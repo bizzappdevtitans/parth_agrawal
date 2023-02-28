@@ -18,6 +18,7 @@ class SaleOrderInherit(models.Model):
     invoice_description = fields.Char("Invoice Description")
     project_description = fields.Char(string="Project Description")
     task_description = fields.Char(string="Task Description")
+    purchase_description = fields.Char(string="Purchase order description")
 
     def _prepare_invoice(self):
         invoice_dec = super(SaleOrderInherit, self)._prepare_invoice()
@@ -36,6 +37,13 @@ class SaleOrderInherit(models.Model):
         values["task_description"] = self.task_description
         print("after")
         return values
+
+    def _purchase_service_generation(self):
+        print("inside inherited method")
+        POvalues = super(SaleOrderInherit, self)._purchase_service_generation()
+        POvalues["purchase_description"] = self.purchase_description
+        print("inside inherited method closed")
+        return POvalues
 
     # def _timesheet_create_task_prepare_values(self, project_id):
     #     values = super(SaleOrderInherit, self)._timesheet_create_task_prepare_values(
