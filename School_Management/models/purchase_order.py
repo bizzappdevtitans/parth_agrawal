@@ -1,8 +1,10 @@
-from odoo import fields, models, api
+from odoo import fields, models
 
 
 class PurchaseOrderInherit(models.Model):
     _inherit = "purchase.order"
 
-    sale_order_id = fields.Many2one('sale.order')
-    purchase_description = fields.Char(related="sale_order_id.purchase_description",string="Purchase order description")
+    # sale_reference_id = fields.Many2one("sale.order")
+    # purchase_description = fields.Char(string="Purchase order description")
+    # , related="order_id.purchase_description"
+    purchase_des = fields.Char(string="description")

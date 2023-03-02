@@ -10,7 +10,15 @@
     "description": """
 This module contains all the common features of School management system
     """,
-    "depends": ["base", "mail", "sale", "stock", "account", "project"],
+    "depends": [
+        "base",
+        "mail",
+        "sale",
+        "stock",
+        "account",
+        "sale_project",
+        "sale_purchase",
+    ],
     "data": [
         "security/ir.model.access.csv",
         "views/Details_view.xml",

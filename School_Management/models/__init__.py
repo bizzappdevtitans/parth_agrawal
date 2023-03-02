@@ -27,3 +27,4 @@ from . import sale_order_line
 from . import project
 from . import project_task
 from . import purchase_order
+from . import mrp_production
