@@ -18,3 +18,4 @@ School_Management.access_attendance_option,access_attendance_option,School_Manag
 School_Management.access_create_record,access_create_record,School_Management.model_create_record,base.group_user,1,1,1,1
 School_Management.access_inherit_fees,access_inherit_fees,School_Management.model_inherit_fees,base.group_user,1,1,1,1
 School_Management.access_sale_work,access_sale_work,School_Management.model_sale_work,base.group_user,1,1,1,1
+School_Management.access_create_data_wizard,access_create_data_wizard,School_Management.model_create_data_wizard,base.group_user,1,1,1,1

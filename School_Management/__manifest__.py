@@ -22,6 +22,7 @@ This module contains all the common features of School management system
     ],
     "data": [
         "security/ir.model.access.csv",
+        "wizard/create_data_view.xml",
         "views/Details_view.xml",
         "views/option_view.xml",
         "views/Studycorner_view.xml",

@@ -23,6 +23,12 @@
          action = "action_fees_status"
          sequence="2"
         />
+     <menuitem id="create_data_sub_menu"
+         name="Create Data Wizard"
+         parent="record_sub_menu"
+         action = "action_create_data_wizard"
+         sequence="3"
+        />
 
 
     <record id="action_create_record" model="ir.actions.act_window">
@@ -36,6 +42,9 @@
         <field name="model">create.record</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name= "%(action_create_data_wizard)d" type= "action" string="create wizard(assignment)" class="btn-primary"/>
+                </header>
                 <sheet>
                     <group>
                         <field name= "name" />
@@ -44,7 +53,7 @@
                         <field name= "dob" />
                         <field name= "gender" />
                         <field name= "phone" />
-                        <span>Browse/Delete/Write/Search</span>
+                        <span>Write/Browse/Delete/Search</span>
                         <field name= "recid" />
                         <field name= "name1" />
                         <field name= "rollno1" />

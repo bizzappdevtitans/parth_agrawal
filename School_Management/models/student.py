@@ -143,3 +143,4 @@ class StudentProfile(models.Model):
             )
         res = super(StudentProfile, self).create(vals)
         return res
+

@@ -89,8 +89,8 @@
                                 <field name = "department" />
                                 <field name = "gender" />
                             </group>
-                            <gruop>
-                            </gruop>
+                            <group>
+                            </group>
                         <notebook>
                             <page string="subject">
                                 <group>

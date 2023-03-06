@@ -4,8 +4,6 @@ from odoo import fields, models
 class StockRule(models.Model):
     _inherit = "stock.rule"
 
-    # sale_id = fields.Many2one("sale.order")
-    # manufacturing_description = fields.Char('sale_id.manufacturing_description')
 
     def _prepare_mo_vals(
         self,
