@@ -1,0 +1,15 @@
+from odoo import fields, models
+
+
+class InheritFees(models.Model):
+    _inherit = "fees.option"
+    _name = 'inherit.fees'
+    _description = "inherited fees model"
+
+    feesstatus = fields.Selection(
+        [
+            ("paid", "Paid"),
+            ("unpaid", "unpaid"),
+        ],
+        string="Payment Status",
+    )
