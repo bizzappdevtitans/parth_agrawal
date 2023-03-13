@@ -24,6 +24,8 @@ This module contains all the common features of School Management System
         "security/ir.model.access.csv",
 
         "data/ir_sequence_data.xml",
+        "data/ir_server_actions_data.xml",
+        "data/ir_cron_data.xml",
 
         "wizard/create_data_view.xml",
 

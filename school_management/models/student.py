@@ -3,6 +3,7 @@ from odoo import fields, models, api
 
 class StudentProfile(models.Model):
     """Give details of students"""
+
     _name = "student.profile"
     _description = "student profile model"
 
@@ -59,7 +60,9 @@ class StudentProfile(models.Model):
         related="student_school_name_id.phone", string="school phone"
     )
 
-    marksheetcount = fields.Integer(compute="_compute_count_marksheet", string="Marksheet")
+    marksheetcount = fields.Integer(
+        compute="_compute_count_marksheet", string="Marksheet"
+    )
     feescount = fields.Integer(compute="_compute_count_fees", string="Fees")
 
     @api.depends("name")
@@ -151,3 +154,11 @@ class StudentProfile(models.Model):
             )
         res = super(StudentProfile, self).create(vals)
         return res
+
+    @api.model
+    def test_cron(self):
+        print("\n \n TESTING CRON JOB \n \n")
+        data = self.env["student.profile"].search([("dob", "=", fields.Date.today())]).name_get()
+        print("\t\t there is somone's birthday today...", data)
+        # data1 = data.name_get()
+        # print("\t\t there is somone's birthday today...", data1)

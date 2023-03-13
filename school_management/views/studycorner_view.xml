@@ -69,6 +69,7 @@
                 <field name = "department_id"/>
                 <field name = "duedate"/>
                 <field name = "submit" widget="boolean_toggle" groups="school_management.group_school_teacher"/>
+                <field name = "submit_student_side" widget="boolean_toggle"/>
             </tree>
         </field>
     </record>
@@ -107,6 +108,7 @@
                                     <field name = "today" widget="badge" />
                                     <field name = "Task" />
                                     <field name = "submit" widget="boolean_toggle" groups="school_management.group_school_teacher" />
+                                    <field name = "submit_student_side" widget="boolean_toggle"/>
                                 </group>
                             </page>
                         </notebook>
@@ -147,7 +149,7 @@
                 <field name ="email" />
                 <field name = "schoolname_id"/>
                 <field name = "percentage" />
-                <field name="state" decoration-success="state =='done'" decoration-info="state =='draft'" decoration-danger="state =='cancel'" widget="badge" />
+                <field name="state" decoration-success="state =='confirmed'" decoration-info="state =='done'" decoration-danger="state =='cancel'" decoration-warning="state =='draft'" widget="badge" />
             </tree>
         </field>
     </record>
@@ -160,8 +162,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name= "action_confirm" type= "object" string="confirm" class="oe_highlight"/>
-                    <button name= "action_cancel" type= "object" string="cancel" class="oe_highlight"/>
+                    <button name= "action_confirm" type= "object" string="submit" class="oe_highlight"/>
+                    <button name= "action_cancel" type= "object" string="cancel" class="oe_highlight" groups="school_management.group_school_teacher"/>
+                    <button name= "action_confirm_admission" type= "object" string="confirm admission" class="oe_highlight" groups="school_management.group_school_teacher"/>
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>

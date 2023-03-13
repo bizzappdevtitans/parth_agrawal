@@ -79,7 +79,7 @@
                     <group style="display: flex; justify-content: center; height:430px; width:400; ">
                         <h2 style="text-align:center"> Welcome To</h2><br></br>
                         <h1 style="text-align:center"> School Management System</h1><br></br>
-                        <img src='School_Management/static/image/default8.png' alt="#"/>
+                        <img src='school_management/static/image/default8.png' alt="#"/>
                         <h5>The school management system is a large database system and can be used for managing any school 's day to day business. School Management System allows users to store almost all of their school 's information electronically.
                         <br></br> <br></br> In the process of managing the school as an organisation the principal of a school should execute the management functions. The functional task of a school is teaching and learning. The management functions that are used in a school system is planning, organising, leading and controlling.<br></br><br></br>Leading is the third step in the management function and it refers to directing the educators and the learners and motivating them to achieve the desire goals they have. When leading one should be able to communicate to learners and educators with confidence so that they can perform as well as they possible can. Handling conflict situation will sometimes be necessary and one should be careful not to give someone more benefits then a other person.</h5>
                     </group>
@@ -316,7 +316,6 @@
                     <group>
 
                             <field name = "reference_no" style="font-size:15pt;" widget="badge" decoration-success="1"/>
-
                             <field name = "name" />
                             <field name = "photo" widget="image" class="oe_avatar" options="{'size': [88, 88]}"/>
                             <field name ="rollno" options="{'format': 0}"/>

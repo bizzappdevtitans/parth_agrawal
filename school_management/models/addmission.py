@@ -17,6 +17,7 @@ class Addmission(models.Model):
             ("draft", "Draft"),
             ("done", "Done"),
             ("cancel", "Cancel"),
+            ("confirmed", "Confirmed"),
         ],
         string="Form Status",
     )
@@ -176,6 +177,14 @@ class Addmission(models.Model):
     def action_cancel(self):
         for addmission in self:
             addmission.state = "cancel"
+
+    def action_confirm_admission(self):
+        for addmission in self:
+            addmission.state = "confirmed"
+
+    def access_error(self):
+        for addmission in self:
+            raise ValidationError("You can not perform this action as you are not teacher or admin")
 
     @api.model
     def create(self, vals):
