@@ -1,0 +1,9 @@
+.sass-cache
+.venv
+*.bat
+*.dot
+*.pyc
+*.py0
+*~
+*.swp
+*.swo
