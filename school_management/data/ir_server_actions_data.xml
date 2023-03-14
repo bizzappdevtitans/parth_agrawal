@@ -30,7 +30,7 @@ if  env.user.has_group('school_management.group_school_teacher'):
             <field name="binding_view_types">form</field>
             <field name="model_id" ref="school_management.model_department_option"/>
             <field name="binding_model_id" ref="school_management.model_department_option" />
-            <field name="state">code</field>
+            <field name="state">object_create</field>
             <field name="code">action = records.action_addmission_option()</field>
         </record>
 </odoo>

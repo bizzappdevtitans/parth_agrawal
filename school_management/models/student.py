@@ -1,4 +1,5 @@
 from odoo import fields, models, api
+from datetime import datetime
 
 
 class StudentProfile(models.Model):
@@ -8,6 +9,9 @@ class StudentProfile(models.Model):
     _description = "student profile model"
 
     name = fields.Char("student name")
+    message = fields.Selection(
+        [("birth", "Happy Birthday To You"), ("nobirth", "Waiting")]
+    )
     photo = fields.Binary("Photo", store=True)
     rollno = fields.Integer("rollno")
     subject_id = fields.Many2one("department.option", string="Field")
@@ -155,10 +159,40 @@ class StudentProfile(models.Model):
         res = super(StudentProfile, self).create(vals)
         return res
 
+    # date = datetime.strptime(str(dob), "%m,%d,%Y")
+    # print(date)
+
+    # @api.onchange(dob)
+    # def dob_changed(self, cr, uid, ids, dob, context=None):
+
+    #     if context is None:
+
+    #         context = {}
+
+    #     if dob:
+
+    #         date = datetime.strptime(dob, "%Y-%m-%d")
+
+    #         day = date.day
+
+    #         month = date.month
+
+    #         print(day)
+    #         print(month)
+    #     print(day)
+    #     print(month)
+
     @api.model
-    def test_cron(self):
-        print("\n \n TESTING CRON JOB \n \n")
-        data = self.env["student.profile"].search([("dob", "=", fields.Date.today())]).name_get()
-        print("\t\t there is somone's birthday today...", data)
-        # data1 = data.name_get()
-        # print("\t\t there is somone's birthday today...", data1)
+    def test_cron_birthdate(self):
+        """Scheduled action that check birthdate of student and
+        return field value if matched"""
+        print("\n \n TESTING CRON JOB Birthday\n \n")
+        equal = self.env["student.profile"].search([("dob", "=", fields.Date.today())])
+        not_equal = self.env["student.profile"].search(
+            [("dob", "!=", fields.Date.today())]
+        )
+        if equal:
+            equal.write({"message": "birth"})
+
+        if not_equal:
+            not_equal.write({"message": "nobirth"})

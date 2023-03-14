@@ -72,6 +72,8 @@ class Addmission(models.Model):
     hindi_gujarati = fields.Integer("Hindi/Gujarati marks")
     total = fields.Integer("total marks", compute="_compute_marks")
 
+    disable_button = fields.Boolean("Same text", default=False)
+
     _sql_constraints = [
         (
             "phone",
@@ -168,9 +170,14 @@ class Addmission(models.Model):
                 raise ValidationError(
                     "You can not delete the record which is in Draft stage. To delete you need to change state from Draft to Cancel"
                 )
+            elif admission.state == "confirmed":
+                raise ValidationError(
+                    "You can not delete the record which is in Confirmed stage. To delete you need to change state from Confirmed to Cancel"
+                )
         return super(Addmission, self).unlink()
 
     def action_confirm(self):
+        self.disable_button = True
         for addmission in self:
             addmission.state = "done"
 
@@ -184,7 +191,9 @@ class Addmission(models.Model):
 
     def access_error(self):
         for addmission in self:
-            raise ValidationError("You can not perform this action as you are not teacher or admin")
+            raise ValidationError(
+                "You can not perform this action as you are not teacher or admin"
+            )
 
     @api.model
     def create(self, vals):

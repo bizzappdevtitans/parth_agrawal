@@ -322,7 +322,8 @@
                             <field name ="marksheetcount" />
                             <field name ="feescount" />
                             <field name = "subject_id" />
-                             <field name = "dob" />
+                            <field name = "dob"/>
+                            <field name = "message" readonly='1'/>
                             <field name = "phone" widget="phone"/>
                             <field name = "gender" />
                             <field name = "totalmarks" />

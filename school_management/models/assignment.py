@@ -66,11 +66,17 @@ class Assignment(models.Model):
     note = fields.Text("Assigned task", tracking=True)
     Task = fields.Binary(string="Upload Answer", tracking=True)
     submit = fields.Boolean("approve?", tracking=True)
-    submit_student_side = fields.Boolean(
-        string="approved?", tracking=True
-    )
+    submit_student_side = fields.Boolean(string="approved?", tracking=True)
     Questions = fields.Binary("Questions", tracking=True)
     today = fields.Date(string="Today's date", default=datetime.today(), readonly=True)
+
+    alert_message = fields.Selection(
+        [
+            ("due_today", "Due date of assignment is today"),
+            ("due_future", "Due date of assignment is comming soon"),
+            ("due_past", "Due date of assignment is already passed"),
+        ]
+    )
 
     @api.onchange("studentname_id")
     def _onchange_gender(self):
@@ -82,3 +88,20 @@ class Assignment(models.Model):
         for assignment in self:
             assignment.submit_student_side = assignment.submit
             # return assignment.submit_student_side
+
+    @api.model
+    def test_cron_assignment(self):
+        """Scheduled action that check assignment duedate of student and
+        return co-responding field value if matched"""
+        print("\n \n TESTING CRON JOB Assignment \n \n")
+        equal = self.env["assignment.option"].search([("duedate", "=", "today")])
+        greater = self.env["assignment.option"].search([("duedate", ">", "today")])
+        lesser = self.env["assignment.option"].search([("duedate", "<", "today")])
+        if equal:
+            equal.write({"alert_message": "due_today"})
+
+        if greater:
+            greater.write({"alert_message": "due_future"})
+
+        if lesser:
+            lesser.write({"alert_message": "due_past"})
