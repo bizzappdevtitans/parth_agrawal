@@ -1,26 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="ir_cron_for_testing_birthdate" model="ir.cron">
+        <field name="name">Test Cron Birthdate</field>
+        <field name="model_id" ref="model_student_profile"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">model.test_cron_birthdate()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+    </record>
+    <record id="ir_cron_for_testing_assignment" model="ir.cron">
+        <field name="name">Test Cron job Assignment</field>
+        <field name="model_id" ref="model_assignment_option"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">model.test_cron_assignment()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+    </record>
 
-        <record id="ir_cron_for_testing_birthdate" model="ir.cron">
-            <field name="name">Test Cron Birthdate</field>
-            <field name="model_id" ref="model_student_profile"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">model.test_cron_birthdate()</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
-        </record>
+   <record id="ir_cron_birthdate_message" model="ir.cron">
+        <field name="name">Cron Birthday Message</field>
+        <field name="model_id" ref="school_management.model_student_profile"/>
+        <field name="type">ir.actions.server</field>
+        <field name = "user_id" ref = "base.user_root" />
+        <field name="state">code</field>
+        <field name="code">model.birthdate_message()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 07:59:59')" />
+    </record>
 
-        <record id="ir_cron_for_testing_assignment" model="ir.cron">
-            <field name="name">Test Cron job Assignment</field>
-            <field name="model_id" ref="model_assignment_option"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">model.test_cron_assignment()</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
-        </record>
 
+    <record id="birthday_email_template" model="mail.template">
+        <field name="name">Birthday Email Template</field>
+        <field name="model_id" ref="school_management.model_student_profile"/>
+        <field name="subject">Email</field>
+        <field name="email_from">parth@gmail.com</field>
+        <field name="email_to">{{object.studentemail}}</field>
+        <field name="body_html" type="html">
+            <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;">
+                <tr>
+                    <td align="center">
+                        <table border="0" cellpadding="0" cellspacing="0" style="padding: 16px; background-color: white; color: #454748; border-collapse:separate;" width="590">
+                            <tbody>
+                                <tr>
+                                    <td align="center" style="min-width: 590px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;" width="590">
+                                            <tr>
+                                                <td valign="middle">
+                                                    <br/>
+                                                    <span style="font-size: 20px; font-weight: bold;">
+                                                        <t t-out="object.reference_no"/>
+                                                    </span>
+                                                </td>
+                                                <td align="right" valign="middle">
+                                                    <img style="padding: 0px; margin: 0px; height: auto; width: 80px;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align:center;">
+                                                    <hr style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;" width="100%"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="min-width: 590px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;" width="590">
+                                            <tr>
+                                                <td style="font-size: 13px;" valign="top">
+                                                    <div>Dear
+
+                                                        <t t-out="object.name"/>
+                                                        ,
+                                                        <br/>
+                                                        <br/>
+                                                        Happy Birth Day...!
+
+                                                        <br/>
+                                                        <br/>
+                                                        <br/>
+                                                        <t t-if="user.signature">
+                                                            <br/>
+                                                            <t t-out="user.signature">
+                                                                <br/>
+                                                                <t t-out="user.name"/>
+                                                            </t>
+                                                        </t>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align:center;">
+                                                    <hr style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;" width="100%"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </field>
+        <field eval="True" name="auto_delete"/>
+    </record>
 </odoo>

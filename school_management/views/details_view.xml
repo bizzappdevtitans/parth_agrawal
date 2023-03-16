@@ -298,6 +298,9 @@
         <field name="model">student.profile</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name= "action_send_email" type= "object" string="Send Email" class="oe_highlight"/>
+                </header>
                 <sheet>
                       <div class="oe_button_box" name="button_box">
                         <button class=" oe_stat_button" width="380" height="40" name="action_school_profile" type="object" icon="fa-home">
@@ -323,6 +326,7 @@
                             <field name ="feescount" />
                             <field name = "subject_id" />
                             <field name = "dob"/>
+                            <field name = "studentemail" />
                             <field name = "message" readonly='1'/>
                             <field name = "phone" widget="phone"/>
                             <field name = "gender" />

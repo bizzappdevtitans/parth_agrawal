@@ -1,5 +1,6 @@
 from odoo import fields, models, api
-from datetime import datetime
+from datetime import date
+import datetime
 
 
 class StudentProfile(models.Model):
@@ -25,6 +26,7 @@ class StudentProfile(models.Model):
             ("female", "Female"),
         ]
     )
+    studentemail = fields.Char("Email id")
     student_school_name_id = fields.Many2one("school.profile", string="school name")
     tuition = fields.Integer(related="student_school_name_id.tuition")
     library = fields.Integer(related="student_school_name_id.library")
@@ -187,12 +189,37 @@ class StudentProfile(models.Model):
         """Scheduled action that check birthdate of student and
         return field value if matched"""
         print("\n \n TESTING CRON JOB Birthday\n \n")
-        equal = self.env["student.profile"].search([("dob", "=", fields.Date.today())])
-        not_equal = self.env["student.profile"].search(
-            [("dob", "!=", fields.Date.today())]
-        )
-        if equal:
-            equal.write({"message": "birth"})
+        for rec in self.search([]):
+            today = date.today()
+            if today.day == rec.dob.day and today.month == rec.dob.month:
+                vals = rec.write({"message": "birth"})
+            else:
+                vals = rec.write({"message": "nobirth"})
 
-        if not_equal:
-            not_equal.write({"message": "nobirth"})
+    def action_send_email(self):
+        email_template_id = self.env.ref("school_management.birthday_email_template").id
+        template = self.env["mail.template"].browse(email_template_id)
+        template.send_mail(self.id, force_send=True)
+
+    @api.model
+    def birthdate_message(self):
+        for rec in self.search([]):
+            today = date.today()
+            print(today)
+            if today.day == rec.dob.day and today.month == rec.dob.month:
+                email_template_id = self.env.ref(
+                    "school_management.birthday_email_template"
+                ).id
+                template = self.env["mail.template"].browse(email_template_id)
+                result = template.send_mail(rec.id, force_send=True)
+
+
+                message = ("Happy Birthday %s") % (rec.name)
+                channel_template_id = self.env.ref("mail.channel_all_employees").id
+                channel = self.env["mail.channel"].browse(channel_template_id)
+                print1 = channel.message_post(
+                    body=message,
+                    message_type="comment",
+                    subtype_xmlid="mail.mt_comment",
+                )
+                # rec.env['mail.channel'].search([('name', '=', 'general')]).message_post(body=message)
