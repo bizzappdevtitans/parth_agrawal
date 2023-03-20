@@ -3,6 +3,7 @@ from odoo import fields, models
 
 class StockRule(models.Model):
     """To pass the field value from SO to MO using stock.rule model's method"""
+
     _inherit = "stock.rule"
 
     def _prepare_mo_vals(

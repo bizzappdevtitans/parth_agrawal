@@ -81,6 +81,9 @@
         <field name="model">assignment.option</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                     <button name= "action_share_whatsapp" type= "object" string="Alert on Whatsapp" class="oe_highlight" icon = "fa-whatsapp" />
+                </header>
                 <sheet>
                     <widget name="web_ribbon" text="assignment" bg_color="bg-info" />
                         <group>
@@ -88,6 +91,7 @@
                                 <field name = "studentname_id"/>
                                 <field name = "teachername_id"/>
                                 <field name = "department_id" />
+                                <field name = "mobile_number" />
                                 <field name = "gender" />
                                 <field name = "alert_message" readonly = "1"/>
                             </group>

@@ -29,3 +29,6 @@ from . import project_task
 from . import purchase_order
 from . import mrp_production
 from . import stock_rule
+from . import product_template
+from . import stock_move
+from . import stock_move_line

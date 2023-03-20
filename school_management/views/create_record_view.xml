@@ -101,9 +101,26 @@
                 <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="after">
                     <field name="delivery_description"/>
                 </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='move_ids_without_package']/tree/field[@name='product_id']" position="after">
+                    <field name="weight_done_new"/>
+                    <field name= "weight" attrs="{'readonly': [('state','=','done')]}"/>
+                </xpath>
             </field>
         </record>
     </data>
+
+    <!--  <record id="stock_movie_line_inherited" model="ir.ui.view">
+            <field name="name">Stock Move Line Inherited</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//label[@for='qty_done']" position="attributes">
+                    <attribute name="weight">Weight</attribute>
+                </xpath>
+            </field>
+        </record>
+ -->
+
     <data>
         <record id="invoice_inherit_form" model="ir.ui.view">
             <field name="name">Invoice Inherit Form</field>
@@ -133,8 +150,11 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='product_id']" position="after">
-                <field name="available"/>
+            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="available" invisible="1"/>
+                <field name= "weight_done" invisible="1" />
+                <field name="weight_done_new" attrs="{'invisible': [('weight_done','!=',True)]}"/>
+                <field name= "weight" attrs="{'invisible': [('weight_done_new','=',False)]}"/>
             </xpath>
         </field>
     </record>
@@ -174,6 +194,7 @@
             </field>
         </record>
     </data>
+
     <data>
         <record id="manufacturing_inherit_form" model="ir.ui.view">
             <field name="name">Manufacturing Order Form</field>
@@ -186,4 +207,22 @@
             </field>
         </record>
     </data>
+
+
+        <record id="inherited_product_template_form_view" model="ir.ui.view">
+            <field name="name">Product template Form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/div/span/label[@for='purchase_ok']" position="after">
+                    <span>
+                    <field name="weight_done"/>
+                    <label for="weight_done"/>
+                </span>
+                </xpath>
+            </field>
+        </record>
+
+
+
 </odoo>

@@ -27,6 +27,8 @@ class Assignment(models.Model):
     department_id = fields.Many2one(
         related="studentname_id.subject_id", string="department"
     )
+
+    mobile_number = fields.Char(related="studentname_id.phone", string="Mobile")
     subject_arts = fields.Selection(
         [
             ("geography", "Geography"),
@@ -105,3 +107,22 @@ class Assignment(models.Model):
 
         if lesser:
             lesser.write({"alert_message": "due_past"})
+
+    def action_share_whatsapp(self):
+        if not self.studentname_id.phone:
+            raise ValidationError(("Mobile number not found"))
+        message = "Hello *%s*, Your assignment is missing. due date is '''_%s_'''" % (self.studentname_id.name,self.duedate)
+        whatsapp_api_url = (
+            "https://web.whatsapp.com/send?phone="
+            + self.mobile_number
+            + "&text="
+            + message
+        )
+
+        result = {
+            "type": "ir.actions.act_url",
+            "target": "new",
+            "url": whatsapp_api_url,
+        }
+
+        return result
