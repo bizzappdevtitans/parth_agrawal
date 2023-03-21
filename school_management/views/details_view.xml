@@ -371,7 +371,7 @@
             <field name="name">student.kanban</field>
             <field name="model">student.profile</field>
             <field name="arch" type="xml">
-                <kanban class="o_res_partner_kanban">
+                <kanban class="o_res_partner_kanban" default_group_by="subject_id">
                     <field name="id"/>
                     <field name = "name" />
                     <field name = "photo" widget="image"/>

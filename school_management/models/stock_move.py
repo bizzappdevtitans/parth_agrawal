@@ -2,41 +2,23 @@ from odoo import fields, models, api
 
 
 class StockMoveInherit(models.Model):
-    """To pass the field value from SO to DO"""
+    """To pass the field value from SOL to stock.move"""
 
     _inherit = "stock.move"
 
-    product_template_id = fields.Many2one("sale.order.line")
+    product_temp_id = fields.Many2one("sale.order.line")
     weight_done_new = fields.Boolean(
         string="Weight done", related="sale_line_id.weight_done_new", store=True
     )
 
-    weight = fields.Float(string="Weight", related="sale_line_id.weight")
+    weight = fields.Float(string="Weight")
 
-    # @api.model
-    # def get_data(self):
-    #     data = self.env['sale.order.line'].search([])
-    #     weightdata = ""
-    #     for rec in data:
-    #         weightdata = rec.weight
-    #     for record in self:
-    #         record.weight = weightdata
-
-    def get_data(self):
+    def _get_new_picking_values(self):
+        """This method helps to pass value from SO to delivery order"""
+        picking_vals = super(StockMoveInherit, self)._get_new_picking_values()
+        picking_vals[
+            "delivery_description"
+        ] = self.sale_line_id.order_id.delivery_description
         for move in self:
-            if not (move.picking_id and move.picking_id.group_id):
-                continue
-            picking = move.picking_id
-            sale_order = (
-                self.env["sale.order"]
-                .sudo()
-                .search([("procurement_group_id", "=", picking.group_id.id)], limit=1)
-            )
-        for line in sale_order.order_line:
-            if line.product_id.id != move.product_id.id:
-                continue
-            move.update(
-                {
-                    "weight": line.weight,
-                }
-            )
+            move.weight = move.sale_line_id.weight
+        return picking_vals

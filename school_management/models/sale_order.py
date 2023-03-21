@@ -3,6 +3,7 @@ from odoo import fields, models
 
 class SaleOrderInherit(models.Model):
     """To pass value from SO to DO , MO, PO, invoice ,project and task"""
+
     _inherit = "sale.order"
 
     project_id = fields.Many2one("project.project", "project_id")
@@ -28,11 +29,16 @@ class SaleOrderInherit(models.Model):
         invoice_dec["invoice_description"] = self.invoice_description
         return invoice_dec
 
-    def _get_new_picking_values(self):
-        """This method helps to pass value from SO to delivery order"""
-        picking_vals = super(SaleOrderInherit, self)._get_new_picking_values()
-        picking_vals["delivery_description"] = self.delivery_description
-        return picking_vals
+    # def _get_new_picking_values(self):
+    #     """This method helps to pass value from SO to delivery order"""
+    #     picking_vals = super(SaleOrderInherit, self)._get_new_picking_values()
+    #     picking_vals["delivery_description"] = self.delivery_description
+    #     data = self.env["stock.picking"].search([])
+    #     for move in data.move_lines:
+    #         sale_line = move.sale_line_id
+    #         if sale_line:
+    #             move["weight"] = sale_line.weight
+    #     return picking_vals
 
     def _prepare_analytic_account_data(self, prefix):
         """This method helps to pass value from SO to project and task"""
