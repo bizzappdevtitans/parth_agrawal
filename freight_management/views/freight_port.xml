@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+     <data>
+
+        <record id="freight_port_tree_view" model="ir.ui.view">
+            <field name="name">Port</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <tree decoration-bf="1">
+                    <field name="name"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="freight_port_form_view" model="ir.ui.view">
+            <field name="name">Port</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                    <form>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="country_id"/>
+                                    <field name="state_id"/>
+                                </group>
+                                <group>
+                                    <field name="active" widget="boolean_toggle"/>
+                                    <field name="land" />
+                                    <field name="air" />
+                                    <field name="water" />
+                                </group>
+                            </group>
+                        </sheet>
+                    </form>
+            </field>
+        </record>
+
+        <record id="view_freight_port_filter" model="ir.ui.view">
+            <field name="name">freight.port.search</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter string="Inactive" name="inactive" domain="[('active','=',False)]"/>
+                </search>
+             </field>
+         </record>
+
+        <record id="action_freight_port" model="ir.actions.act_window">
+            <field name="name">Freight Port</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">freight.port</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Define a new freight port
+              </p>
+            </field>
+
+        </record>
+
+    </data>
+</odoo>

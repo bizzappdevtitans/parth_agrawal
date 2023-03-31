@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <menuitem id="menu_freight_root" name="Freight Management" sequence="0" action="action_home_page" />
+
+    <menuitem id="menu_freight_order" name="Shipping" parent="menu_freight_root" sequence="1"/>
+    <menuitem id="sub_menu_freight_order" name="Quick Shipping" parent="menu_freight_order" sequence="1" action="action_freight_order"/>
+
+    <menuitem id="menu_custom" name="Custom" parent="menu_freight_root" sequence="2"/>
+    <menuitem id="menu_custom_clearance" name="Custom Clearance" parent="menu_custom" sequence="1" action="action_custom_clearance"/>
+
+    <menuitem id="menu_configuration" name="Configuration" sequence="3" parent="menu_freight_root" />
+    <menuitem id="menu_freight_port" name="Ports" parent="menu_configuration" sequence="1" action="action_freight_port"/>
+    <menuitem id="menu_freight_container" name="Container" parent="menu_configuration" sequence="2" action="action_container_port"/>
+    <menuitem id="menu_freight_price" name="Pricing List" parent="menu_configuration" sequence="3" action="action_freight_price"/>
+    <menuitem id="menu_freight_routes" name="Route Operations" parent="menu_configuration" sequence="4" action="action_freight_routes"/>
+    <menuitem id="menu_freight_service" name="Services" parent="menu_configuration" sequence="5" action="action_service_freight"/>
+
+    <menuitem id="menu_feedback" name="Feedback" parent="menu_freight_root" sequence="4" action="action_feedback_option"/>
+
+</odoo>

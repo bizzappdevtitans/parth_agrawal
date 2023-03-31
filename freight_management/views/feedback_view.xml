@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+  <record id="action_feedback_option" model="ir.actions.act_window">
+       <field name="name">Feedback</field>
+       <field name="res_model">feedback.option</field>
+       <field name="view_mode">tree,form,graph,kanban</field>
+       <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Make your first feedback
+            </p>
+        </field>
+    </record>
+
+<!-- feedback list -->
+
+     <record id="feedback_list_view" model="ir.ui.view">
+        <field name="name">feedback.list</field>
+        <field name="model">feedback.option</field>
+        <field name="arch" type="xml">
+            <tree decoration-bf="1">
+                <field name = "freight_order_id"/>
+                <field name = "name" />
+                <field name="subject"/>
+                <field name = "note"/>
+                <field name="priority" widget="priority"/>
+                <field name = "date" />
+            </tree>
+        </field>
+    </record>
+
+<!-- feedback form -->
+
+     <record id="feedback_form_view" model="ir.ui.view">
+        <field name="name">feedback.form</field>
+        <field name="model">feedback.option</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" text="review" bg_color="bg-success" />
+                        <group>
+                            <group>
+                                <field name = "freight_order_id"/>
+                                <field name = "source_location"/>
+                                <field name = "destination_location"/>
+                                <field name = "name" />
+                                <field name="subject" widget="CopyClipboardChar"/>
+                                <field name = "note" widget="CopyClipboardText"/>
+                            </group>
+                            <group>
+                                <field name="priority" widget="priority"/>
+                                <field name = "date"/>
+                            </group>
+                        </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+<!-- feedback graph -->
+
+    <record  id="feedback_graph_view" model="ir.ui.view">
+        <field name="name">feedback.graph</field>
+        <field name="model">feedback.option</field>
+        <field name="arch" type="xml">
+            <graph string="review">
+                 <field name="priority" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+<!-- feedback kanban -->
+
+     <record id="feedback_kanban_view" model="ir.ui.view">
+        <field name="name">feedback.kanban</field>
+        <field name="model">feedback.option</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban">
+                <field name="id"/>
+                <field name = "name" />
+                <field name = "freight_order_id" />
+                <field name="subject" widget="CopyClipboardChar"/>
+                <field name = "note" widget="CopyClipboardText"/>
+                <field name="priority" widget="priority"/>
+                <field name = "date" />
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                     <label for="name">Name:</label>
+                                    <field name="name"/>
+                                    <div t-if="record.freight_order_id.value">
+                                         <label for="freight_order_id">Freight Order Id:</label>
+                                        <t  t-esc="record.freight_order_id.value"/>
+                                    </div>
+                                    <div t-if="record.priority.value">
+                                         <label for="priority">Review:</label>
+                                        <t  t-esc="record.priority.value"/>
+                                    </div>
+                                </strong>
+                                <div t-if="record.subject.value">
+                                     <label for="subject">Description:</label>
+                                    <t t-esc="record.subject.value"/>
+                                </div>
+                                <div t-if="record.note.value">
+                                     <label for="note">Note:</label>
+                                    <t t-esc="record.note.value"/>
+                                </div>
+                                <div t-if="record.date.value">
+                                     <label for="date">Date of review:</label>
+                                    <t t-esc="record.date.value"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+</odoo>
