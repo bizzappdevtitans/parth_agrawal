@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+        <!-- freight order tree view -->
         <record id="freight_order_tree_view" model="ir.ui.view">
             <field name="name">Freight Order</field>
             <field name="model">freight.order</field>
@@ -15,7 +16,7 @@
             </field>
         </record>
 
-
+        <!-- freight order form view -->
         <record id="freight_order_form_view" model="ir.ui.view">
             <field name="name">Freight Order</field>
             <field name="model">freight.order</field>
@@ -167,6 +168,7 @@
         </field>
     </record>
 
+        <!-- freight order action -->
         <record id="action_freight_order" model="ir.actions.act_window">
             <field name="name">Freight Order</field>
             <field name="type">ir.actions.act_window</field>

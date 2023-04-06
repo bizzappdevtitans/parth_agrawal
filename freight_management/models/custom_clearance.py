@@ -1,8 +1,8 @@
-from werkzeug import urls
 from odoo import api, fields, models, _
 
 
 class CustomClearance(models.Model):
+    """This model allow to create custom clearance"""
     _name = "custom.clearance"
     _description = "Custom Clearance"
 

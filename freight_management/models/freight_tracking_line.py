@@ -1,7 +1,7 @@
-from werkzeug import urls
 from odoo import fields, models, _
 
 class FreightTrackingLine(models.Model):
+    """Freight order track information stored in this model"""
     _name = 'freight.order.track.line'
     _description = "Freight Order Track Line"
 

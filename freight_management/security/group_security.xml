@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+        <!-- created category for group -->
      <record id="module_category_freight_management" model="ir.module.category">
         <field name="name">Freight_Management</field>
         <field name="description">Category of Freight Management</field>
     </record>
+    <!-- created admin for group -->
     <record id="group_freight_admin" model="res.groups">
         <field name="name">Administrator</field>
         <field name="category_id" ref="freight_management.module_category_freight_management"/>
         <field name="implied_ids" eval="[(4,ref('freight_management.group_freight_agent'))]" />
     </record>
+    <!-- created customer for group -->
     <record id="group_freight_customer" model="res.groups">
         <field name="name">Customer</field>
         <field name="category_id" ref="freight_management.module_category_freight_management"/>
-        <!-- <field name="implied_ids" eval="[(4,ref('freight_management.group_freight_customer'))]" /> -->
     </record>
+    <!-- created agent for group -->
     <record id="group_freight_agent" model="res.groups">
         <field name="name">Agent</field>
         <field name="category_id" ref="freight_management.module_category_freight_management"/>

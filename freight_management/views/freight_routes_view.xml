@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- route operation tree view -->
     <record id="freight_routes_tree_view" model="ir.ui.view">
             <field name="name">Routes</field>
             <field name="model">freight.routes</field>
@@ -10,6 +11,7 @@
             </field>
         </record>
 
+    <!-- route operation form view -->
         <record id="freight_routes_form_view" model="ir.ui.view">
             <field name="name">Routes</field>
             <field name="model">freight.routes</field>
@@ -31,6 +33,7 @@
             </field>
         </record>
 
+    <!-- route operation action -->
         <record id="action_freight_routes" model="ir.actions.act_window">
             <field name="name">Freight Routes</field>
             <field name="type">ir.actions.act_window</field>

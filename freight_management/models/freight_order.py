@@ -1,10 +1,10 @@
-from werkzeug import urls
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from datetime import datetime
 
 
 class FreightOrder(models.Model):
+    """This model is main model that create freight order"""
     _name = "freight.order"
     _description = "Freight Order"
 

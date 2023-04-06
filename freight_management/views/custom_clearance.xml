@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- custom clearance tree view -->
     <data>
         <record id="custom_clearance_tree_view" model="ir.ui.view">
             <field name="name">Custom Clearance</field>
@@ -12,6 +13,8 @@
             </field>
         </record>
 
+
+        <!-- custom clearance form view -->
         <record id="custom_clearance_form_view" model="ir.ui.view">
             <field name="name">Custom Clearance</field>
             <field name="model">custom.clearance</field>
@@ -57,6 +60,7 @@
             </field>
         </record>
 
+        <!-- custom clearance action -->
         <record id="action_custom_clearance" model="ir.actions.act_window">
             <field name="name">Custom Clearance</field>
             <field name="type">ir.actions.act_window</field>

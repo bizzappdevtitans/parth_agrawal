@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
+    <!-- cron job to send email on the due date of custom clearance -->
    <record id="ir_cron_duedate_message" model="ir.cron">
         <field name="name">Cron Duedate Message</field>
         <field name="model_id" ref="freight_management.model_custom_clearance_revision"/>
@@ -14,7 +14,7 @@
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 07:59:59')" />
     </record>
 
-
+    <!-- email template of due date reminder -->
     <record id="duedate_email_template" model="mail.template">
         <field name="name">Duedate Email Template</field>
         <field name="model_id" ref="freight_management.model_custom_clearance_revision"/>

@@ -1,9 +1,9 @@
-from werkzeug import urls
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
 class Tracking(models.Model):
+    """This model will take data regarding freight order tracking status"""
     _name = "freight.track"
     _description = "Freight Track"
 

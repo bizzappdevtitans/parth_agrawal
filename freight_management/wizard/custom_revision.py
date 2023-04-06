@@ -3,6 +3,7 @@ from odoo import models, fields, _
 
 
 class CustomClearanceRevisionReason(models.TransientModel):
+    """This wizard is helpful to create clearance revision"""
     _name = "custom.clearance.revision.wizard"
     _description = "Custom Clearance Revision"
 
@@ -12,7 +13,7 @@ class CustomClearanceRevisionReason(models.TransientModel):
     last_date = fields.Date(string="Last Date To Submit")
 
     def create_revision(self):
-        """create revision"""
+        """create revision and send mail if revision created"""
         for rec in self.custom_id:
 
             mail_content = _(

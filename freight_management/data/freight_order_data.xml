@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-
+        <!-- sequence generator for freight order -->
         <record id="freight_order_sequence" model="ir.sequence">
             <field name="name">Freight Order Sequence</field>
             <field name="code">freight.order.sequence</field>
@@ -12,12 +12,13 @@
             <field name="padding">4</field>
         </record>
 
-        <!-- <record model="freight.routes" id="main_carriage">
+        <!-- default record for freight route model -->
+         <record model="freight.routes" id="main_carriage">
             <field name="name">Main Carriage</field>
             <field name="land_sale">0.00</field>
             <field name="air_sale">0.00</field>
             <field name="water_sale">0.00</field>
-        </record> -->
+        </record>
 
     </data>
 </odoo>

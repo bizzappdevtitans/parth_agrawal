@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+
+    <!-- container tree view -->
      <data>
 
         <record id="freight_container_tree_view" model="ir.ui.view">
@@ -13,6 +15,7 @@
             </field>
         </record>
 
+        <!-- container form view -->
         <record id="freight_container_form_view" model="ir.ui.view">
             <field name="name">Container</field>
             <field name="model">freight.container</field>
@@ -42,6 +45,7 @@
             </field>
         </record>
 
+        <!-- container filter in search -->
         <record id="view_freight_container_filter" model="ir.ui.view">
             <field name="name">freight.Container.search</field>
             <field name="model">freight.container</field>
@@ -52,6 +56,7 @@
              </field>
          </record>
 
+         <!-- container action -->
         <record id="action_container_port" model="ir.actions.act_window">
             <field name="name">Freight Container</field>
             <field name="type">ir.actions.act_window</field>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
  <odoo>
+
+    <!-- feedback action -->
   <record id="action_feedback_option" model="ir.actions.act_window">
        <field name="name">Feedback</field>
        <field name="res_model">feedback.option</field>

@@ -1,10 +1,10 @@
-from werkzeug import urls
 from odoo import api, fields, models
 from datetime import date, datetime
 from odoo.exceptions import ValidationError
 
 
 class CustomClearanceRevision(models.Model):
+    """This model show custom clearance revision for particular customer clearance"""
     _name = "custom.clearance.revision"
     _description = "Custom Clearance Revision"
 

@@ -2,6 +2,7 @@ from odoo import fields, models
 
 
 class FreightPort(models.Model):
+    """To create different ports for freight order"""
     _name = 'freight.port'
     _description = "Freight Port"
 

@@ -1,8 +1,8 @@
-from werkzeug import urls
 from odoo import api, fields, models
 
 
 class CustomClearanceLine(models.Model):
+    """This model store different custom clearance documents"""
     _name = "custom.clearance.line"
     _description = "Custom Clearance Line"
 

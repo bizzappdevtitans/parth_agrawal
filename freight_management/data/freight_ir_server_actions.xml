@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
+        <!-- server action to confirm freight order -->
         <record id="action_confirm_freight_order" model="ir.actions.server">
             <field name="name">Confirm Freight Order</field>
             <field name="type">ir.actions.server</field>
@@ -12,7 +12,7 @@
 if  env.user.has_group('freight_management.group_freight_admin'):
     records.action_confirm_order()</field>
         </record>
-
+        <!-- server action to complete freight order -->
         <record id="action_done_freight_order" model="ir.actions.server">
             <field name="name">Complete Freight Order</field>
             <field name="type">ir.actions.server</field>
@@ -24,7 +24,7 @@ if  env.user.has_group('freight_management.group_freight_admin'):
 if  env.user.has_group('freight_management.group_freight_admin'):
     records.action_done_order()</field>
         </record>
-
+        <!-- server action to cancel freight order -->
         <record id="action_cancel_freight_order" model="ir.actions.server">
             <field name="name">Cancel Freight Order</field>
             <field name="type">ir.actions.server</field>

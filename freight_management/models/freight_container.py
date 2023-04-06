@@ -2,6 +2,7 @@ from odoo import fields, models
 
 
 class FreightContainer(models.Model):
+    """This model allow to create container records"""
     _name = "freight.container"
     _description = "Freight Container"
 

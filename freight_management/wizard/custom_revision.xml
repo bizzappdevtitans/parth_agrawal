@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- custom revision wizard view -->
     <data>
         <record id="custom_clearance_revision_form_view" model="ir.ui.view">
             <field name="name">Custom Clearance Revision</field>
@@ -22,6 +23,7 @@
             </field>
         </record>
 
+        <!-- custom revision wizard action -->
         <record id="action_custom_clearance_revision_wizard" model="ir.actions.act_window">
             <field name="name">Custom Clearance Revision</field>
             <field name="type">ir.actions.act_window</field>

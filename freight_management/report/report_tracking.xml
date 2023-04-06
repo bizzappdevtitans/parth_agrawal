@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- freight tracking report action -->
     <data>
         <record id="report_freight_tracking" model="ir.actions.report">
             <field name="name">Order Tracking</field>
@@ -9,6 +11,7 @@
             <field name="binding_type">report</field>
         </record>
 
+        <!-- freight tracking report template -->
         <template id="report_freight_track">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">

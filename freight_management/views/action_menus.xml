@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- list of all menu button ids -->
     <menuitem id="menu_freight_root" name="Freight Management" sequence="0" action="action_home_page" />
 
     <menuitem id="menu_freight_order" name="Shipping" parent="menu_freight_root" sequence="1"/>

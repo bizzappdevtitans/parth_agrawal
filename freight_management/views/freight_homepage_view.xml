@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-
+    <!-- home page action -->
      <record id="action_home_page" model="ir.actions.act_window">
             <field name="name">Home Page</field>
             <field name="res_model">home.page</field>
@@ -8,6 +8,7 @@
             <field name="target">inline</field>
         </record>
 
+        <!-- home page form view -->
         <record id="home_form_view" model="ir.ui.view">
         <field name="name">Home Form</field>
         <field name="model">home.page</field>
@@ -17,7 +18,7 @@
                     <group style="display: flex; justify-content: center;height:500px; width:600; ">
                         <h2 style="text-align:center"> Welcome To</h2><br></br>
                         <h1 style="text-align:center">Freight Management System</h1><br></br>
-                        <div><img src='freight_management_system/static/image/homepage.png' alt="#"/></div>
+                        <div><img src='freight_management/static/image/homepage.png' alt="#"/></div>
                         <span>
                         <h5>If you are a business owner who relies on freight shipping to get your products to market, then you need to know about the freight management system (FMS). FMS will streamline the process of your freight shipping operation and can save you a lot of time and money. It’s a software system designed to help businesses with their freight shipping operations.
                         <br></br><br></br>Freight Management System (FMS) is a software system that helps businesses with their freight shipping operations. It’s designed to streamline the freight shipping process and can save businesses time and money.<br></br><br></br>

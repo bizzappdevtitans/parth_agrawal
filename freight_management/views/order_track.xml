@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- order track view -->
     <data>
         <record id="view_freight_order_track" model="ir.ui.view">
             <field name="name">Track</field>
@@ -34,6 +35,7 @@
             </field>
         </record>
 
+        <!-- order track action -->
         <record id="action_order_track" model="ir.actions.act_window">
             <field name="name">Track Order</field>
             <field name="type">ir.actions.act_window</field>

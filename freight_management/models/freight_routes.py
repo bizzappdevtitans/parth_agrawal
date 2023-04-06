@@ -1,8 +1,8 @@
-from werkzeug import urls
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 class FreightRoutes(models.Model):
+    """This model allows to create new operation routes for freight order"""
     _name = 'freight.routes'
     _description = "Freight Routes"
 

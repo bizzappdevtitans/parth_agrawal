@@ -1,8 +1,10 @@
-from werkzeug import urls
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
+
 class FreightOrderRouteLine(models.Model):
+    """This model is to create operation route line to use it in freight order"""
+
     _name = "freight.order.routes.line"
     _description = "Freight Order Routes Line"
 
@@ -21,10 +23,21 @@ class FreightOrderRouteLine(models.Model):
     def _onchange_operation_id(self):
         """calculate the price of route operation"""
         for freight_route_line in self:
-            if freight_route_line.operation_id and freight_route_line.transport_type:
-                if freight_route_line.transport_type == "land":
-                    freight_route_line.sale = freight_route_line.operation_id.land_sale
-                elif freight_route_line.transport_type == "air":
-                    freight_route_line.sale = freight_route_line.operation_id.air_sale
-                elif freight_route_line.transport_type == "water":
-                    freight_route_line.sale = freight_route_line.operation_id.water_sale
+            if (
+                freight_route_line.operation_id
+                and freight_route_line.transport_type
+                and freight_route_line.transport_type == "land"
+            ):
+                freight_route_line.sale = freight_route_line.operation_id.land_sale
+            if (
+                freight_route_line.operation_id
+                and freight_route_line.transport_type
+                and freight_route_line.transport_type == "air"
+            ):
+                freight_route_line.sale = freight_route_line.operation_id.air_sale
+            if (
+                freight_route_line.operation_id
+                and freight_route_line.transport_type
+                and freight_route_line.transport_type == "water"
+            ):
+                freight_route_line.sale = freight_route_line.operation_id.water_sale
