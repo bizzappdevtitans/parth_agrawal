@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+      <record id="inherited_product_purchase_form" model="ir.ui.view">
+            <field name="name">Product Form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='invoicing']" position="after">
+
+                <page string="Purchase Order History">
+                    <field name="purchase_order_data" string="Purchase Order Data"/>
+                </page>
+                 <page string="Sale Order History">
+                    <field name="sale_order_data" string="Sale Order Data"/>
+                </page>
+
+                </xpath>
+            </field>
+     </record>
+
+
+
+</odoo>
