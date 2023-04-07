@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- route operation tree view -->
+    <record id="freight_routes_tree_view" model="ir.ui.view">
+            <field name="name">Routes</field>
+            <field name="model">freight.routes</field>
+            <field name="arch" type="xml">
+                <tree decoration-bf="1">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+    <!-- route operation form view -->
+        <record id="freight_routes_form_view" model="ir.ui.view">
+            <field name="name">Routes</field>
+            <field name="model">freight.routes</field>
+            <field name="arch" type="xml">
+                    <form>
+                        <sheet>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="land_sale"/>
+                                    <field name="air_sale"/>
+                                    <field name="water_sale"/>
+                                </group>
+                            </group>
+                        </sheet>
+                    </form>
+            </field>
+        </record>
+
+    <!-- route operation action -->
+        <record id="action_freight_routes" model="ir.actions.act_window">
+            <field name="name">Freight Routes</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">freight.routes</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Define a new freight routes
+              </p>
+            </field>
+        </record>
+
+</odoo>

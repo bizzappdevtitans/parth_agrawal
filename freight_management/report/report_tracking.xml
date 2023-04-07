@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- freight tracking report action -->
+    <data>
+        <record id="report_freight_tracking" model="ir.actions.report">
+            <field name="name">Order Tracking</field>
+            <field name="model">freight.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="model_freight_order"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- freight tracking report template -->
+        <template id="report_freight_track">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <center><b><h2>Order Track Details</h2></b></center>
+                        <b><h4><t t-esc="doc.name"/></h4></b><br/>
+                        <div name="customer">
+                            <strong>Customer:</strong>
+                        </div>
+                        <div name="customer_details">
+                            <div t-esc="doc.shipper_id.name"/>
+                            <div t-esc="doc.shipper_id.street"/>
+                            <div t-esc="doc.shipper_id.city"/>
+                            <t t-esc="doc.shipper_id.state_id.name"/>
+                            <t t-esc="doc.shipper_id.zip"/>
+                            <div t-esc="doc.shipper_id.country_id.name"/>
+                        </div><br/>
+                        <table class="table o_main_table">
+                            <tbody>
+                                <tr>
+                                    <th name="loading_port"><strong>Loading Port</strong></th>
+                                    <td name="loading"><span t-field="doc.loading_port_id.name"/></td>
+                                    <th name="destination_port"><strong>Destination Port</strong></th>
+                                    <td name="destination"><span t-field="doc.discharging_port_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <th name="direction"><strong>Direction</strong></th>
+                                    <td name="direction_name"><span t-field="doc.type"/></td>
+                                    <th name="transport"><strong>Transport</strong></th>
+                                    <td name="transport_name"><span t-field="doc.transport_type"/></td>
+                                </tr>
+                                <tr>
+                                    <th name="date"><strong>Date</strong></th>
+                                    <td name="date"><span t-field="doc.order_date"/></td>
+                                    <th name="expected"><strong>Expected Date</strong></th>
+                                    <td name="expected_name"><span t-field="doc.expected_date"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div name="track">
+                            <strong>Tracking Status:</strong>
+                        </div>
+                        <table class="table o_main_table">
+                            <thead>
+                                <tr>
+                                    <th name="th_source">Source location</th>
+                                    <th name="th_destination">Destination Location</th>
+                                    <th name="th_operation">Transport</th>
+                                    <th name="th_transport">Date</th>
+                                    <th name="th_price">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.track_ids" t-as="track">
+                                    <td t-esc="track.source_loc.name"/>
+                                    <td t-esc="track.destination_loc.name"/>
+                                    <td><span t-field="track.transport_type"/></td>
+                                    <td t-esc="track.date"/>
+                                    <td><span t-field="track.type"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
