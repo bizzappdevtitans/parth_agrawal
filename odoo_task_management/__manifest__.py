@@ -25,6 +25,7 @@
         "security/ir.model.access.csv",
         "wizard/mail_compose_message_view.xml",
         "views/create_record_view.xml",
+        "report/invoices_report.xml",
     ],
     "installable": True,
     "auto_install": False,
