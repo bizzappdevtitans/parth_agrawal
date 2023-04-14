@@ -20,6 +20,7 @@
         "purchase",
         "stock",
         "mrp",
+        "product",
     ],
     "data": [
         "security/ir.model.access.csv",

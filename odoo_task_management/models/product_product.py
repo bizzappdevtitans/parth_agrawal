@@ -19,3 +19,13 @@ class ProductInherited(models.Model):
         domain=[("state", "=", "sale")],
         limit=5,
     )
+
+    attachment_ids = fields.Many2many(
+        "ir.attachment", compute="_compute_attachments_product"
+    )
+
+    def _compute_attachments_product(self):
+        product_attachment_count = self.env["ir.attachment"].search(
+            [("res_model", "=", self._name), ("res_id", "=", self.id)]
+        )
+        self.attachment_ids = product_attachment_count.ids

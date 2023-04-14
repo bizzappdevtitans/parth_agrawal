@@ -6,7 +6,8 @@
         <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='attachment_ids']" position="after">
-                <field name="attachment_details" widget="many2many_tags" domain="[('res_model', '=', 'sale.order'), ('res_id', '=', res_id)]"/>
+                 <field name="attachment_details" widget="many2many_tags" domain="[('res_model', '=', model), ('res_id', '=', res_id)]"/>
+                <field name="order_line_many2many" widget="many2many_tags" domain="[('res_model', '=', 'product.product')]" />
             </xpath>
         </field>
     </record>
