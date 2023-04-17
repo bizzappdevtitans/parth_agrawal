@@ -13,13 +13,9 @@
     "depends": [
         "mail",
         "sale",
-        "account",
-        "project",
-        "sale_project",
-        "project",
         "purchase",
+        "account",
         "stock",
-        "mrp",
         "product",
     ],
     "data": [

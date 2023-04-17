@@ -20,7 +20,7 @@ class ProductInherited(models.Model):
         limit=5,
     )
 
-    attachment_ids = fields.Many2many(
+    attachment_data = fields.Many2many(
         "ir.attachment", compute="_compute_attachments_product"
     )
 
@@ -28,4 +28,6 @@ class ProductInherited(models.Model):
         product_attachment_count = self.env["ir.attachment"].search(
             [("res_model", "=", self._name), ("res_id", "=", self.id)]
         )
-        self.attachment_ids = product_attachment_count.ids
+        self.attachment_data = product_attachment_count.ids
+
+    attachment_ids = fields.One2many('ir.attachment', 'res_id', domain=[('res_model', '=', 'product.product')])
