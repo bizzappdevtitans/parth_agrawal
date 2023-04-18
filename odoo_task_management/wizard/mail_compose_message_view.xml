@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="email_compose_message_wizard_inherit_form">
+        <field name="name">mail.compose.message.form (mail_attach_existing_attachment)</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='attachment_ids']" position="after">
+                 <field name="attachment_details" widget="many2many_tags" domain="[('res_model', '=', model), ('res_id', '=', res_id)]"/>
+                  <field name="attachment_product" widget="many2many_tags" domain="[('res_model', '=', 'product.product'), ('res_id', '=', res_id)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
