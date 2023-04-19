@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- This wizard button is usful to create new sale order -->
+    <record id="create_data_wizard_form_view" model="ir.ui.view">
+        <field name="name">create data wizard form</field>
+        <field name="model">create.data.wizard</field>
+        <field name="arch" type="xml">
+            <form string="create new sale order">
+                <sheet>
+                    <group>
+                        <span>By clicking on Create you can create New Sale Order</span>
+                    </group>
+                    <footer>
+                        <button
+                            class="btn-primary"
+                            name="action_on_click_create"
+                            string="Create"
+                            type="object"
+                        />
+                        <button
+                            class="btn-secondary"
+                            special="cancel"
+                            string="cancel"
+                        />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- this is the action of create.data.wizard model -->
+    <record id="action_create_data_wizard" model="ir.actions.act_window">
+        <field name="name">Create New Sale Order</field>
+        <field name="res_model">create.data.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="create_data_wizard_form_view" />
+        <field name="target">new</field>
+    </record>
+</odoo>

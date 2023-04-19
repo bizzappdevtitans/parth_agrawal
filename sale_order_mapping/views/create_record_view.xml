@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+   <!-- Sub-menu button for in sales module  -->
+   <menuitem
+        action="action_create_data_wizard"
+        id="create_so_menu"
+        name="Create Sale Order"
+        parent="sale.sale_order_menu"
+        sequence="1"
+    />
+</odoo>
