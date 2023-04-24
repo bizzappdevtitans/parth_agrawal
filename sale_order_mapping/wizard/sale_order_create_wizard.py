@@ -26,8 +26,8 @@ class CreateSaleOrderWizard(models.TransientModel):
         """This method use sale order's payload to create new sale order"""
         sale_order_payload = self.get_sale_order_payload()
 
-        customer_name = sale_order_payload.get("customer", {}).get("name")
-        customer_add = sale_order_payload.get("customer", {}).get("address", {})
+        customer_name = sale_order_payload.get("customer").get("name")
+        customer_add = sale_order_payload.get("customer").get("address")
         customer_city = customer_add.get("city")
         customer_zip = customer_add.get("zip")
         customer_phone = customer_add.get("phone")
@@ -46,7 +46,7 @@ class CreateSaleOrderWizard(models.TransientModel):
             )
 
         order_lines = []
-        for line in sale_order_payload.get("sale_lines", []):
+        for line in sale_order_payload.get("sale_lines"):
             product_id = line.get("productId")
             quantity = line.get("quantity")
             product = self.env["product.product"].search(
