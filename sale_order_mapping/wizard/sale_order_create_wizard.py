@@ -25,42 +25,48 @@ class CreateSaleOrderWizard(models.TransientModel):
     def action_on_click_create(self):
         """This method use sale order's payload to create new sale order"""
         sale_order_payload = self.get_sale_order_payload()
-        customer = self.env["res.partner"].search(
-            [("name", "=", sale_order_payload["customer"]["name"])]
-        )
 
+        customer_name = sale_order_payload.get("customer", {}).get("name")
+        customer_add = sale_order_payload.get("customer", {}).get("address", {})
+        customer_city = customer_add.get("city")
+        customer_zip = customer_add.get("zip")
+        customer_phone = customer_add.get("phone")
+
+        customer = self.env["res.partner"].search(
+            [("name", "=", customer_name)], limit=1
+        )
         if not customer:
             customer = self.env["res.partner"].create(
                 {
-                    "name": sale_order_payload["customer"]["name"],
-                    "city": sale_order_payload["customer"]["address"]["city"],
-                    "zip": sale_order_payload["customer"]["address"]["zip"],
-                    "phone": sale_order_payload["customer"]["address"]["phone"],
+                    "name": customer_name,
+                    "city": customer_city,
+                    "zip": customer_zip,
+                    "phone": customer_phone,
                 }
             )
 
         order_lines = []
-
-        for line in sale_order_payload["sale_lines"]:
+        for line in sale_order_payload.get("sale_lines", []):
+            product_id = line.get("productId")
+            quantity = line.get("quantity")
             product = self.env["product.product"].search(
-                [("default_code", "=", line["productId"])]
+                [("default_code", "=", product_id)]
             )
             if not product:
                 raise ValidationError(
-                    f"Product with default_code '{line['productId']}' not found"
+                    f"Product with default_code '{product_id}' not found"
                 )
             order_lines.append(
-                (0, 0, {"product_id": product.id, "product_uom_qty": line["quantity"]})
+                (0, 0, {"product_id": product.id, "product_uom_qty": quantity})
             )
 
         sale_order = self.env["sale.order"].create(
             {
-                "name": sale_order_payload["name"],
+                "name": sale_order_payload.get("name"),
                 "partner_id": customer.id,
                 "order_line": order_lines,
             }
         )
-
         data = {
             "name": "Sale Order",
             "view_mode": "tree,form",
