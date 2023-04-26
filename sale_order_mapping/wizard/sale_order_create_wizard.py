@@ -46,17 +46,19 @@ class CreateSaleOrderWizard(models.TransientModel):
 
         order_lines = []
         for line in sale_order_payload.get("sale_lines"):
-            product_id = line.get("productId")
-            quantity = line.get("quantity")
             product = self.env["product.product"].search(
-                [("default_code", "=", product_id)]
+                [("default_code", "=", line.get("productId"))]
             )
             if not product:
                 raise ValidationError(
-                    f"Product with default_code '{product_id}' not found"
+                    f"Product with default_code '{line.get('productId')}' not found"
                 )
             order_lines.append(
-                (0, 0, {"product_id": product.id, "product_uom_qty": quantity})
+                (
+                    0,
+                    0,
+                    {"product_id": product.id, "product_uom_qty": line.get("quantity")},
+                )
             )
 
         sale_order = self.env["sale.order"].create(
