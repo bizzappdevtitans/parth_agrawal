@@ -7,7 +7,7 @@ class CreateSaleOrderWizard(models.TransientModel):
     _description = "create sale order through wizard"
 
     def get_sale_order_payload(self):
-        """This method contains the sale order's payload"""
+        """This method return the sale order's payload"""
         sale_order_payload = {
             "name": "PL/AT:123456",
             "customer": {
@@ -26,22 +26,21 @@ class CreateSaleOrderWizard(models.TransientModel):
         """This method use sale order's payload to create new sale order"""
         sale_order_payload = self.get_sale_order_payload()
 
-        customer_name = sale_order_payload.get("customer").get("name")
-        customer_add = sale_order_payload.get("customer").get("address")
-        customer_city = customer_add.get("city")
-        customer_zip = customer_add.get("zip")
-        customer_phone = customer_add.get("phone")
-
         customer = self.env["res.partner"].search(
-            [("name", "=", customer_name)], limit=1
+            [("name", "=", sale_order_payload.get("customer").get("name"))], limit=1
         )
+
         if not customer:
             customer = self.env["res.partner"].create(
                 {
-                    "name": customer_name,
-                    "city": customer_city,
-                    "zip": customer_zip,
-                    "phone": customer_phone,
+                    "name": sale_order_payload.get("customer").get("name"),
+                    "city": sale_order_payload.get("customer")
+                    .get("address")
+                    .get("city"),
+                    "zip": sale_order_payload.get("customer").get("address").get("zip"),
+                    "phone": sale_order_payload.get("customer")
+                    .get("address")
+                    .get("phone"),
                 }
             )
 
