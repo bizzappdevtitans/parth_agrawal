@@ -11,7 +11,7 @@ class CreateSaleOrderWizard(models.TransientModel):
         sale_order_payload = {
             "name": "PL/AT:123456",
             "customer": {
-                "name": "XYZ",
+                "name": "Parth",
                 "address": {"city": "Pune", "zip": "10ji033", "phone": "990022933"},
             },
             "sale_lines": [
