@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Added new field called External Id in the form view of project -->
+    <record id="inherit_project_form_view" model="ir.ui.view">
+        <field name="name">Project Inherit Form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <div>
+                    <label class="oe_inline" for="external_id">External Id</label>
+                    <h3>
+                        <field name="external_id" />
+                    </h3>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <!-- Added new field called External Id in the form view of task -->
+    <record id="inherit_project_task_form_view" model="ir.ui.view">
+        <field name="name">Project Task Inherit Form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='project_id']" position="before">
+                <field name="external_id" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

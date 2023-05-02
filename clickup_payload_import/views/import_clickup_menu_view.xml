@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+   <!-- Menu button for in project module  -->
+   <menuitem
+        action="action_import_clickup_project_wizard"
+        id="imp_clickup_menu"
+        name="Import Clickup Project"
+        parent="project.menu_main_pm"
+    />
+</odoo>
