@@ -6,10 +6,19 @@ class ImportClickupWizard(models.TransientModel):
     _name = "import.clickup.project.wizard"
     _description = "import clickup projects through wizard"
 
-    clickup_project_id = fields.Char(string="Clickup Project Id", required=True)
-    clickup_api_key = fields.Char(String="Clickup Api Key", required=True)
+    clickup_project_id = fields.Char(string="Clickup Project Id")
+    clickup_folder_id = fields.Char(string="Clickup Folder Id")
+    clickup_api_key = fields.Char(string="Clickup Api Token", required=True)
+    clickup_import_type = fields.Selection(
+        [
+            ("importproject", "Import Particular Project"),
+            ("importprojects", "Import All Projects"),
+        ],
+        string="Select Import Type",
+        required=True,
+    )
 
-    def get_clickup_payload(self):
+    def get_clickup_project_payload(self):
         """This method return the clickup's project and task payload"""
         import requests
 
@@ -35,8 +44,8 @@ class ImportClickupWizard(models.TransientModel):
 
         return data
 
-    def action_on_click_import(self):
-        data = self.get_clickup_payload()
+    def action_on_click_import_project(self):
+        data = self.get_clickup_project_payload()
         external_id = data.get("id")
 
         # Check if project with same external ID already exists
@@ -110,6 +119,115 @@ class ImportClickupWizard(models.TransientModel):
             "view_mode": "form",
             "res_model": "project.project",
             "res_id": imported_project.id,
+            "type": "ir.actions.act_window",
+        }
+
+        return result
+
+    def get_clickup_projects_payload(self):
+        """This method return the clickup's project and task payload"""
+        import requests
+
+        folder_id = self.clickup_folder_id
+        url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+
+        query = {"archived": "false"}
+
+        headers = {"Authorization": self.clickup_api_key}
+
+        response = requests.get(url, headers=headers, params=query)
+
+        if response.status_code != 200:
+            raise ValidationError(_("Invalid ClickUp folder ID or API key"))
+
+        data = response.json()
+        return data
+
+    def action_on_click_import_projects(self):
+        projects_data = self.get_clickup_projects_payload()
+        imported_projects = []
+
+        for project in projects_data["lists"]:
+            self.clickup_project_id = project["id"]
+            project_data = self.get_clickup_project_payload()
+            external_id = project_data.get("id")
+
+            # Check if project with same external ID already exists
+            existing_project = self.env["project.project"].search(
+                [("external_id", "=", external_id)], limit=1
+            )
+
+            if existing_project:
+                # Update existing project
+                existing_project.write(
+                    {
+                        "name": project_data.get("name"),
+                        "description": project_data.get("content"),
+                    }
+                )
+                imported_project = existing_project
+            else:
+                # Create new project
+                imported_project = self.env["project.project"].create(
+                    {
+                        "external_id": external_id,
+                        "name": project_data.get("name"),
+                        "description": project_data.get("content"),
+                    }
+                )
+
+            # Create or update tasks for the project
+            task_obj = self.env["project.task"]
+            stage_obj = self.env["project.task.type"]
+            for task in project_data.get("tasks", []):
+                task_external_id = task.get("id")
+                task_status = task.get("status").get("status")
+
+                # Check if task with same external ID already exists
+                existing_task = task_obj.search(
+                    [("external_id", "=", task_external_id)], limit=1
+                )
+
+                # Check if stage with same name already exists
+                existing_stage = stage_obj.search(
+                    [
+                        ("name", "=", task_status),
+                        ("project_ids", "=", imported_project.id),
+                    ],
+                    limit=1,
+                )
+
+                # Create new stage if it doesn't exist
+                if not existing_stage:
+                    existing_stage = stage_obj.create(
+                        {
+                            "name": task_status,
+                            "project_ids": [(4, imported_project.id)],
+                        }
+                    )
+
+                task_vals = {
+                    "name": task.get("name"),
+                    "description": task.get("text_content"),
+                    "stage_id": existing_stage.id,
+                    "project_id": imported_project.id,
+                    "external_id": task_external_id,
+                    "user_id": self.env.user.id,
+                }
+
+                # Update existing task or create new task
+                if existing_task:
+                    existing_task.write(task_vals)
+                else:
+                    task_obj.create(task_vals)
+
+            imported_projects.append(imported_project.id)
+
+        result = {
+            "name": "Projects",
+            "view_mode": "kanban,tree,form",
+            "res_model": "project.project",
+            "domain": [("id", "in", imported_projects)],
             "type": "ir.actions.act_window",
         }
 
