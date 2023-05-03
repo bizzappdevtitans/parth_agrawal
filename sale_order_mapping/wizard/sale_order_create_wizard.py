@@ -68,12 +68,10 @@ class CreateSaleOrderWizard(models.TransientModel):
                 "order_line": order_lines,
             }
         )
-        data = {
+        return {
             "name": "Sale Order",
             "view_mode": "tree,form",
             "res_model": "sale.order",
             "res_id": sale_order.id,
             "type": "ir.actions.act_window",
         }
-
-        return data
