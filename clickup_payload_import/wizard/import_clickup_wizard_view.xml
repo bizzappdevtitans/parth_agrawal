@@ -8,7 +8,7 @@
             <form string="Import Clickup Project">
                 <sheet>
                     <group>
-                        <field name="clickup_import_type" />
+                        <field name="clickup_import_type" widget="radio"/>
                         <field
                             name="clickup_project_id"
                             attrs="{'invisible': [('clickup_import_type', '!=', 'importproject')]}"

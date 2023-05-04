@@ -16,6 +16,7 @@ class ImportClickupWizard(models.TransientModel):
         ],
         string="Select Import Type",
         required=True,
+        default="importproject",
     )
 
     def get_clickup_project_payload(self):
@@ -34,63 +35,57 @@ class ImportClickupWizard(models.TransientModel):
 
         data = response.json()
 
-        # Get tasks information for the list
         tasks_url = "https://api.clickup.com/api/v2/list/{}/task".format(list_id)
         tasks_response = requests.get(tasks_url, headers=headers)
         tasks_data = tasks_response.json()
 
-        # Add tasks information to the returned payload
         data["tasks"] = tasks_data["tasks"]
 
         return data
 
     def action_on_click_import_project(self):
+        """This method takes clickup payload to import particular project and it's tasks"""
         data = self.get_clickup_project_payload()
         external_id = data.get("id")
 
-        # Check if project with same external ID already exists
         existing_project = self.env["project.project"].search(
             [("external_id", "=", external_id)], limit=1
         )
 
         if existing_project:
-            # Update existing project
             existing_project.write(
                 {
                     "name": data.get("name"),
+                    "api_token": self.clickup_api_key,
                     "description": data.get("content"),
                 }
             )
             imported_project = existing_project
         else:
-            # Create new project
             imported_project = self.env["project.project"].create(
                 {
                     "external_id": external_id,
+                    "api_token": self.clickup_api_key,
                     "name": data.get("name"),
                     "description": data.get("content"),
                 }
             )
 
-        # Create or update tasks for the project
         task_obj = self.env["project.task"]
         stage_obj = self.env["project.task.type"]
         for task in data.get("tasks", []):
             task_external_id = task.get("id")
             task_status = task.get("status").get("status")
 
-            # Check if task with same external ID already exists
             existing_task = task_obj.search(
                 [("external_id", "=", task_external_id)], limit=1
             )
 
-            # Check if stage with same name already exists
             existing_stage = stage_obj.search(
                 [("name", "=", task_status), ("project_ids", "=", imported_project.id)],
                 limit=1,
             )
 
-            # Create new stage if it doesn't exist
             if not existing_stage:
                 existing_stage = stage_obj.create(
                     {
@@ -108,7 +103,6 @@ class ImportClickupWizard(models.TransientModel):
                 "user_id": self.env.user.id,
             }
 
-            # Update existing task or create new task
             if existing_task:
                 existing_task.write(task_vals)
             else:
@@ -125,7 +119,7 @@ class ImportClickupWizard(models.TransientModel):
         return result
 
     def get_clickup_projects_payload(self):
-        """This method return the clickup's project and task payload"""
+        """This method return the clickup's all projects and tasks payload"""
         import requests
 
         folder_id = self.clickup_folder_id
@@ -144,6 +138,7 @@ class ImportClickupWizard(models.TransientModel):
         return data
 
     def action_on_click_import_projects(self):
+        """This method takes clickup payload to import all the projects and it's tasks"""
         projects_data = self.get_clickup_projects_payload()
         imported_projects = []
 
@@ -152,43 +147,39 @@ class ImportClickupWizard(models.TransientModel):
             project_data = self.get_clickup_project_payload()
             external_id = project_data.get("id")
 
-            # Check if project with same external ID already exists
             existing_project = self.env["project.project"].search(
                 [("external_id", "=", external_id)], limit=1
             )
 
             if existing_project:
-                # Update existing project
                 existing_project.write(
                     {
                         "name": project_data.get("name"),
+                        "api_token": self.clickup_api_key,
                         "description": project_data.get("content"),
                     }
                 )
                 imported_project = existing_project
             else:
-                # Create new project
                 imported_project = self.env["project.project"].create(
                     {
                         "external_id": external_id,
+                        "api_token": self.clickup_api_key,
                         "name": project_data.get("name"),
                         "description": project_data.get("content"),
                     }
                 )
 
-            # Create or update tasks for the project
             task_obj = self.env["project.task"]
             stage_obj = self.env["project.task.type"]
             for task in project_data.get("tasks", []):
                 task_external_id = task.get("id")
                 task_status = task.get("status").get("status")
 
-                # Check if task with same external ID already exists
                 existing_task = task_obj.search(
                     [("external_id", "=", task_external_id)], limit=1
                 )
 
-                # Check if stage with same name already exists
                 existing_stage = stage_obj.search(
                     [
                         ("name", "=", task_status),
@@ -197,7 +188,6 @@ class ImportClickupWizard(models.TransientModel):
                     limit=1,
                 )
 
-                # Create new stage if it doesn't exist
                 if not existing_stage:
                     existing_stage = stage_obj.create(
                         {
@@ -215,7 +205,6 @@ class ImportClickupWizard(models.TransientModel):
                     "user_id": self.env.user.id,
                 }
 
-                # Update existing task or create new task
                 if existing_task:
                     existing_task.write(task_vals)
                 else:
