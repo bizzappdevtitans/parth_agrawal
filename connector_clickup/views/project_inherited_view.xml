@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Form view for clickup.backend model -->
+        <record id="view_clickup_backend_form" model="ir.ui.view">
+            <field name="name">Clickup Backend Form</field>
+            <field name="model">clickup.backend</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="api_key"/>
+                            <field name="uri"/>
+                        </group>
+                        <footer>
+                            <button class="oe_highlight" name="import_projects" string="Import Projects" style="margin-right:10px;" type="object"/>
+                            <button class="oe_highlight" name="import_tasks" string="Import Tasks" style="margin-right:10px;" type="object"/>
+                            <button class="oe_highlight" name="import_stages" string="Import Stages" style="margin-right:10px;" type="object"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Tree view for clickup.backend model -->
+        <record id="view_clickup_backend_tree" model="ir.ui.view">
+            <field name="name">Clickup Backend Tree</field>
+            <field name="model">clickup.backend</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="api_key"/>
+                    <field name="uri"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Action to open the clickup.backend view -->
+        <record id="action_clickup_backend_form" model="ir.actions.act_window">
+            <field name="name">Clickup Backend Form</field>
+            <field name="res_model">clickup.backend</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- Menu item to open the clickup.backend form -->
+        <menuitem id="menu_clickup_backend_form_main" name="Clickup Backend"/>
+        <menuitem action="action_clickup_backend_form" id="menu_clickup_backend_form" name="Clickup Backend" parent="menu_clickup_backend_form_main"/>
+    </data>
+</odoo>

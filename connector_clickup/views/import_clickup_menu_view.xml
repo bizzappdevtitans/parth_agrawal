@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="inherit_project_project_form_view" model="ir.ui.view">
+        <field name="name">Project project Inherit Form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='settings']" position="after">
+                <page string="Connector Clickup">
+                    <field name="clickup_bind_ids"/>
+                    <label for="external_id">External Id</label>
+                    <field name="external_id"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
