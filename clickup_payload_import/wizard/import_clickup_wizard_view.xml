@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Import Clickup Project using wizard form view that contains dynamic fields -->
+    <record id="import_clickup_project_wizard_form_view" model="ir.ui.view">
+        <field name="name">Import Clickup Wizard Form</field>
+        <field name="model">import.clickup.project.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Clickup Project">
+                <sheet>
+                    <group>
+                        <field name="clickup_import_type" widget="radio"/>
+                        <field
+                            name="clickup_project_id"
+                            attrs="{'invisible': [('clickup_import_type', '!=', 'importproject')]}"
+                        />
+                        <field
+                            name="clickup_folder_id"
+                            attrs="{'invisible': [('clickup_import_type', '!=', 'importprojects')]}"
+                        />
+                        <field name="clickup_api_key" />
+                    </group>
+                    <footer>
+                        <button
+                            class="btn-primary"
+                            name="action_on_click_import_project"
+                            string="Import Project"
+                            type="object"
+                            attrs="{'invisible': [('clickup_import_type', '!=', 'importproject')]}"
+                        />
+                        <button
+                            class="btn-primary"
+                            name="action_on_click_import_projects"
+                            string="Import Projects"
+                            type="object"
+                            attrs="{'invisible': [('clickup_import_type', '!=', 'importprojects')]}"
+                        />
+                        <button
+                            class="btn-secondary"
+                            special="cancel"
+                            string="Cancel"
+                        />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- This is the action of importing clickup project -->
+    <record id="action_import_clickup_project_wizard" model="ir.actions.act_window">
+        <field name="name">Import Clickup Project</field>
+        <field name="res_model">import.clickup.project.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="import_clickup_project_wizard_form_view" />
+        <field name="target">new</field>
+    </record>
+</odoo>
