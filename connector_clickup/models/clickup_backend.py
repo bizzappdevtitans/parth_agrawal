@@ -1,19 +1,24 @@
-from odoo import _, models, fields, api
+import requests
+
+from odoo import _, fields, models
 from odoo.exceptions import ValidationError
-from pprint import pprint
 
 
 class ClickupBackend(models.Model):
     _name = "clickup.backend"
+    _description = "Clickup backend model"
 
+    name = fields.Char(string="Clickup Backend ID", required=True)
     api_key = fields.Char(string="API Key/Token", required=True)
     uri = fields.Char(string="URI/Location", required=True)
 
-    def import_projects(self):
-        import requests
+    clickup_project_id = fields.Char(string="Clickup Project Id")
 
-        folder_id = self.uri
-        url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+    def get_clickup_project_payload(self):
+        """This method return the clickup's particular project and it's tasks payload"""
+
+        list_id = self.clickup_project_id
+        url = "https://api.clickup.com/api/v2/list/" + list_id
 
         headers = {"Authorization": self.api_key}
 
@@ -23,70 +28,170 @@ class ClickupBackend(models.Model):
             raise ValidationError(_("Invalid ClickUp project ID or API key"))
 
         data = response.json()
-        pprint(data)
 
-        for project in data["lists"]:
-            existing_project = self.env["clickup.project.project"].search(
-                [("external_id", "=", project.get("id"))]
-            )
-            if existing_project:
-                existing_project.write({"name": project.get("name")})
-            else:
-                vals = {
-                    "name": project.get("name"),
-                    "external_id": project.get("id"),
-                }
-                self.env["clickup.project.project"].create(vals)
+        tasks_url = "https://api.clickup.com/api/v2/list/{}/task".format(list_id)
+        tasks_response = requests.get(tasks_url, headers=headers)
+        tasks_data = tasks_response.json()
 
-    def import_tasks(self):
-        import requests
+        data["tasks"] = tasks_data["tasks"]
+
+        return data
+
+    def get_clickup_projects_payload(self):
+        """This method return the clickup's all projects payload"""
 
         folder_id = self.uri
-        tasks_url = f"https://api.clickup.com/api/v2/folder/{folder_id}/tasks"
+        url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+
+        query = {"archived": "false"}
+
         headers = {"Authorization": self.api_key}
 
-        tasks_response = requests.get(tasks_url, headers=headers)
+        response = requests.get(url, headers=headers, params=query)
 
-        if tasks_response.status_code != 200:
+        if response.status_code != 200:
             raise ValidationError(_("Invalid ClickUp folder ID or API key"))
 
-        tasks_data = tasks_response.json()
-        pprint(tasks_data)
+        data = response.json()
+        return data
 
-        for task in tasks_data["tasks"]:
-            project_id = task.get("list", {}).get("id")
-            project = self.env["clickup.project.project"].search(
-                [("external_id", "=", project_id)]
+    def import_projects(self):
+        """This method takes clickup payload to import all the projects"""
+        projects_data = self.get_clickup_projects_payload()
+
+        for project in projects_data["lists"]:
+            self.clickup_project_id = project["id"]
+            project_data = self.get_clickup_project_payload()
+            external_id = project_data.get("id")
+
+            existing_project = self.env["clickup.project.project"].search(
+                [("external_id", "=", external_id)], limit=1
             )
-            if project:
-                task_name = task.get("name")
-                task_desc = task.get("description")
-                task_assignee_id = (
-                    task.get("assignees", [])[0].get("id")
-                    if task.get("assignees")
-                    else False
+
+            if existing_project:
+                existing_project.write(
+                    {
+                        "name": project_data.get("name"),
+                        "description": project_data.get("content"),
+                    }
                 )
-                task_due_date = task.get("due_date")
+
+            else:
+                self.env["clickup.project.project"].create(
+                    {
+                        "external_id": external_id,
+                        "clickup_backend_id": self.id,
+                        "name": project_data.get("name"),
+                        "description": project_data.get("content"),
+                    }
+                )
+
+    def import_tasks(self):
+        """This method takes clickup payload to import all the project's Tasks"""
+        projects_data = self.get_clickup_projects_payload()
+        imported_projects = []
+
+        for project in projects_data["lists"]:
+            self.clickup_project_id = project["id"]
+            project_data = self.get_clickup_project_payload()
+            external_id = project_data.get("id")
+
+            existing_project = self.env["project.project"].search(
+                [("external_id", "=", external_id)], limit=1
+            )
+            if not existing_project:
+                raise ValidationError(
+                    _("You are trying to import tasks before importing project")
+                )
+
+            stage_obj = self.env["project.task.type"]
+            task_obj = self.env["clickup.project.tasks"]
+
+            for task in project_data.get("tasks", []):
+                task_external_id = task.get("id")
                 task_status = task.get("status").get("status")
 
-                vals = {
-                    "name": task_name,
-                    "description": task_desc,
-                    "assignee_id": task_assignee_id,
-                    "due_date": task_due_date,
-                    "status": task_status,
-                    "odoo_id": project.odoo_id.id,
+                existing_task = task_obj.search(
+                    [("external_id", "=", task_external_id)], limit=1
+                )
+
+                existing_stage = stage_obj.search(
+                    [
+                        ("external_id", "=", task_status),
+                    ],
+                    limit=1,
+                )
+                if not existing_stage:
+                    raise ValidationError(
+                        _("You are trying to import tasks before importing Stages")
+                    )
+
+                task_vals = {
+                    "name": task.get("name"),
+                    "description": task.get("text_content"),
+                    "project_id": existing_project.id,
+                    "stage_id": existing_stage.id,
+                    "external_id": task_external_id,
+                    "clickup_backend_id": self.id,
+                    "user_id": self.env.user.id,
                 }
-                self.env["clickup.project.tasks"].create(vals)
+
+                if existing_task:
+                    existing_task.write(task_vals)
+                else:
+                    task_obj.create(task_vals)
+
+            imported_projects.append(existing_project.id)
 
     def import_stages(self):
-        pass
+        """This method takes clickup payload to import all the stages for the tasks"""
+        projects_data = self.get_clickup_projects_payload()
+
+        for project in projects_data["lists"]:
+            self.clickup_project_id = project["id"]
+            project_data = self.get_clickup_project_payload()
+            external_id = project_data.get("id")
+
+            existing_project = self.env["project.project"].search(
+                [("external_id", "=", external_id)], limit=1
+            )
+            if not existing_project:
+                raise ValidationError(
+                    _("You are trying to import stages before importing project")
+                )
+
+            stage_obj = self.env["clickup.project.task.type"]
+            for task in project_data.get("tasks", []):
+                task_status = task.get("status").get("status")
+
+                existing_stage = stage_obj.search(
+                    [
+                        ("external_id", "=", task_status),
+                    ],
+                    limit=1,
+                )
+
+                if not existing_stage:
+                    existing_stage = stage_obj.create(
+                        {
+                            "name": task_status,
+                            "external_id": task_status,
+                            "clickup_backend_id": self.id,
+                        }
+                    )
+                else:
+                    existing_stage = stage_obj.write(
+                        {
+                            "name": task_status,
+                        }
+                    )
 
 
 class ClickupProjectProject(models.Model):
     _name = "clickup.project.project"
     _inherits = {"project.project": "odoo_id"}
     _inherit = ["clickup.model"]
+    _description = "Clickup project.project binding model"
 
     odoo_id = fields.Many2one(
         "project.project", string="Project", required=True, ondelete="restrict"
@@ -97,6 +202,7 @@ class ClickupProjectTasks(models.Model):
     _name = "clickup.project.tasks"
     _inherits = {"project.task": "odoo_id"}
     _inherit = ["clickup.model"]
+    _description = "Clickup project.tasks binding model"
 
     odoo_id = fields.Many2one(
         "project.task", string="Task", required=True, ondelete="restrict"
@@ -107,7 +213,8 @@ class ClickupProjectTaskType(models.Model):
     _name = "clickup.project.task.type"
     _inherits = {"project.task.type": "odoo_id"}
     _inherit = ["clickup.model"]
+    _description = "Clickup project.task.type binding model"
 
     odoo_id = fields.Many2one(
-        "project.task.type", string="Stage", required=True, ondelete="cascade"
+        "project.task.type", string="Stage", required=True, ondelete="restrict"
     )

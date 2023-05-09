@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Inherited project.project model form view to add external_id, clickup_backend_id -->
+    <record id="inherit_project_project_form_view" model="ir.ui.view">
+        <field name="name">Project project Inherit Form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='settings']" position="after">
+                <page
+                    string="Connector Clickup Project"
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                >
+                    <field invisible="1" name="clickup_bind_ids" />
+                    <group>
+                        <field name="external_id" />
+                        <field name="clickup_backend_id" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+     <!-- Inherited project.task model form view to add external_id, clickup_backend_id -->
+    <record id="inherit_project_task_form_view" model="ir.ui.view">
+        <field name="name">Project task Inherit Form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='extra_info']" position="after">
+                <page
+                    string="Connector Clickup Task"
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                >
+                    <field invisible="1" name="clickup_bind_ids" />
+                    <group>
+                        <field name="external_id" />
+                        <field name="clickup_backend_id" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+     <!-- Inherited project.task.type model form view to add external_id, clickup_backend_id -->
+    <record id="inherit_project_task_type_form_view" model="ir.ui.view">
+        <field name="name">Project task type Inherit Form</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.task_type_edit" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <notebook>
+                    <page
+                        string="Connector Clickup Stage"
+                        attrs="{'invisible': [('external_id', '=', False)]}"
+                    >
+                        <field invisible="1" name="clickup_bind_ids" />
+                        <group>
+                            <field name="external_id" />
+                            <field name="clickup_backend_id" />
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+</odoo>

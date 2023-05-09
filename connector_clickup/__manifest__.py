@@ -10,8 +10,8 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        "views/project_inherited_view.xml",
-        "views/import_clickup_menu_view.xml",
+        "views/connector_clickup_backend_view.xml",
+        "views/inherited_project_module_view.xml",
     ],
     "installable": True,
     "auto_install": False,
