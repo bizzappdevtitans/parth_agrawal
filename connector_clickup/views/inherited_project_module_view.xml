@@ -6,6 +6,22 @@
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.edit_project" />
         <field name="arch" type="xml">
+            <header>
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="btn-primary"
+                    name="update_project"
+                    string="Update Project Now"
+                    type="object"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    name="open_clickup_project"
+                    string="Open Project in ClickUp"
+                    type="object"
+                    class="oe_highlight"
+                />
+            </header>
             <xpath expr="//page[@name='settings']" position="after">
                 <page
                     string="Connector Clickup Project"
@@ -15,6 +31,8 @@
                     <group>
                         <field name="external_id" />
                         <field name="clickup_backend_id" />
+                        <field name="api_token_data" />
+                        <field name="created_at" />
                     </group>
                 </page>
             </xpath>
@@ -26,6 +44,22 @@
         <field name="model">project.task</field>
         <field name="inherit_id" ref="project.view_task_form2" />
         <field name="arch" type="xml">
+            <header>
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="btn-primary"
+                    name="update_task"
+                    string="Update Task Now"
+                    type="object"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    name="open_clickup_task"
+                    string="Open Task in ClickUp"
+                    type="object"
+                    class="oe_highlight"
+                />
+            </header>
             <xpath expr="//page[@name='extra_info']" position="after">
                 <page
                     string="Connector Clickup Task"
@@ -35,6 +69,9 @@
                     <group>
                         <field name="external_id" />
                         <field name="clickup_backend_id" />
+                        <field name="api_token_data" />
+                        <field name="created_at" />
+                        <field name="updated_at" />
                     </group>
                 </page>
             </xpath>
@@ -56,6 +93,7 @@
                         <group>
                             <field name="external_id" />
                             <field name="clickup_backend_id" />
+                            <field name="api_token_data" />
                         </group>
                     </page>
                 </notebook>

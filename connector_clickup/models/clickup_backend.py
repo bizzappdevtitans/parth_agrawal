@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 
 from odoo import _, fields, models
@@ -58,7 +60,6 @@ class ClickupBackend(models.Model):
     def import_projects(self):
         """This method takes clickup payload to import all the projects"""
         projects_data = self.get_clickup_projects_payload()
-
         for project in projects_data["lists"]:
             self.clickup_project_id = project["id"]
             project_data = self.get_clickup_project_payload()
@@ -73,18 +74,24 @@ class ClickupBackend(models.Model):
                     {
                         "name": project_data.get("name"),
                         "description": project_data.get("content"),
+                        "api_token_data": self.api_key,
+                        "clickup_backend_id": self.id,
                     }
                 )
+                imported_project = existing_project
 
             else:
-                self.env["clickup.project.project"].create(
+                imported_project = self.env["clickup.project.project"].create(
                     {
                         "external_id": external_id,
+                        "api_token_data": self.api_key,
                         "clickup_backend_id": self.id,
                         "name": project_data.get("name"),
                         "description": project_data.get("content"),
+                        "created_at": datetime.now(),
                     }
                 )
+            return imported_project
 
     def import_tasks(self):
         """This method takes clickup payload to import all the project's Tasks"""
@@ -128,6 +135,7 @@ class ClickupBackend(models.Model):
 
                 task_vals = {
                     "name": task.get("name"),
+                    "api_token_data": self.api_key,
                     "description": task.get("text_content"),
                     "project_id": existing_project.id,
                     "stage_id": existing_stage.id,
@@ -136,10 +144,23 @@ class ClickupBackend(models.Model):
                     "user_id": self.env.user.id,
                 }
 
-                if existing_task:
-                    existing_task.write(task_vals)
+                task_vals_new = {
+                    "name": task.get("name"),
+                    "api_token_data": self.api_key,
+                    "description": task.get("text_content"),
+                    "project_id": existing_project.id,
+                    "stage_id": existing_stage.id,
+                    "external_id": task_external_id,
+                    "clickup_backend_id": self.id,
+                    "user_id": self.env.user.id,
+                    "created_at": datetime.now(),
+                }
+
+                if not existing_task:
+                    task_obj.create(task_vals_new)
+
                 else:
-                    task_obj.create(task_vals)
+                    existing_task.write(task_vals)
 
             imported_projects.append(existing_project.id)
 
@@ -152,7 +173,7 @@ class ClickupBackend(models.Model):
             project_data = self.get_clickup_project_payload()
             external_id = project_data.get("id")
 
-            existing_project = self.env["project.project"].search(
+            existing_project = self.env["clickup.project.project"].search(
                 [("external_id", "=", external_id)], limit=1
             )
             if not existing_project:
@@ -175,6 +196,7 @@ class ClickupBackend(models.Model):
                     existing_stage = stage_obj.create(
                         {
                             "name": task_status,
+                            "api_token_data": self.api_key,
                             "external_id": task_status,
                             "clickup_backend_id": self.id,
                         }
@@ -183,6 +205,9 @@ class ClickupBackend(models.Model):
                     existing_stage = stage_obj.write(
                         {
                             "name": task_status,
+                            "api_token_data": self.api_key,
+                            "external_id": task_status,
+                            "clickup_backend_id": self.id,
                         }
                     )
 
