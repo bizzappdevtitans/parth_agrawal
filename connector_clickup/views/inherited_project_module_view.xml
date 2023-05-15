@@ -21,6 +21,20 @@
                     type="object"
                     class="oe_highlight"
                 />
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    name="export_to_clickup_project"
+                    string="Export Changes in Clickup"
+                    type="object"
+                    class="oe_highlight"
+                />
+                 <button
+                    attrs="{'invisible': [('external_id', '!=', False)]}"
+                    name="export_project_to_clickup_project"
+                    string="Export Project in Clickup"
+                    type="object"
+                    class="oe_highlight"
+                />
             </header>
             <xpath expr="//page[@name='settings']" position="after">
                 <page
@@ -56,6 +70,20 @@
                     attrs="{'invisible': [('external_id', '=', False)]}"
                     name="open_clickup_task"
                     string="Open Task in ClickUp"
+                    type="object"
+                    class="oe_highlight"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '!=', False)]}"
+                    name="export_task_to_clickup_task"
+                    string="Export Task in Clickup"
+                    type="object"
+                    class="oe_highlight"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    name="export_changes_to_clickup_task"
+                    string="Export Changes in Clickup"
                     type="object"
                     class="oe_highlight"
                 />

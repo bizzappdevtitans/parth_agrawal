@@ -64,11 +64,9 @@ class ClickupBackend(models.Model):
             self.clickup_project_id = project["id"]
             project_data = self.get_clickup_project_payload()
             external_id = project_data.get("id")
-
             existing_project = self.env["clickup.project.project"].search(
                 [("external_id", "=", external_id)], limit=1
             )
-
             if existing_project:
                 existing_project.write(
                     {
@@ -78,10 +76,9 @@ class ClickupBackend(models.Model):
                         "clickup_backend_id": self.id,
                     }
                 )
-                imported_project = existing_project
 
             else:
-                imported_project = self.env["clickup.project.project"].create(
+                self.env["clickup.project.project"].create(
                     {
                         "external_id": external_id,
                         "api_token_data": self.api_key,
@@ -91,7 +88,6 @@ class ClickupBackend(models.Model):
                         "created_at": datetime.now(),
                     }
                 )
-            return imported_project
 
     def import_tasks(self):
         """This method takes clickup payload to import all the project's Tasks"""
@@ -210,36 +206,3 @@ class ClickupBackend(models.Model):
                             "clickup_backend_id": self.id,
                         }
                     )
-
-
-class ClickupProjectProject(models.Model):
-    _name = "clickup.project.project"
-    _inherits = {"project.project": "odoo_id"}
-    _inherit = ["clickup.model"]
-    _description = "Clickup project.project binding model"
-
-    odoo_id = fields.Many2one(
-        "project.project", string="Project", required=True, ondelete="restrict"
-    )
-
-
-class ClickupProjectTasks(models.Model):
-    _name = "clickup.project.tasks"
-    _inherits = {"project.task": "odoo_id"}
-    _inherit = ["clickup.model"]
-    _description = "Clickup project.tasks binding model"
-
-    odoo_id = fields.Many2one(
-        "project.task", string="Task", required=True, ondelete="restrict"
-    )
-
-
-class ClickupProjectTaskType(models.Model):
-    _name = "clickup.project.task.type"
-    _inherits = {"project.task.type": "odoo_id"}
-    _inherit = ["clickup.model"]
-    _description = "Clickup project.task.type binding model"
-
-    odoo_id = fields.Many2one(
-        "project.task.type", string="Stage", required=True, ondelete="restrict"
-    )

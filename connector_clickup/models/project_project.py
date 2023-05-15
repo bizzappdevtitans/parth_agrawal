@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from odoo import _, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class ProjectProject(models.Model):
@@ -92,7 +92,10 @@ class ProjectProject(models.Model):
             clickup_update = datetime.fromtimestamp(clickup_timestamp)
 
             existing_task = task_obj.search(
-                [("external_id", "=", task_external_id)], limit=1
+                [
+                    ("external_id", "=", task_external_id),
+                ],
+                limit=1,
             )
 
             existing_stage = stage_obj.search(
@@ -160,6 +163,7 @@ class ProjectProject(models.Model):
         return result
 
     def open_clickup_project(self):
+        """This method open the particular project on clickup's website"""
         data = self.get_clickup_project_payload()
         for task in data.get("tasks", []):
             team_id = task.get("team_id")
@@ -169,144 +173,68 @@ class ProjectProject(models.Model):
                 "target": "new",
             }
 
-
-class ProjectTask(models.Model):
-    _inherit = "project.task"
-    _description = "Inherited project.task model"
-
-    clickup_bind_ids = fields.One2many(
-        "clickup.project.tasks",
-        "odoo_id",
-        string="Clickup Backend ID",
-        readonly=True,
-    )
-    external_id = fields.Char(
-        related="clickup_bind_ids.external_id",
-        readonly=True,
-    )
-    clickup_backend_id = fields.Many2one(
-        "clickup.backend",
-        related="clickup_bind_ids.clickup_backend_id",
-        string="Clickup Backend",
-        readonly=True,
-    )
-    api_token_data = fields.Char(
-        string="API token",
-        related="clickup_bind_ids.api_token_data",
-        readonly=True,
-    )
-    created_at = fields.Datetime(
-        string="Created At", related="clickup_bind_ids.created_at", readonly=True
-    )
-
-    updated_at = fields.Datetime(string="Updated At", readonly=True)
-
-    def get_clickup_task_payload(self):
-        """This method returns the clickup's project and task payload"""
+    def export_project_api(self, payload):
+        """This method export the changes that heppened in project to clickup's website"""
         import requests
 
-        task_id = self.external_id
-        url = "https://api.clickup.com/api/v2/task/" + task_id
+        list_id = self.external_id
+        url = "https://api.clickup.com/api/v2/list/" + list_id
 
-        query = {
-            "custom_task_ids": "true",
-            "team_id": "123",
-            "include_subtasks": "true",
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_token_data,
         }
 
-        headers = {"Authorization": self.api_token_data}
+        response = requests.put(url, json=payload, headers=headers)
 
-        response = requests.get(url, headers=headers, params=query)
+        response.json()
 
-        if response.status_code != 200:
-            raise ValidationError(
-                _(
-                    "Invalid API key to update the task,Please import task to update",
-                )
+        if response.status_code == 200:
+            raise UserError(
+                _("The project changes have been updated in ClickUp successfully")
             )
 
-        data = response.json()
-
-        return data
-
-    def update_task(self):
-        """This method update the clickup's project and task payload"""
-        data = self.get_clickup_task_payload()
-
-        task_obj = self.env["project.task"]
-        stage_obj = self.env["project.task.type"]
-
-        task_external_id = data.get("id")
-        task_status = data.get("status").get("status")
-
-        existing_task = task_obj.search(
-            [("external_id", "=", task_external_id)], limit=1
-        )
-
-        existing_stage = stage_obj.search(
-            [("name", "=", task_status)],
-            limit=1,
-        )
-
-        if not existing_stage:
-            self.env["clickup.project.task.type"].create(
-                {
-                    "name": task_status,
-                    "api_token_data": self.api_token_data,
-                    "external_id": task_status,
-                }
-            )
-
-        task_vals = {
-            "name": data.get("name"),
-            "description": data.get("text_content"),
-            "stage_id": existing_stage.id,
-            "api_token_data": self.api_token_data,
-            "external_id": task_external_id,
-            "user_id": self.env.user.id,
-            "updated_at": datetime.now(),
-        }
-        clickup_timestamp = int(data.get("date_updated")) // 1000
-        clickup_update = datetime.fromtimestamp(clickup_timestamp)
-
-        if self.updated_at is False or self.updated_at < clickup_update:
-            existing_task.write(task_vals)
-
-        else:
-            raise ValidationError(
-                _("Task has been updated since the last ClickUp update.")
-            )
-
-    def open_clickup_task(self):
-        return {
-            "type": "ir.actions.act_url",
-            "url": f"https://app.clickup.com/t/{self.external_id}",
-            "target": "new",
+    def export_to_clickup_project(self):
+        """Payload to export the changes that heppened in project to clickup's website"""
+        payload = {
+            "name": self.name,
+            "content": self.description,
+            "assignee": "none",
+            "unset_status": True,
         }
 
+        self.export_project_api(payload)
 
-class ProjectTaskType(models.Model):
-    _inherit = "project.task.type"
-    _description = "Inherited project.task.type model"
+    def api_to_export_new_project(self, payload):
+        """This method export the new project to clickup's website"""
+        import requests
 
-    clickup_bind_ids = fields.One2many(
-        "clickup.project.task.type",
-        "odoo_id",
-        string="Clickup Backend ID",
-        readonly=True,
-    )
-    external_id = fields.Char(
-        related="clickup_bind_ids.external_id",
-        readonly=True,
-    )
-    clickup_backend_id = fields.Many2one(
-        "clickup.backend",
-        related="clickup_bind_ids.clickup_backend_id",
-        string="Clickup Backend",
-        readonly=True,
-    )
-    api_token_data = fields.Char(
-        string="API token",
-        related="clickup_bind_ids.api_token_data",
-        readonly=True,
-    )
+        folder_id = "90020435594"
+        url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+
+        # space_id = "90020155368"
+        # url = "https://api.clickup.com/api/v2/space/" + space_id + "/list"
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "pk_67222607_9TATNL43QDZ5M0KWHNLQPF41L3EFNQLM",
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        response.json()
+
+    def export_project_to_clickup_project(self):
+        """Payload which helps to export the new project to clickup's website"""
+
+        payload = {
+            "name": self.name,
+            "content": self.description,
+            "due_date": 1567780450202,
+            "due_date_time": False,
+            "priority": 1,
+            "assignee": 183,
+            "status": "red",
+        }
+
+        self.api_to_export_new_project(payload)
