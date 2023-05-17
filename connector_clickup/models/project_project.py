@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from odoo import _, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 
 class ProjectProject(models.Model):
@@ -90,7 +90,8 @@ class ProjectProject(models.Model):
 
             clickup_timestamp = int(task.get("date_updated")) // 1000
             clickup_update = datetime.fromtimestamp(clickup_timestamp)
-
+            name = task.get("name")
+            task_model = self.env["project.task"].search([("name", "=", name)], limit=1)
             existing_task = task_obj.search(
                 [
                     ("external_id", "=", task_external_id),
@@ -137,20 +138,16 @@ class ProjectProject(models.Model):
 
             if (
                 existing_task.updated_at is False
-                or existing_task
                 or existing_task.updated_at < clickup_update
             ):
-                if existing_task:
-                    existing_task.write(task_vals)
-                elif not existing_task:
-                    self.env["clickup.project.tasks"].create(task_vals_new)
-
-                else:
-                    raise ValidationError(
-                        _(
-                            "All the tasks of this Project is upto date",
-                        )
-                    )
+                existing_task.write(task_vals)
+            if not existing_task:
+                self.env["clickup.project.tasks"].create(task_vals_new)
+                if task_model:
+                    if task_model and existing_task:
+                        continue
+                    else:
+                        task_model.unlink()
 
         result = {
             "name": "Project",
@@ -175,6 +172,7 @@ class ProjectProject(models.Model):
 
     def export_project_api(self, payload):
         """This method export the changes that heppened in project to clickup's website"""
+
         import requests
 
         list_id = self.external_id
@@ -189,31 +187,40 @@ class ProjectProject(models.Model):
 
         response.json()
 
-        if response.status_code == 200:
-            raise UserError(
-                _("The project changes have been updated in ClickUp successfully")
-            )
+        old_tasks = self.env["project.task"].search(
+            [("project_id", "=", self.id), ("external_id", "!=", False)]
+        )
+
+        for tasks in old_tasks:
+            tasks.export_changes_to_clickup_task()
+
+        new_tasks = self.env["project.task"].search([("project_id", "=", self.id)])
+
+        for new_task in new_tasks:
+            if not new_task.external_id and new_task.disable_button is False:
+                new_task.export_task_to_clickup_task()
+                new_task.disable_button = True
 
     def export_to_clickup_project(self):
         """Payload to export the changes that heppened in project to clickup's website"""
+
         payload = {
             "name": self.name,
             "content": self.description,
             "assignee": "none",
             "unset_status": True,
         }
-
         self.export_project_api(payload)
 
     def api_to_export_new_project(self, payload):
         """This method export the new project to clickup's website"""
         import requests
 
-        folder_id = "90020435594"
-        url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+        # folder_id = "90020435594"
+        # url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
 
-        # space_id = "90020155368"
-        # url = "https://api.clickup.com/api/v2/space/" + space_id + "/list"
+        space_id = "90020155368"
+        url = "https://api.clickup.com/api/v2/space/" + space_id + "/list"
 
         headers = {
             "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 from datetime import datetime, time
 
 from odoo import _, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 
 class ProjectTask(models.Model):
@@ -34,6 +34,7 @@ class ProjectTask(models.Model):
     )
 
     updated_at = fields.Datetime(string="Updated At", readonly=True)
+    disable_button = fields.Boolean(default=False, readonly=False)
 
     def get_clickup_task_payload(self):
         """This method returns the clickup's task payload"""
@@ -81,7 +82,25 @@ class ProjectTask(models.Model):
             [("name", "=", task_status)],
             limit=1,
         )
+        assignees = data.get("assignees")
 
+        if assignees:
+            assignee_username = assignees[0].get("username")
+
+            assignee = self.env["res.users"].search(
+                [("name", "=", assignee_username)], limit=1
+            )
+
+            if not assignee:
+                assignee = self.env["res.users"].create(
+                    {
+                        "name": assignees[0].get("username"),
+                        "login": assignees[0].get("email"),
+                    }
+                )
+
+        else:
+            assignee = False
         if not existing_stage:
             self.env["clickup.project.task.type"].create(
                 {
@@ -93,11 +112,11 @@ class ProjectTask(models.Model):
 
         task_vals = {
             "name": data.get("name"),
+            "user_id": assignee.id if assignee else self.env.user.id,
             "description": data.get("text_content"),
             "stage_id": existing_stage.id,
             "api_token_data": self.api_token_data,
             "external_id": task_external_id,
-            "user_id": self.env.user.id,
             "updated_at": datetime.now(),
         }
         clickup_timestamp = int(data.get("date_updated")) // 1000
@@ -137,11 +156,6 @@ class ProjectTask(models.Model):
 
         response.json()
 
-        if response.status_code == 200:
-            raise UserError(
-                _("The task changes have been updated in ClickUp successfully")
-            )
-
     def export_changes_to_clickup_task(self):
         """This method send payload to export task changes to clickup's website"""
 
@@ -158,9 +172,10 @@ class ProjectTask(models.Model):
         payload = {
             "name": self.name,
             "description": self.description,
+            "status": self.stage_id.name,
             "priority": 1,
             "due_date": unix_timestamp,
-            "due_date_time": True,
+            "due_date_time": False,
             "parent": "abc1234",
             "time_estimate": 8640000,
             "start_date": 1567780450202,
@@ -191,10 +206,8 @@ class ProjectTask(models.Model):
 
         response.json()
 
-        if response.status_code == 200:
-            raise UserError(
-                _("The task changes have been updated in ClickUp successfully")
-            )
+        if self.disable_button is False:
+            self.disable_button = True
 
     def export_task_to_clickup_task(self):
         """This method send payload to export new task to clickup's website"""
@@ -214,7 +227,7 @@ class ProjectTask(models.Model):
             "description": self.description,
             "assignees": [],
             "tags": [],
-            "status": "",
+            "status": self.stage_id.name,
             "priority": 3,
             "due_date": unix_timestamp,
             "due_date_time": False,

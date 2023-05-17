@@ -74,7 +74,7 @@
                     class="oe_highlight"
                 />
                 <button
-                    attrs="{'invisible': [('external_id', '!=', False)]}"
+                    attrs="{'invisible': ['|', ('external_id', '!=', False), ('disable_button', '=', True)]}"
                     name="export_task_to_clickup_task"
                     string="Export Task in Clickup"
                     type="object"
@@ -87,6 +87,7 @@
                     type="object"
                     class="oe_highlight"
                 />
+                <field name="disable_button" />
             </header>
             <xpath expr="//page[@name='extra_info']" position="after">
                 <page

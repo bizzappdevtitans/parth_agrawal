@@ -64,9 +64,14 @@ class ClickupBackend(models.Model):
             self.clickup_project_id = project["id"]
             project_data = self.get_clickup_project_payload()
             external_id = project_data.get("id")
+            name = project_data.get("name")
             existing_project = self.env["clickup.project.project"].search(
                 [("external_id", "=", external_id)], limit=1
             )
+            project_module = self.env["project.project"].search(
+                [("name", "=", name)], limit=1
+            )
+
             if existing_project:
                 existing_project.write(
                     {
@@ -88,6 +93,17 @@ class ClickupBackend(models.Model):
                         "created_at": datetime.now(),
                     }
                 )
+                if project_module:
+                    if project_module and existing_project:
+                        continue
+                    elif project_module:
+                        tasks_to_delete = self.env["clickup.project.tasks"].search(
+                            [("project_id", "=", project_module.id)]
+                        )
+
+                        tasks_to_delete.unlink()
+                        project_module.tasks.unlink()
+                        project_module.unlink()
 
     def import_tasks(self):
         """This method takes clickup payload to import all the project's Tasks"""
@@ -113,9 +129,12 @@ class ClickupBackend(models.Model):
             for task in project_data.get("tasks", []):
                 task_external_id = task.get("id")
                 task_status = task.get("status").get("status")
-
+                name = task.get("name")
                 existing_task = task_obj.search(
                     [("external_id", "=", task_external_id)], limit=1
+                )
+                task_model = self.env["project.task"].search(
+                    [("name", "=", name)], limit=1
                 )
 
                 existing_stage = stage_obj.search(
@@ -154,6 +173,11 @@ class ClickupBackend(models.Model):
 
                 if not existing_task:
                     task_obj.create(task_vals_new)
+                    if task_model:
+                        if task_model and existing_task:
+                            continue
+                        else:
+                            task_model.unlink()
 
                 else:
                     existing_task.write(task_vals)
