@@ -44,13 +44,13 @@
                             <page string="Basic Information">
                                 <group>
                                     <span><b>
-                                    1) You need API Token as well as Endpoint Location ID(Folder_id) in order to successfully import Projects, Tasks and Stages from Clickup Project Management.<br
+                                    1) You need API Token as well as Endpoint Location ID(Folder_id) in order to successfully import Projects, Tasks and Stages from ClickUp Project Management.<br
                                             /><br />
-                                    2) If you are Importing first time from Connector Clickup, you need to First Import Projects then Stages and Lastly Tasks.<br
+                                    2) If you are Importing first time from Connector ClickUp, you need to First Import Projects then Stages and Lastly Tasks.<br
                                             /><br />
-                                    3) If you made changes only in tasks in Clickup project menagement you can directly import tasks in order to update that specific task's data.<br
+                                    3) If you made changes only in tasks in ClickUp project management you can directly import tasks in order to update that specific task's data.<br
                                             /><br />
-                                    4) This module uses binding terminology to import projects, tasks and stages from Clickup project management so you can not directly delete any of these data from Project module without deleting it from it's co-responsible binding models.<br
+                                    4) This module uses binding terminology to import projects, tasks and stages from ClickUp project management so you can not directly delete any of these data from Project module without deleting it from it's co-responsible binding models.<br
                                             /></b>
                                     </span>
                                 </group>
