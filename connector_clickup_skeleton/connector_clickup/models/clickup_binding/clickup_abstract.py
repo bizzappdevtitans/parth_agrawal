@@ -28,3 +28,21 @@ class ClickupAbstractModel(models.AbstractModel):
             importer = work.component(usage="record.importer")
 
             return importer.run(external_id, force=force, data=data, **kwargs)
+
+    @api.model
+    def export_batch(self, backend, filters=None):
+        """Prepare the import of records modified on Everstox"""
+
+        if filters is None:
+            filters = {}
+        with backend.work_on(self._name) as work:
+            exporter = work.component(usage="batch.exporter")
+            return exporter.run(filters=filters)
+
+    @api.model
+    def export_record(self, backend, records, fields=None):
+        """Export a record on Everstox"""
+        for record in records:
+            with backend.work_on(self._name) as work:
+                exporter = work.component(usage="record.exporter")
+                return exporter.run(self, record, fields)

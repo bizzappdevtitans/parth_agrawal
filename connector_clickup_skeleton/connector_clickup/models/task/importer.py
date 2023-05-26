@@ -41,11 +41,16 @@ class ProjectTaskImportMapper(Component):
         project_id = record.get("list").get("id")
         project = self.env["project.project"].search([("external_id", "=", project_id)])
 
-        if project:
+        stage_id = record.get("status")
+        stage = self.env["project.task.type"].search([("external_id", "=", stage_id)])
+
+        if project and stage:
             name = record.get("name")
-            return {"name": name, "project_id": project.id}
+            return {"name": name, "project_id": project.id, "stage_id": stage.id}
         else:
-            _logger.warning("Project not found for external ID: %s", project_id)
+            _logger.warning(
+                "Project or Stage not found for external ID: %s", project_id, stage
+            )
         return {}
 
     @mapping

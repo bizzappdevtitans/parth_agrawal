@@ -255,6 +255,7 @@ class BatchImporter(AbstractComponent):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
+
         for record in records:
             external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
 

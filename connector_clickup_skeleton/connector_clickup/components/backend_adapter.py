@@ -1,3 +1,4 @@
+import json
 import logging
 import socket
 import urllib
@@ -70,56 +71,136 @@ class ClickupClient(object):
 
     def call(self, resource_path, arguments, http_method=None):
         """send/get request/response to/from remote system"""
+
+        search_json = arguments.get("search")
+        search_dict = json.loads(search_json) if search_json else {}
+        find = search_dict.get("updated", [{}])[0].get("action")
+
         if self._model == "clickup.project.project":
-            url = self._location
-            headers = {"Authorization": self._token}
+            if find == "import":
+                url = self._location
+                headers = {"Authorization": self._token}
 
-            try:
-                response = requests.get(url, headers=headers)
-                response.raise_for_status()
-                data = response.json()
-
-                return data.get("lists", [])
-            except requests.exceptions.RequestException as e:
-                _logger.error("Failed to fetch projects from ClickUp API: %s", str(e))
-                return []
-
-        if self._model == "clickup.project.tasks":
-            url = self._location
-            headers = {"Authorization": self._token}
-
-            try:
-                response = requests.get(url, headers=headers)
-                response.raise_for_status()
-                data = response.json()
-                data.get("lists", [])
-
-                all_tasks = []
-
-                for project in data["lists"]:
-                    clickup_project_id = project["id"]
-
-                    list_id = clickup_project_id
-                    url = "https://api.clickup.com/api/v2/list/" + list_id
-
-                    headers = {"Authorization": self._token}
-
+                try:
                     response = requests.get(url, headers=headers)
-
+                    response.raise_for_status()
                     data = response.json()
 
-                    tasks_url = "https://api.clickup.com/api/v2/list/{}/task".format(
-                        list_id
+                    return data.get("lists", [])
+                except requests.exceptions.RequestException as e:
+                    _logger.error(
+                        "Failed to fetch projects from ClickUp API: %s", str(e)
                     )
-                    tasks_response = requests.get(tasks_url, headers=headers)
-                    tasks_data = tasks_response.json()
+                    return []
+            url = self._location
+            headers = {"Authorization": self._token}
+            if find == "export":
+                if http_method is None:
+                    http_method = "get"
+                function = getattr(requests, http_method)
+                default_headers = self.get_header()
+                if headers:
+                    default_headers.update(headers)
+                kwargs = {"headers": default_headers}
+                if http_method == "get":
+                    kwargs["params"] = arguments
+                elif isinstance(arguments, str):
+                    kwargs["data"] = arguments
+                elif arguments is not None:
+                    kwargs["json"] = arguments
+                res = function(url, **kwargs)
 
-                    all_tasks.extend(tasks_data["tasks"])
+                payload = res.json()
 
-                return all_tasks
-            except requests.exceptions.RequestException as e:
-                _logger.error("Failed to fetch projects from ClickUp API: %s", str(e))
-                return []
+                return payload
+
+        if self._model == "clickup.project.task.type":
+            if find == "import":
+                url = self._location
+                headers = {"Authorization": self._token}
+
+                try:
+                    response = requests.get(url, headers=headers)
+                    response.raise_for_status()
+                    data = response.json()
+                    data.get("lists", [])
+
+                    all_tasks = []
+
+                    for project in data["lists"]:
+                        clickup_project_id = project["id"]
+
+                        list_id = clickup_project_id
+                        url = "https://api.clickup.com/api/v2/list/" + list_id
+
+                        headers = {"Authorization": self._token}
+
+                        response = requests.get(url, headers=headers)
+
+                        data = response.json()
+
+                        tasks_url = (
+                            "https://api.clickup.com/api/v2/list/{}/task".format(
+                                list_id
+                            )
+                        )
+                        tasks_response = requests.get(tasks_url, headers=headers)
+                        tasks_data = tasks_response.json()
+
+                        all_tasks.extend(tasks_data["tasks"])
+
+                    return all_tasks
+                except requests.exceptions.RequestException as e:
+                    _logger.error(
+                        "Failed to fetch projects from ClickUp API: %s", str(e)
+                    )
+                    return []
+            if find == "export":
+                pass
+
+        if self._model == "clickup.project.tasks":
+            if find == "import":
+                url = self._location
+                headers = {"Authorization": self._token}
+
+                try:
+                    response = requests.get(url, headers=headers)
+                    response.raise_for_status()
+                    data = response.json()
+                    data.get("lists", [])
+
+                    all_tasks = []
+
+                    for project in data["lists"]:
+                        clickup_project_id = project["id"]
+
+                        list_id = clickup_project_id
+                        url = "https://api.clickup.com/api/v2/list/" + list_id
+
+                        headers = {"Authorization": self._token}
+
+                        response = requests.get(url, headers=headers)
+
+                        data = response.json()
+
+                        tasks_url = (
+                            "https://api.clickup.com/api/v2/list/{}/task".format(
+                                list_id
+                            )
+                        )
+                        tasks_response = requests.get(tasks_url, headers=headers)
+                        tasks_data = tasks_response.json()
+
+                        all_tasks.extend(tasks_data["tasks"])
+
+                    return all_tasks
+                except requests.exceptions.RequestException as e:
+                    _logger.error(
+                        "Failed to fetch projects from ClickUp API: %s", str(e)
+                    )
+                    return []
+            if find == "export":
+                pass
 
 
 class ClickupAPI(object):
@@ -155,6 +236,7 @@ class ClickupAPI(object):
     #         return []
     def api_call(self, resource_path, arguments, http_method=None, is_token=False):
         """Adjust available arguments per API"""
+
         api = False
         if is_token:
             api = self.api_token
@@ -169,6 +251,7 @@ class ClickupAPI(object):
 
     def call(self, resource_path, arguments, http_method=None, is_token=False):
         """send/get request/response to/from remote system"""
+
         try:
             start = datetime.now()
             try:
@@ -283,4 +366,38 @@ class GenericAdapter(AbstractComponent):
         """
         resource_path = self._akeneo_model
         result = self._call(resource_path, arguments=filters)
+        return result
+
+    def read(self, external_id=None, attributes=None):
+        """Returns the information of a record
+
+        :rtype: dict
+        """
+        resource_path = self._remote_model
+        if external_id:
+            resource_path = "{}/{}".format(resource_path, external_id)
+        result = self._call(resource_path)
+        return result
+
+    def create(self, data):
+        """Create a record on the external system"""
+        resource_path = self._remote_model
+        result = self._call(resource_path, data, http_method="post")
+        return result
+
+    def write(self, external_id, data):
+        """Update records on the external system"""
+        resource_path = self._remote_model
+        resource_path = "{}/{}".format(resource_path, external_id)
+        if self._remote_model_extension:
+            resource_path = "{}/{}".format(resource_path, self._remote_model_extension)
+        http_method = self._http_update_method
+        result = self._call(resource_path, data, http_method=http_method)
+        return result
+
+    def delete(self, external_id):
+        """Delete a record on the external system"""
+        resource_path = self._remote_model
+        resource_path = "{}/{}".format(resource_path, external_id)
+        result = self._call(resource_path, http_method="delete")
         return result
