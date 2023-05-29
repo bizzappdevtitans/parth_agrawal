@@ -83,3 +83,10 @@ class ProjectProjectImportMapper(Component):
         data = self.backend_record.id
 
         return {"backend_id": data}
+
+    @mapping
+    def api_token(self, record):
+        """Mapped the backend id"""
+        data = self.backend_record.api_key
+
+        return {"api_token_data": data}

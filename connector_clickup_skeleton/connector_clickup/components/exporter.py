@@ -10,6 +10,9 @@ In addition to its export job, an exporter has to:
 """
 import logging
 
+from odoo import _, tools
+from odoo.exceptions import ValidationError
+
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.queue_job.job import identity_exact
 
@@ -22,7 +25,229 @@ class ClickupExporter(AbstractComponent):
     _name = "clickup.exporter"
     _inherit = ["base.exporter", "base.clickup.connector"]
     _usage = "record.exporter"
-    # _default_binding_field = "everstox_bind_ids"
+    _default_binding_field = "id"
+
+    def __init__(self, work_context):
+        super(ClickupExporter, self).__init__(work_context)
+        self.binding = None
+        self.external_id = None
+
+    def create_get_binding(self, record, extra_data=None):
+        """Search for the existing binding else create a new binding"""
+
+        binder = self.binder_for(model=self.model._name)
+        external_id = False
+        binding = record[self._default_binding_field]
+
+        if binding and isinstance(binding, dict):
+            external_id = binding.get(self.backend_adapter._odoo_ext_id_key)
+
+        binding = False
+        if external_id:
+            binding = binder.to_internal(external_id, unwrap=False)
+
+        if not binding:
+            binding = self.model.search(
+                [
+                    ("external_id", "=", record.get("id")),
+                    ("backend_id", "=", self.backend_record.id),
+                ],
+                limit=1,
+            )
+
+        if not binding:
+            # create a new binding
+            data = {}
+            if extra_data and isinstance(extra_data, dict):
+                data.update(extra_data)
+            data.update(
+                {
+                    "odoo_id": False,
+                    "external_id": record.get("id"),
+                    "backend_id": self.backend_record.id,
+                }
+            )
+            binding = self.model.create(data)
+
+        return binding
+
+    # def create_get_binding(self, record, extra_data=None):
+    #     """Search for the existing binding else create new binding"""
+    #     binder = self.binder_for(model=self.model._name)
+    #     external_id = False
+    #     if self._default_binding_field and record[self._default_binding_field]:
+    #         binding = record[self._default_binding_field][:1]
+    #         external_id = binding[self.backend_adapter._odoo_ext_id_key]
+
+    #     binding = False
+    #     if external_id:
+    #         binding = binder.to_internal(external_id, unwrap=False)
+    #     if not binding:
+    #         binding = self.model.search(
+    #             [
+    #                 ("odoo_id", "=", record.id),
+    #                 ("external_id", "=", False),
+    #                 ("backend_id", "=", self.backend_record.id),
+    #             ],
+    #             limit=1,
+    #         )
+    #     if not binding:
+    #         # create new binding
+    #         data = {}
+    #         if extra_data and isinstance(extra_data, dict):
+    #             data.update(extra_data)
+    #         data.update(
+    #             {
+    #                 "odoo_id": record.id,
+    #                 "external_id": False,
+    #                 "backend_id": self.backend_record.id,
+    #             }
+    #         )
+    #         binding = self.model.create(data)
+    #     return binding
+
+    def run(self, binding, record=None, *args, **kwargs):
+        if not binding:
+            if not record:
+                raise ValidationError(_("No record found to export!!!"))
+            binding = self.create_get_binding(record)
+
+        self.binding = binding
+        self.external_id = self.binder.to_external(self.binding)
+        result = self._run(*args, **kwargs)
+
+        self.binder.bind(self.external_id, self.binding)
+        # Commit so we keep the external ID when there are several
+        # exports (due to dependencies) and one of them fails.
+        # The commit will also release the lock acquired on the binding
+        # record
+        if not tools.config["test_enable"]:
+            self.env.cr.commit()  # pylint: disable=E8102
+
+        self._after_export(self.binding)
+        return result
+
+    def _after_export(self, binding):
+        pass
+
+    def _export_dependency(
+        self,
+        relation,
+        binding_model,
+        component_usage="record.exporter",
+        binding_field=None,
+        binding_extra_vals=None,
+    ):
+        exporter = self.component(usage=component_usage, model_name=binding_model)
+        if component_usage == "record.importer":
+            external_id = relation[exporter.backend_adapter._odoo_ext_id_key]
+            return exporter._import_dependency(
+                external_id=external_id, binding_model=binding_model
+            )
+
+        if binding_field is None:
+            binding_field = exporter._default_binding_field
+
+        binding_ids = getattr(relation, binding_field)
+        binder = self.binder_for(binding_model)
+        if binding_ids.filtered(
+            lambda bind: getattr(bind, binder._external_field)
+            and bind.backend_id == self.backend_record
+        ):
+            return
+
+        if not relation:
+            return
+        # wrap is typically True if the relation is for instance a
+        # 'product.product' record but the binding model is
+        # 'my_bakend.product.product'
+        wrap = relation._name != binding_model
+
+        if wrap and hasattr(relation, binding_field):
+            domain = [
+                ("odoo_id", "=", relation.id),
+                ("backend_id", "=", self.backend_record.id),
+            ]
+            binding = self.env[binding_model].search(domain)
+            if binding:
+                assert len(binding) == 1, (
+                    "only 1 binding for a backend is " "supported in _export_dependency"
+                )
+            # we are working with a unwrapped record (e.g.
+            # product.category) and the binding does not exist yet.
+            # Example: I created a product.product and its binding
+            # my_backend.product.product and we are exporting it, but we need
+            # to create the binding for the product.category on which it
+            # depends.
+            else:
+                with self._retry_unique_violation():
+                    binding = exporter.create_get_binding(
+                        record=relation, extra_data=binding_extra_vals
+                    )
+                    if not tools.config["test_enable"]:
+                        self.env.cr.commit()  # pylint: disable=E8102
+        else:
+            # If my_backend_bind_ids does not exist we are typically in a
+            # "direct" binding (the binding record is the same record).
+            # If wrap is True, relation is already a binding record.
+            binding = relation
+
+        if not binder.to_external(binding):
+            exporter.run(binding)
+
+    def _export_dependencies(self):
+        """Import the dependencies for the record
+
+        Import of dependencies can be done manually or by calling
+        :meth:`_import_dependency` for each dependency.
+        """
+        if not hasattr(self.backend_adapter, "_model_export_dependencies"):
+            return
+        record = self.binding.odoo_id
+        for dependency in self.backend_adapter._model_export_dependencies:
+            model, key = dependency
+            relations = record.mapped(key)
+            for relation in relations:
+                self._export_dependency(
+                    relation=relation,
+                    binding_model=model,
+                )
+
+    def _run(self, fields=None):
+        """Flow of the synchronization, implemented in inherited classes"""
+        assert self.binding
+
+        if not self.external_id:
+            fields = None  # should be created with all the fields
+
+        skip = self._has_to_skip()
+        if skip:
+            return skip
+
+        # export the missing linked resources
+        self._export_dependencies()
+
+        # prevent other jobs to export the same record
+        # will be released on commit (or rollback)
+
+        map_record = self._map_data()
+
+        if self.external_id:
+            record = self._update_data(map_record, fields=fields)
+            if not record:
+                return _("Nothing to export.")
+            self._update(record)
+        else:
+            record = self._create_data(map_record, fields=fields)
+            if not record:
+                return _("Nothing to export.")
+            res = self._create(record)
+            if isinstance(res, dict):
+                self.external_id = res.get(self.backend_adapter._odoo_ext_id_key)
+            else:
+                self.external_id = self.binding[self.backend_adapter._odoo_ext_id_key]
+
+        return _("Record exported with ID %s on Backend.") % self.external_id
 
 
 class BatchExporter(AbstractComponent):
@@ -38,19 +263,25 @@ class BatchExporter(AbstractComponent):
     # def run(self, filters=None):
     #     """Run the synchronization"""
     #     records = self.backend_adapter.search(filters)
-    #     print("Export RECORD TYPE", records)
-    #     for record in records:
+    #     print("\n\nInside batch=", records)
+    #     self._export_record(records)
+
+    # def run(self, filters=None):
+    #     """Run the synchronization"""
+    #     records = self.backend_adapter.search(filters)
+    #     print("\n\n batch run=", records)
+    #     for record in records["lists"]:
     #         self._export_record(record)
 
     def run(self, filters=None):
         """Run the synchronization"""
         records = self.backend_adapter.search(filters)
 
-        self._export_record(records)
+        for record in records:
+            self._export_record(record)
 
     def _export_record(self, external_id):
         """Export a record directly or delay the export of the record.
-
         Method to implement in sub-classes.
         """
         raise NotImplementedError
@@ -69,11 +300,11 @@ class DelayedBatchExporter(AbstractComponent):
     _name = "clickup.delayed.batch.exporter"
     _inherit = "clickup.batch.exporter"
 
-    def _export_record(self, records, job_options=None, **kwargs):
+    def _export_record(self, record, job_options=None, **kwargs):
         """Delay the export of the records"""
 
         job_options = job_options or {}
         if "identity_key" not in job_options:
             job_options["identity_key"] = identity_exact
         delayable = self.model.with_delay(**job_options or {})
-        delayable.export_record(self.backend_record, records, **kwargs)
+        delayable.export_record(self.backend_record, record, **kwargs)

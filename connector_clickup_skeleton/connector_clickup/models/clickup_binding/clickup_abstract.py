@@ -31,7 +31,7 @@ class ClickupAbstractModel(models.AbstractModel):
 
     @api.model
     def export_batch(self, backend, filters=None):
-        """Prepare the import of records modified on Everstox"""
+        """Prepare the export of records modified on in odoo"""
 
         if filters is None:
             filters = {}
@@ -39,10 +39,19 @@ class ClickupAbstractModel(models.AbstractModel):
             exporter = work.component(usage="batch.exporter")
             return exporter.run(filters=filters)
 
-    @api.model
-    def export_record(self, backend, records, fields=None):
-        """Export a record on Everstox"""
-        for record in records:
-            with backend.work_on(self._name) as work:
-                exporter = work.component(usage="record.exporter")
-                return exporter.run(self, record, fields)
+    # @api.model
+    # def export_record(self, backend, record, fields=None):
+    #     """Export a record on Clickup"""
+    #     print("\n\nexport_records=", record)
+    #     # for record in record:
+    #     #     print("\n\nLOOP of export_record", record)
+    #     with backend.work_on(self._name) as work:
+    #         exporter = work.component(usage="record.exporter")
+    #         return exporter.run(self, record, fields)
+
+    def export_record(self, backend, record, fields=None):
+        """Export a record on scayle"""
+        record.ensure_one()
+        with backend.work_on(self._name) as work:
+            exporter = work.component(usage="record.exporter")
+            return exporter.run(self, record, fields)

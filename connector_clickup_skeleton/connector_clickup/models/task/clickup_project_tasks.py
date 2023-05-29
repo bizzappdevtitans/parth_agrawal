@@ -1,3 +1,5 @@
+import json
+
 from odoo import fields, models
 
 from odoo.addons.component.core import Component
@@ -35,6 +37,7 @@ class ProjectTask(models.Model):
         readonly=True,
     )
     api_token_data = fields.Char(
+        related="clickup_bind_ids.api_token_data",
         string="API token",
         readonly=True,
     )
@@ -42,6 +45,14 @@ class ProjectTask(models.Model):
 
     updated_at = fields.Datetime(string="Updated At", readonly=True)
     disable_button = fields.Boolean(default=False, readonly=False)
+
+    def open_task(self):
+        """This method open the particular task on clickup's website"""
+        return {
+            "type": "ir.actions.act_url",
+            "url": f"https://app.clickup.com/t/{self.external_id}",
+            "target": "new",
+        }
 
 
 class TaskAdapter(Component):
@@ -51,19 +62,17 @@ class TaskAdapter(Component):
     _akeneo_model = "clickup.project.tasks"
     _akeneo_ext_id_key = "id"
 
+    def _call(self, method, arguments=None, http_method=None, storeview=None):
+        search_json = arguments.get("search")
+        search_dict = json.loads(search_json) if search_json else {}
+        find = search_dict.get("updated", [{}])[0].get("action")
 
-#     def _call(self, method, arguments, http_method=None, storeview=None):
-#         try:
-#             return super(TaskAdapter, self)._call(
-#                 method, arguments, http_method=http_method, storeview=storeview
-#             )
-#         except xmlrpc.client.Fault as err:
-#             # this is the error in the Magento API
-#             # when the customer does not exist
-#             if err.faultCode == 102:
-#                 raise TaskAdapter
-#             else:
-#                 raise
-
-#     def read(self, external_id, attributes=None, storeview=None):
-#         """Returns the information of a record"""
+        if self._akeneo_model == "clickup.project.tasks":
+            if find == "import":
+                return super(TaskAdapter, self)._call(
+                    method, arguments, http_method="get", storeview=storeview
+                )
+            if find == "export":
+                return super(TaskAdapter, self)._call(
+                    method, arguments, http_method="post", storeview=storeview
+                )

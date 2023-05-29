@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 
 from odoo import fields, models
 
+from odoo.addons.queue_job.job import identity_exact
+
 # from ...components.backend_adapter import ClickUpBackendAdapter
 from ...components.backend_adapter import (
     ClickupAPI,
@@ -180,6 +182,16 @@ class ClickupBackend(models.Model):
                 model="clickup.project.project",
                 from_date_field=None if not from_sync else False,
                 with_delay=with_delay,
+                identity_key=identity_exact,
+            )
+
+    def export_tasks(self, with_delay=True, from_sync=False):
+        for backend in self.sudo():
+            backend._export_from_date(
+                model="clickup.project.tasks",
+                from_date_field=None if not from_sync else False,
+                with_delay=with_delay,
+                identity_key=identity_exact,
             )
 
     def _export_from_date(
@@ -189,6 +201,7 @@ class ClickupBackend(models.Model):
         filters=None,
         force_update_field=None,
         priority=None,
+        identity_key=identity_exact,
         with_delay=True,
     ):
         """Common method for import data from from_date."""

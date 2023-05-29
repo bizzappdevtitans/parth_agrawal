@@ -15,6 +15,12 @@
                         <field name="backend_id" />
                         <field name="api_token_data" />
                         <field name="created_at" />
+                        <button
+                            class="oe_highlight"
+                            name="open_project"
+                            string="Open Project In ClickUp"
+                            type="object"
+                        />
                     </group>
                 </page>
             </xpath>
@@ -35,6 +41,12 @@
                         <field name="api_token_data" />
                         <field name="created_at" />
                         <field name="updated_at" />
+                        <button
+                            class="oe_highlight"
+                            name="open_task"
+                            string="Open Task In ClickUp"
+                            type="object"
+                        />
                     </group>
                 </page>
             </xpath>

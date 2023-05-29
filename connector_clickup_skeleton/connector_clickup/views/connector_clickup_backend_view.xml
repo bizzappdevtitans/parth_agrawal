@@ -82,6 +82,18 @@
                                     type="object"
                                 />
                             </group>
+                            <br />
+                            <group>
+                                <span><b
+                                    >Click to Export Tasks In ClickUp remote</b></span>
+                                <button
+                                    class="oe_highlight"
+                                    name="export_tasks"
+                                    string="Export Tasks"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

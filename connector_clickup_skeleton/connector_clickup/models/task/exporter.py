@@ -6,10 +6,10 @@ from odoo.addons.connector.components.mapper import mapping
 _logger = logging.getLogger(__name__)
 
 
-class ProjectProjectExporter(Component):
-    _name = "clickup.project.project.exporter"
+class ProjectTaskExporter(Component):
+    _name = "clickup.project.task.exporter"
     _inherit = "clickup.exporter"
-    _apply_on = "clickup.project.project"
+    _apply_on = "clickup.project.tasks"
 
     def _has_to_skip(self):
         """prevent exporting return to everstox"""
@@ -24,18 +24,18 @@ class ProjectProjectExporter(Component):
         self.mapper.map_record(record)
 
 
-class ProjectProjectDelayedBatchExporter(Component):
+class ProjectTaskDelayedBatchExporter(Component):
     """Delay import of the records"""
 
-    _name = "clickup.project.project.batch.exporter"
+    _name = "clickup.project.task.batch.exporter"
     _inherit = "clickup.delayed.batch.exporter"
-    _apply_on = "clickup.project.project"
+    _apply_on = "clickup.project.tasks"
 
 
-class ProjectProjectImportMapper(Component):
-    _name = "clickup.project.project.export.mapper"
+class ProjectTaskImportMapper(Component):
+    _name = "clickup.project.task.export.mapper"
     _inherit = "clickup.export.mapper"
-    _apply_on = "clickup.project.project"
+    _apply_on = "clickup.project.tasks"
     _mapper_ext_key = "identifier"
 
     @mapping

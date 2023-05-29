@@ -3,11 +3,12 @@ import logging
 import socket
 import urllib
 from datetime import datetime
+from urllib.parse import urljoin
 
 import requests
 
 from odoo.addons.component.core import AbstractComponent
-from odoo.addons.connector.exception import NetworkRetryableError
+from odoo.addons.connector.exception import InvalidDataError, NetworkRetryableError
 from odoo.addons.queue_job.exception import RetryableJobError
 
 # from simplejson.errors import JSONDecodeError
@@ -65,7 +66,7 @@ class ClickupClient(object):
         """Headers for the akeneo api"""
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer %s" % (self._token),
+            "Authorization": "%s" % (self._token),
         }
         return headers
 
@@ -85,16 +86,19 @@ class ClickupClient(object):
                     response = requests.get(url, headers=headers)
                     response.raise_for_status()
                     data = response.json()
-
                     return data.get("lists", [])
                 except requests.exceptions.RequestException as e:
                     _logger.error(
                         "Failed to fetch projects from ClickUp API: %s", str(e)
                     )
                     return []
-            url = self._location
+            # url = self._location
             headers = {"Authorization": self._token}
             if find == "export":
+                resource_path = "list"
+
+                url = urljoin(self._location, resource_path)
+
                 if http_method is None:
                     http_method = "get"
                 function = getattr(requests, http_method)
@@ -199,8 +203,106 @@ class ClickupClient(object):
                         "Failed to fetch projects from ClickUp API: %s", str(e)
                     )
                     return []
+
             if find == "export":
-                pass
+                url = self._location
+                headers = {"Authorization": self._token}
+
+                try:
+                    response = requests.get(url, headers=headers)
+                    response.raise_for_status()
+                    data = response.json()
+                    data.get("lists", [])
+
+                    all_tasks = []
+
+                    for project in data["lists"]:
+                        clickup_project_id = project["id"]
+
+                        list_id = clickup_project_id
+                        url = "https://api.clickup.com/api/v2/list/" + list_id
+
+                        headers = {"Authorization": self._token}
+
+                        response = requests.get(url, headers=headers)
+
+                        data = response.json()
+
+                        tasks_url = (
+                            "https://api.clickup.com/api/v2/list/{}/task".format(
+                                list_id
+                            )
+                        )
+                        tasks_response = requests.get(tasks_url, headers=headers)
+                        tasks_data = tasks_response.json()
+
+                        all_tasks.extend(tasks_data["tasks"])
+
+                        if http_method is None:
+                            http_method = "get"
+                        function = getattr(requests, http_method)
+                        headers = self.get_header()
+                        kwargs = {"headers": headers}
+                        if http_method == "get":
+                            kwargs["params"] = arguments
+                        elif isinstance(arguments, str):
+                            kwargs["data"] = arguments
+                        elif arguments is not None:
+                            kwargs["json"] = arguments
+                        res = function(tasks_url, **kwargs)
+                        # Exceptional Case: status-code 201 is consider as error by raise_for_status
+                        try:
+                            results = res.json()
+                        except InvalidDataError:
+                            raise InvalidDataError(
+                                tasks_url,
+                                res.status_code,
+                                res._content,
+                                headers,
+                                __name__,
+                            )
+                        final_result = []
+                        for result in results:
+                            if res.status_code == 201:
+                                if res._content:
+                                    if result.get("errors"):
+                                        raise InvalidDataError(
+                                            tasks_url,
+                                            res.status_code,
+                                            result.get("errors"),
+                                            __name__,
+                                        )
+                                final_result.append(result)
+                                continue
+                            if res.status_code == 400 or res._content:
+                                # From scayle system on invalid data we get 400 error
+                                # but raise_for_status treats it as network error(which is retryable)
+                                raise InvalidDataError(
+                                    tasks_url,
+                                    res.status_code,
+                                    res._content,
+                                    headers,
+                                    __name__,
+                                )
+                            if res.status_code == 404 or result.get("status") == 404:
+                                # In case record(product/shipment/DO) not exists in scayle system
+                                raise InvalidDataError(
+                                    tasks_url,
+                                    res.status_code,
+                                    res._content,
+                                    headers,
+                                    __name__,
+                                )
+                            final_result.append(result)
+
+                        res.raise_for_status()
+                        return final_result
+
+                except requests.exceptions.RequestException as e:
+                    _logger.error(
+                        "Failed to fetch projects from ClickUp API: %s", str(e)
+                    )
+                    return []
 
 
 class ClickupAPI(object):
@@ -223,17 +325,6 @@ class ClickupAPI(object):
 
         return self._api
 
-    # def call(self, params=None, data=None):
-    #     url = f"https://api.clickup.com/api/v2/folder/{self.uri}/list"
-    #     headers = {"Authorization": self.api_key}
-    #     try:
-    #         response = requests.get(url, headers=headers, params=params, json=data)
-    #         response.raise_for_status()
-    #         data = response.json()
-    #         return data.get("lists", [])
-    #     except requests.exceptions.RequestException as e:
-    #         _logger.error("Failed to fetch projects from ClickUp API: %s", str(e))
-    #         return []
     def api_call(self, resource_path, arguments, http_method=None, is_token=False):
         """Adjust available arguments per API"""
 
@@ -328,7 +419,7 @@ class ClickupCRUDAdapter(AbstractComponent):
     #     """Returns the information of a record"""
     #     raise NotImplementedError
 
-    def _call(self, method, arguments=None, http_method=None, storeview=None):
+    def _call(self, resource_path, arguments=None, http_method=None, storeview=None):
         try:
             akeneo_api = getattr(self.work, "akeneo_api")  # noqa: B009
         except AttributeError:
@@ -337,7 +428,7 @@ class ClickupCRUDAdapter(AbstractComponent):
                 "MagentoAPI instance to be able to use the "
                 "Backend Adapter."
             )
-        return akeneo_api.call(method, arguments, http_method=http_method)
+        return akeneo_api.call(resource_path, arguments, http_method=http_method)
 
 
 class GenericAdapter(AbstractComponent):
@@ -373,7 +464,7 @@ class GenericAdapter(AbstractComponent):
 
         :rtype: dict
         """
-        resource_path = self._remote_model
+        resource_path = self._akeneo_model
         if external_id:
             resource_path = "{}/{}".format(resource_path, external_id)
         result = self._call(resource_path)
@@ -381,13 +472,13 @@ class GenericAdapter(AbstractComponent):
 
     def create(self, data):
         """Create a record on the external system"""
-        resource_path = self._remote_model
+        resource_path = self._akeneo_model
         result = self._call(resource_path, data, http_method="post")
         return result
 
     def write(self, external_id, data):
         """Update records on the external system"""
-        resource_path = self._remote_model
+        resource_path = self._akeneo_model
         resource_path = "{}/{}".format(resource_path, external_id)
         if self._remote_model_extension:
             resource_path = "{}/{}".format(resource_path, self._remote_model_extension)
@@ -397,7 +488,13 @@ class GenericAdapter(AbstractComponent):
 
     def delete(self, external_id):
         """Delete a record on the external system"""
-        resource_path = self._remote_model
+        resource_path = self._akeneo_model
         resource_path = "{}/{}".format(resource_path, external_id)
         result = self._call(resource_path, http_method="delete")
         return result
+
+
+url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+
+
+url = "https://api.clickup.com/api/v2/list/" + list_id + "/task"
