@@ -24,6 +24,7 @@ class ClickupAbstractModel(models.AbstractModel):
     @api.model
     def import_record(self, backend, external_id, force=False, data=None, **kwargs):
         """Import a ClickUp Project record"""
+
         with backend.work_on(self._name) as work:
             importer = work.component(usage="record.importer")
 

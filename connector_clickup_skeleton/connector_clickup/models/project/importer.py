@@ -39,6 +39,16 @@ class ProjectProjectBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.project"
 
+    def run(self, filters=None, force=False):
+        """Run the synchronization"""
+
+        records = self.backend_adapter.search(filters)
+
+        for record in records["lists"]:
+            external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
+
+            self._import_record(external_id, data=record, force=force)
+
 
 class ProjectProjectImportMapper(Component):
     _name = "clickup.project.project.import.mapper"
@@ -90,3 +100,10 @@ class ProjectProjectImportMapper(Component):
         data = self.backend_record.api_key
 
         return {"api_token_data": data}
+
+    @mapping
+    def folder_id(self, record):
+        """Mapped the backend id"""
+        data = self.backend_record.uri
+
+        return {"folder_id": data}

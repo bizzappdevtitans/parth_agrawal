@@ -44,6 +44,8 @@ class ProjectProject(models.Model):
 
     created_at = fields.Datetime(string="Created At", readonly=True)
 
+    folder_id = fields.Char(string="Folder Id", readonly=True)
+
     def get_clickup_project_payload(self):
         """This method returns the clickup's project and task payload"""
         import requests
@@ -100,40 +102,79 @@ class ProjectAdapter(Component):
 
         :rtype: dict
         """
-        data = self.env["clickup.backend"]
-        list_id = data.uri
-        resource_path = "/list/" + list_id + "/task"
+        # self.env["clickup.backend"]
+        backend_record = self.backend_record  # Retrieve the first record
+        folder_id = backend_record.uri if backend_record.uri else None
+
+        resource_path = "/folder/" + folder_id + "/list"
         result = self._call(resource_path, arguments=filters)
         return result
 
-    # def _call(self, method, arguments, http_method=None, storeview=None):
-    #     try:
-    #         return super(ProjectAdapter, self)._call(
-    #             method, arguments, http_method=http_method, storeview=storeview
-    #         )
-    #     except xmlrpc.client.Fault as err:
-    #         # this is the error in the Magento API
-    #         # when the customer does not exist
-    #         if err.faultCode == 102:
-    #             raise ProjectAdapter
-    #         else:
-    #             raise
+    # def search(self, filters=None):
+    #     """
+    #     Returns the information of a record
 
-    # def read(self, external_id, attributes=None, storeview=None):
-    #     """Returns the information of a record"""
-    #     return
+    #     :rtype: dict
+    #     """
+    #     backend_model = self.env["clickup.backend"]
+    #     backend_record = self.backend_record  # Retrieve the first record
+    #     folder_id = backend_record.uri if backend_record.uri else None
+    #     print("folder_id==", folder_id)
+    #     resource_path = "/folder/" + folder_id + "/list"
+    #     self._akeneo_model = resource_path
+    #     # result = self._call(resource_path, arguments=filters)
+    #     return super(ProjectAdapter, self).search(filters)
 
-    # def _call(self, method, arguments=None, http_method=None, storeview=None):
-    #     search_json = arguments.get("search")
-    #     search_dict = json.loads(search_json) if search_json else {}
-    #     find = search_dict.get("updated", [{}])[0].get("action")
+    # def create(self, data):
+    #     """Create a record on the external system"""
+    #     print("\n\nWHAT IS DATA", data)
+    #     backend_model = self.env["clickup.backend"]
+    #     backend_record = self.backend_record  # Retrieve the first record
+    #     folder_id = backend_record.uri if backend_record.uri else None
+    #     print("folder_id==", folder_id)
+    #     self._akeneo_model = "/folder/" + folder_id + "/list"
+    #     # resource_path = self._akeneo_model
+    #     # result = self._call(resource_path, data, http_method="post")
+    #     return super(ProjectAdapter, self).create(data)
 
-    #     if self._akeneo_model == "clickup.project.project":
-    #         if find == "import":
-    #             return super(ProjectAdapter, self)._call(
-    #                 method, arguments, http_method="get", storeview=storeview
-    #             )
-    #         if find == "export":
-    #             return super(ProjectAdapter, self)._call(
-    #                 method, arguments, http_method="post", storeview=storeview
-    #             )
+
+# import requests
+
+# folder_id = "YOUR_folder_id_PARAMETER"
+# url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+
+# query = {
+#   "archived": "false"
+# }
+
+# headers = {"Authorization": "YOUR_API_KEY_HERE"}
+
+# response = requests.get(url, headers=headers, params=query)
+
+# data = response.json()
+# print(data)
+
+# import requests
+
+# folder_id = "YOUR_folder_id_PARAMETER"
+# url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
+
+# payload = {
+#   "name": "New List Name",
+#   "content": "New List Content",
+#   "due_date": 1567780450202,
+#   "due_date_time": False,
+#   "priority": 1,
+#   "assignee": 183,
+#   "status": "red"
+# }
+
+# headers = {
+#   "Content-Type": "application/json",
+#   "Authorization": "YOUR_API_KEY_HERE"
+# }
+
+# response = requests.post(url, json=payload, headers=headers)
+
+# data = response.json()
+# print(data)

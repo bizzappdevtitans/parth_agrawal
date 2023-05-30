@@ -46,3 +46,30 @@ class TaskTypeAdapter(Component):
     _apply_on = "clickup.project.task.type"
     _akeneo_model = "clickup.project.task.type"
     _akeneo_ext_id_key = "status"
+
+    def search(self, filters=None):
+        """
+        Returns the information of a record
+        :rtype: dict
+        """
+        # self.env["clickup.backend"]
+        backend_record = self.backend_record  # Retrieve the first record
+        folder_id = backend_record.uri if backend_record.uri else None
+
+        project_model = self.env["project.project"]
+
+        projects = project_model.search([("folder_id", "=", folder_id)])
+        result = []
+
+        for project_record in projects:
+            external_id = project_record.external_id
+            if not external_id:
+                continue
+
+            list_id = external_id
+
+            resource_path = "/list/" + list_id + "/task"
+            project_result = self._call(resource_path, arguments=filters)
+            result.append(project_result)
+
+        return result

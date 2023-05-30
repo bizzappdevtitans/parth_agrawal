@@ -11,6 +11,26 @@ class ProjectTaskImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.tasks"
 
+    def __init__(self, work_context):
+        """Inherit init method."""
+        work_context.model = work_context.model.with_context(
+            create_product_product=False
+        )
+        super(ProjectTaskImporter, self).__init__(work_context)
+
+    def _after_import(self, binding, **kwargs):
+        """Hook called at the end of the import"""
+        # images
+        # T-02210 Iterate over all akeneo_image_ids read file and set image URL
+        # for akeneo_image in binding.akeneo_image_ids:
+        #     if not akeneo_image.image_path:
+        #         continue
+        #     image_path = akeneo_image.image_path
+        #     image_value = self.get_image_url(image_path)
+        #     image_url = image_value.get("value", {}).get("value")
+        #     akeneo_image.write({"image_url": image_url})
+        return super(ProjectTaskImporter, self)._after_import(binding, **kwargs)
+
 
 class ProjectTaskBatchImporter(Component):
     """Delay import of the records"""
@@ -18,6 +38,18 @@ class ProjectTaskBatchImporter(Component):
     _name = "clickup.project.task.batch.importer"
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.tasks"
+
+    def run(self, filters=None, force=False):
+        """Run the synchronization"""
+
+        records = self.backend_adapter.search(filters)
+
+        for record in records:
+            tasks = record.get("tasks", [])
+            for task in tasks:
+                external_id = task.get(self.backend_adapter._akeneo_ext_id_key)
+
+                self._import_record(external_id, data=task, force=force)
 
 
 class ProjectTaskImportMapper(Component):
@@ -29,6 +61,7 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def odoo_id(self, record):
         """Getting product based on the SKU."""
+
         binder = self.binder_for(model="clickup.project.tasks")
         odoo_id = binder.to_internal(record.get("id"), unwrap=True)
 
@@ -39,19 +72,35 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def name(self, record):
         project_id = record.get("list").get("id")
+
         project = self.env["project.project"].search([("external_id", "=", project_id)])
 
         stage_id = record.get("status")
-        stage = self.env["project.task.type"].search([("external_id", "=", stage_id)])
-
+        stage = self.env["project.task.type"].search(
+            [("external_id", "=", stage_id)], limit=1
+        )
         if project and stage:
             name = record.get("name")
             return {"name": name, "project_id": project.id, "stage_id": stage.id}
         else:
             _logger.warning(
-                "Project or Stage not found for external ID: %s", project_id, stage
+                "Project or Stage not found for external ID: %s", project_id
             )
-        return {}
+
+    #     project_id = record.get("list").get("id")
+    #     project = self.env["project.project"].search([("external_id", "=", project_id)])
+
+    #     stage_id = record.get("status")
+    #     stage = self.env["project.task.type"].search([("external_id", "=", stage_id)])
+
+    #     if project and stage:
+    #         name = record.get("name")
+    #         return {"name": name, "project_id": project.id, "stage_id": stage.id}
+    #     else:
+    #         _logger.warning(
+    #             "Project or Stage not found for external ID: %s", project_id, stage
+    #         )
+    #     return {}
 
     @mapping
     def description(self, record):
@@ -62,6 +111,7 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def external_id(self, record):
         """#T-02383 Mapped external id"""
+
         external_id = record.get("id")
 
         return {"external_id": external_id}

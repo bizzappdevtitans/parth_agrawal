@@ -1,5 +1,3 @@
-import json
-
 from odoo import fields, models
 
 from odoo.addons.component.core import Component
@@ -62,17 +60,45 @@ class TaskAdapter(Component):
     _akeneo_model = "clickup.project.tasks"
     _akeneo_ext_id_key = "id"
 
-    def _call(self, method, arguments=None, http_method=None, storeview=None):
-        search_json = arguments.get("search")
-        search_dict = json.loads(search_json) if search_json else {}
-        find = search_dict.get("updated", [{}])[0].get("action")
+    def search(self, filters=None):
+        """
+        Returns the information of a record
 
-        if self._akeneo_model == "clickup.project.tasks":
-            if find == "import":
-                return super(TaskAdapter, self)._call(
-                    method, arguments, http_method="get", storeview=storeview
-                )
-            if find == "export":
-                return super(TaskAdapter, self)._call(
-                    method, arguments, http_method="post", storeview=storeview
-                )
+        :rtype: dict
+        """
+        # self.env["clickup.backend"]
+        backend_record = self.backend_record  # Retrieve the first record
+        folder_id = backend_record.uri if backend_record.uri else None
+
+        project_model = self.env["project.project"]
+
+        projects = project_model.search([("folder_id", "=", folder_id)])
+        result = []
+
+        for project_record in projects:
+            external_id = project_record.external_id
+            if not external_id:
+                continue
+
+            list_id = external_id
+
+            resource_path = "/list/" + list_id + "/task"
+            project_result = self._call(resource_path, arguments=filters)
+            result.append(project_result)
+
+        return result
+
+    # def _call(self, method, arguments=None, http_method=None, storeview=None):
+    #     search_json = arguments.get("search")
+    #     search_dict = json.loads(search_json) if search_json else {}
+    #     find = search_dict.get("updated", [{}])[0].get("action")
+
+    #     if self._akeneo_model == "clickup.project.tasks":
+    #         if find == "import":
+    #             return super(TaskAdapter, self)._call(
+    #                 method, arguments, http_method="get", storeview=storeview
+    #             )
+    #         if find == "export":
+    #             return super(TaskAdapter, self)._call(
+    #                 method, arguments, http_method="post", storeview=storeview
+    #             )

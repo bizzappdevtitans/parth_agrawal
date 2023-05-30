@@ -251,15 +251,15 @@ class BatchImporter(AbstractComponent):
     _inherit = ["base.importer", "base.clickup.connector"]
     _usage = "batch.importer"
 
-    def run(self, filters=None, force=False):
-        """Run the synchronization"""
+    # def run(self, filters=None, force=False):
+    #     """Run the synchronization"""
 
-        records = self.backend_adapter.search(filters)
+    #     records = self.backend_adapter.search(filters)
+    #     print("\n\nBatch run=", records)
+    #     for record in records:
+    #         external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
 
-        for record in records:
-            external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
-
-            self._import_record(external_id, data=record, force=force)
+    #         self._import_record(external_id, data=record, force=force)
 
     def _import_record(self, external_id):
         """Import a record directly or delay the import of the record.

@@ -11,6 +11,26 @@ class ProjectTaskTypeImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.task.type"
 
+    def __init__(self, work_context):
+        """Inherit init method."""
+        work_context.model = work_context.model.with_context(
+            create_product_product=False
+        )
+        super(ProjectTaskTypeImporter, self).__init__(work_context)
+
+    def _after_import(self, binding, **kwargs):
+        """Hook called at the end of the import"""
+        # images
+        # T-02210 Iterate over all akeneo_image_ids read file and set image URL
+        # for akeneo_image in binding.akeneo_image_ids:
+        #     if not akeneo_image.image_path:
+        #         continue
+        #     image_path = akeneo_image.image_path
+        #     image_value = self.get_image_url(image_path)
+        #     image_url = image_value.get("value", {}).get("value")
+        #     akeneo_image.write({"image_url": image_url})
+        return super(ProjectTaskTypeImporter, self)._after_import(binding, **kwargs)
+
 
 class ProjectTaskTypeBatchImporter(Component):
     """Delay import of the records"""
@@ -18,6 +38,18 @@ class ProjectTaskTypeBatchImporter(Component):
     _name = "clickup.project.task.type.batch.importer"
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.task.type"
+
+    def run(self, filters=None, force=False):
+        """Run the synchronization"""
+
+        records = self.backend_adapter.search(filters)
+
+        for record in records:
+            tasks = record.get("tasks", [])
+            for task in tasks:
+                external_id = task.get(self.backend_adapter._akeneo_ext_id_key)
+
+                self._import_record(external_id, data=task, force=force)
 
 
 class ProjectTaskTypeImportMapper(Component):

@@ -3,16 +3,13 @@ import logging
 import socket
 import urllib
 from datetime import datetime
-from urllib.parse import urljoin
 
 import requests
+from simplejson.errors import JSONDecodeError
 
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import InvalidDataError, NetworkRetryableError
 from odoo.addons.queue_job.exception import RetryableJobError
-
-# from simplejson.errors import JSONDecodeError
-
 
 _logger = logging.getLogger(__name__)
 
@@ -40,9 +37,7 @@ class ClickupLocation(object):
     @property
     def location(self):
         """Main location of the Akeneo"""
-        location = "https://api.clickup.com/api/v2/folder/{location}/list".format(
-            location=self._location
-        )
+        location = "https://api.clickup.com/api/v2"
         return location
 
 
@@ -70,239 +65,82 @@ class ClickupClient(object):
         }
         return headers
 
-    def call(self, resource_path, arguments, http_method=None):
-        """send/get request/response to/from remote system"""
-
+    def call(self, arguments=None, http_method=None, resource_path=None, headers=None):
+        """Call method for the Token API execution with all headers and parameters."""
         search_json = arguments.get("search")
         search_dict = json.loads(search_json) if search_json else {}
         find = search_dict.get("updated", [{}])[0].get("action")
+        if find == "import":
+            http_method = "get"
+        if find == "export":
+            http_method = "post"
 
-        if self._model == "clickup.project.project":
-            if find == "import":
-                url = self._location
-                headers = {"Authorization": self._token}
+        url = self._location + resource_path
 
+        if http_method is None:
+            http_method = "get"
+        function = getattr(requests, http_method)
+        default_headers = self.get_header()
+
+        if headers:
+            default_headers.update(headers)
+        kwargs = {"headers": default_headers}
+        if http_method == "get":
+            kwargs["params"] = arguments
+        elif isinstance(arguments, str):
+            kwargs["data"] = arguments
+        elif arguments is not None:
+            kwargs["json"] = arguments
+        res = function(url, **kwargs)
+        # Exceptional Case: status-code 202 is consider as error by raise_for_status
+
+        if res.status_code == 202:
+            if res._content:
                 try:
-                    response = requests.get(url, headers=headers)
-                    response.raise_for_status()
-                    data = response.json()
-                    return data.get("lists", [])
-                except requests.exceptions.RequestException as e:
-                    _logger.error(
-                        "Failed to fetch projects from ClickUp API: %s", str(e)
-                    )
-                    return []
-            # url = self._location
-            headers = {"Authorization": self._token}
-            if find == "export":
-                resource_path = "list"
-
-                url = urljoin(self._location, resource_path)
-
-                if http_method is None:
-                    http_method = "get"
-                function = getattr(requests, http_method)
-                default_headers = self.get_header()
-                if headers:
-                    default_headers.update(headers)
-                kwargs = {"headers": default_headers}
-                if http_method == "get":
-                    kwargs["params"] = arguments
-                elif isinstance(arguments, str):
-                    kwargs["data"] = arguments
-                elif arguments is not None:
-                    kwargs["json"] = arguments
-                res = function(url, **kwargs)
-
-                payload = res.json()
-
-                return payload
-
-        if self._model == "clickup.project.task.type":
-            if find == "import":
-                url = self._location
-                headers = {"Authorization": self._token}
-
-                try:
-                    response = requests.get(url, headers=headers)
-                    response.raise_for_status()
-                    data = response.json()
-                    data.get("lists", [])
-
-                    all_tasks = []
-
-                    for project in data["lists"]:
-                        clickup_project_id = project["id"]
-
-                        list_id = clickup_project_id
-                        url = "https://api.clickup.com/api/v2/list/" + list_id
-
-                        headers = {"Authorization": self._token}
-
-                        response = requests.get(url, headers=headers)
-
-                        data = response.json()
-
-                        tasks_url = (
-                            "https://api.clickup.com/api/v2/list/{}/task".format(
-                                list_id
-                            )
+                    result = res.json()
+                    if result.get("errors"):
+                        raise InvalidDataError(
+                            url,
+                            res.status_code,
+                            result.get("errors"),
+                            __name__,
                         )
-                        tasks_response = requests.get(tasks_url, headers=headers)
-                        tasks_data = tasks_response.json()
-
-                        all_tasks.extend(tasks_data["tasks"])
-
-                    return all_tasks
-                except requests.exceptions.RequestException as e:
-                    _logger.error(
-                        "Failed to fetch projects from ClickUp API: %s", str(e)
+                except JSONDecodeError:
+                    _logger.warning(
+                        "\n Invalid json payload received :%s \n" % (res._content)
                     )
-                    return []
-            if find == "export":
-                pass
-
-        if self._model == "clickup.project.tasks":
-            if find == "import":
-                url = self._location
-                headers = {"Authorization": self._token}
-
+                    return res._content
+            return True
+        # Exceptional Case: status-code 201 is consider as error by raise_for_status
+        if res.status_code == 201:
+            if res._content:
                 try:
-                    response = requests.get(url, headers=headers)
-                    response.raise_for_status()
-                    data = response.json()
-                    data.get("lists", [])
-
-                    all_tasks = []
-
-                    for project in data["lists"]:
-                        clickup_project_id = project["id"]
-
-                        list_id = clickup_project_id
-                        url = "https://api.clickup.com/api/v2/list/" + list_id
-
-                        headers = {"Authorization": self._token}
-
-                        response = requests.get(url, headers=headers)
-
-                        data = response.json()
-
-                        tasks_url = (
-                            "https://api.clickup.com/api/v2/list/{}/task".format(
-                                list_id
-                            )
-                        )
-                        tasks_response = requests.get(tasks_url, headers=headers)
-                        tasks_data = tasks_response.json()
-
-                        all_tasks.extend(tasks_data["tasks"])
-
-                    return all_tasks
-                except requests.exceptions.RequestException as e:
-                    _logger.error(
-                        "Failed to fetch projects from ClickUp API: %s", str(e)
+                    return res.json()
+                except JSONDecodeError:
+                    _logger.warning(
+                        "\n Invalid json payload received :%s \n" % (res._content)
                     )
-                    return []
+                    return res._content
+            return res._content
+        if res.status_code == 400 and res._content:
+            # From remote system on invalid data we get 400 error
+            # but raise_for_status treats it as network error(which is retryable)
+            raise InvalidDataError(
+                url, res.status_code, res._content, headers, __name__
+            )
+        if res.status_code == 404 and res.json().get("status") == 404:
+            # In case record(product/shipment/DO) not exists in remote system
+            raise InvalidDataError(
+                url, res.status_code, res._content, headers, __name__
+            )
+        res.raise_for_status()
+        try:
+            result = res.json()
 
-            if find == "export":
-                url = self._location
-                headers = {"Authorization": self._token}
-
-                try:
-                    response = requests.get(url, headers=headers)
-                    response.raise_for_status()
-                    data = response.json()
-                    data.get("lists", [])
-
-                    all_tasks = []
-
-                    for project in data["lists"]:
-                        clickup_project_id = project["id"]
-
-                        list_id = clickup_project_id
-                        url = "https://api.clickup.com/api/v2/list/" + list_id
-
-                        headers = {"Authorization": self._token}
-
-                        response = requests.get(url, headers=headers)
-
-                        data = response.json()
-
-                        tasks_url = (
-                            "https://api.clickup.com/api/v2/list/{}/task".format(
-                                list_id
-                            )
-                        )
-                        tasks_response = requests.get(tasks_url, headers=headers)
-                        tasks_data = tasks_response.json()
-
-                        all_tasks.extend(tasks_data["tasks"])
-
-                        if http_method is None:
-                            http_method = "get"
-                        function = getattr(requests, http_method)
-                        headers = self.get_header()
-                        kwargs = {"headers": headers}
-                        if http_method == "get":
-                            kwargs["params"] = arguments
-                        elif isinstance(arguments, str):
-                            kwargs["data"] = arguments
-                        elif arguments is not None:
-                            kwargs["json"] = arguments
-                        res = function(tasks_url, **kwargs)
-                        # Exceptional Case: status-code 201 is consider as error by raise_for_status
-                        try:
-                            results = res.json()
-                        except InvalidDataError:
-                            raise InvalidDataError(
-                                tasks_url,
-                                res.status_code,
-                                res._content,
-                                headers,
-                                __name__,
-                            )
-                        final_result = []
-                        for result in results:
-                            if res.status_code == 201:
-                                if res._content:
-                                    if result.get("errors"):
-                                        raise InvalidDataError(
-                                            tasks_url,
-                                            res.status_code,
-                                            result.get("errors"),
-                                            __name__,
-                                        )
-                                final_result.append(result)
-                                continue
-                            if res.status_code == 400 or res._content:
-                                # From scayle system on invalid data we get 400 error
-                                # but raise_for_status treats it as network error(which is retryable)
-                                raise InvalidDataError(
-                                    tasks_url,
-                                    res.status_code,
-                                    res._content,
-                                    headers,
-                                    __name__,
-                                )
-                            if res.status_code == 404 or result.get("status") == 404:
-                                # In case record(product/shipment/DO) not exists in scayle system
-                                raise InvalidDataError(
-                                    tasks_url,
-                                    res.status_code,
-                                    res._content,
-                                    headers,
-                                    __name__,
-                                )
-                            final_result.append(result)
-
-                        res.raise_for_status()
-                        return final_result
-
-                except requests.exceptions.RequestException as e:
-                    _logger.error(
-                        "Failed to fetch projects from ClickUp API: %s", str(e)
-                    )
-                    return []
+            return result
+        except JSONDecodeError:
+            _logger.warning("\n Everstox Response Content :%s \n" % (res._content))
+            return res._content
 
 
 class ClickupAPI(object):
@@ -446,7 +284,9 @@ class GenericAdapter(AbstractComponent):
 
         :rtype: dict
         """
+
         resource_path = self._akeneo_model
+
         result = self._call(resource_path, arguments=filters)
         return result
 
@@ -492,9 +332,3 @@ class GenericAdapter(AbstractComponent):
         resource_path = "{}/{}".format(resource_path, external_id)
         result = self._call(resource_path, http_method="delete")
         return result
-
-
-url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
-
-
-url = "https://api.clickup.com/api/v2/list/" + list_id + "/task"
