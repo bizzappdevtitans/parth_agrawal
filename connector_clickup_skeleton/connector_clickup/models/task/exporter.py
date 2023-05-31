@@ -11,18 +11,6 @@ class ProjectTaskExporter(Component):
     _inherit = "clickup.exporter"
     _apply_on = "clickup.project.tasks"
 
-    def _has_to_skip(self):
-        """prevent exporting return to everstox"""
-        # if self.binding.is_return_picking:
-        #     return True
-        return
-
-    def run(self, binding, record=None, *args, **kwargs):
-        """Override Method to create the shipment for each picking
-        with sale binding."""
-
-        self.mapper.map_record(record)
-
 
 class ProjectTaskDelayedBatchExporter(Component):
     """Delay import of the records"""
@@ -30,6 +18,29 @@ class ProjectTaskDelayedBatchExporter(Component):
     _name = "clickup.project.task.batch.exporter"
     _inherit = "clickup.delayed.batch.exporter"
     _apply_on = "clickup.project.tasks"
+
+    def run(self, filters=None):
+        """Run the synchronization"""
+        filters = filters or {}
+        domain = filters.get("domain", [])
+        domain += [
+            "|",
+            ("clickup_bind_ids", "=", False),
+            ("folder_id", "=", self.backend_record.uri),
+        ]
+
+        records = self.env["project.task"].search(domain)
+        for record in records:
+            self._export_record(record)
+
+    def _export_record(self, record, job_options=None, **kwargs):
+        """Delay the export of the records"""
+        job_options = job_options or {}
+        if "priority" not in job_options:
+            job_options["priority"] = 5
+        return super(ProjectTaskDelayedBatchExporter, self)._export_record(
+            record, job_options, **kwargs
+        )
 
 
 class ProjectTaskImportMapper(Component):
@@ -45,7 +56,7 @@ class ProjectTaskImportMapper(Component):
         return {"name": name}
 
     @mapping
-    def content(self, record):
+    def description(self, record):
         content = record.description
 
-        return {"content": content}
+        return {"description": content}

@@ -38,6 +38,7 @@
                     <field invisible="1" name="clickup_bind_ids" />
                     <group>
                         <field name="external_id" />
+                        <field name="folder_id" />
                         <field name="backend_id" />
                         <field name="api_token_data" />
                         <field name="created_at" />

@@ -87,21 +87,6 @@ class ProjectTaskImportMapper(Component):
                 "Project or Stage not found for external ID: %s", project_id
             )
 
-    #     project_id = record.get("list").get("id")
-    #     project = self.env["project.project"].search([("external_id", "=", project_id)])
-
-    #     stage_id = record.get("status")
-    #     stage = self.env["project.task.type"].search([("external_id", "=", stage_id)])
-
-    #     if project and stage:
-    #         name = record.get("name")
-    #         return {"name": name, "project_id": project.id, "stage_id": stage.id}
-    #     else:
-    #         _logger.warning(
-    #             "Project or Stage not found for external ID: %s", project_id, stage
-    #         )
-    #     return {}
-
     @mapping
     def description(self, record):
         content = record.get("text_content")
@@ -129,3 +114,10 @@ class ProjectTaskImportMapper(Component):
         data = self.backend_record.api_key
 
         return {"api_token_data": data}
+
+    @mapping
+    def folder_id(self, record):
+        """Mapped the backend id"""
+        data = self.backend_record.uri
+
+        return {"folder_id": data}

@@ -5,11 +5,13 @@ import urllib
 from datetime import datetime
 
 import requests
-from simplejson.errors import JSONDecodeError
 
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import InvalidDataError, NetworkRetryableError
 from odoo.addons.queue_job.exception import RetryableJobError
+
+MAGENTO_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+from simplejson.errors import JSONDecodeError
 
 _logger = logging.getLogger(__name__)
 
@@ -69,11 +71,7 @@ class ClickupClient(object):
         """Call method for the Token API execution with all headers and parameters."""
         search_json = arguments.get("search")
         search_dict = json.loads(search_json) if search_json else {}
-        find = search_dict.get("updated", [{}])[0].get("action")
-        if find == "import":
-            http_method = "get"
-        if find == "export":
-            http_method = "post"
+        search_dict.get("updated", [{}])[0].get("action")
 
         url = self._location + resource_path
 
@@ -312,18 +310,20 @@ class GenericAdapter(AbstractComponent):
 
     def create(self, data):
         """Create a record on the external system"""
+
         resource_path = self._akeneo_model
         result = self._call(resource_path, data, http_method="post")
         return result
 
     def write(self, external_id, data):
         """Update records on the external system"""
+
         resource_path = self._akeneo_model
-        resource_path = "{}/{}".format(resource_path, external_id)
-        if self._remote_model_extension:
-            resource_path = "{}/{}".format(resource_path, self._remote_model_extension)
-        http_method = self._http_update_method
-        result = self._call(resource_path, data, http_method=http_method)
+        # resource_path = "{}/{}".format(resource_path, external_id)
+        # if self._remote_model_extension:
+        #     resource_path = "{}/{}".format(resource_path, self._remote_model_extension)
+
+        result = self._call(resource_path, data, http_method="put")
         return result
 
     def delete(self, external_id):

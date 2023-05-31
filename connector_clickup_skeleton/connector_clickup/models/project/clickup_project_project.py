@@ -92,7 +92,7 @@ class ProjectAdapter(Component):
     _name = "clickup.project.project.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.project"
-    _akeneo_model = "clickup.project.project"
+    _akeneo_model = "/folder/{}/list"
     _odoo_ext_id_key = "external_id"
     _akeneo_ext_id_key = "id"
 
@@ -102,79 +102,39 @@ class ProjectAdapter(Component):
 
         :rtype: dict
         """
-        # self.env["clickup.backend"]
-        backend_record = self.backend_record  # Retrieve the first record
+
+        backend_record = self.backend_record
         folder_id = backend_record.uri if backend_record.uri else None
 
-        resource_path = "/folder/" + folder_id + "/list"
-        result = self._call(resource_path, arguments=filters)
-        return result
+        resource_path = "/folder/{}/list".format(folder_id)
+        self._akeneo_model = resource_path
+        return super(ProjectAdapter, self).search(filters)
+        # result = self._call(resource_path, arguments=filters)
+        # return super(ProjectAdapter, self).search(filters)
+        # return result
 
-    # def search(self, filters=None):
-    #     """
-    #     Returns the information of a record
+    def create(self, data):
+        """
+        Returns the information of a record
 
-    #     :rtype: dict
-    #     """
-    #     backend_model = self.env["clickup.backend"]
-    #     backend_record = self.backend_record  # Retrieve the first record
-    #     folder_id = backend_record.uri if backend_record.uri else None
-    #     print("folder_id==", folder_id)
-    #     resource_path = "/folder/" + folder_id + "/list"
-    #     self._akeneo_model = resource_path
-    #     # result = self._call(resource_path, arguments=filters)
-    #     return super(ProjectAdapter, self).search(filters)
+        :rtype: dict
+        """
 
-    # def create(self, data):
-    #     """Create a record on the external system"""
-    #     print("\n\nWHAT IS DATA", data)
-    #     backend_model = self.env["clickup.backend"]
-    #     backend_record = self.backend_record  # Retrieve the first record
-    #     folder_id = backend_record.uri if backend_record.uri else None
-    #     print("folder_id==", folder_id)
-    #     self._akeneo_model = "/folder/" + folder_id + "/list"
-    #     # resource_path = self._akeneo_model
-    #     # result = self._call(resource_path, data, http_method="post")
-    #     return super(ProjectAdapter, self).create(data)
+        backend_record = self.backend_record
+        folder_id = backend_record.uri if backend_record.uri else None
 
+        resource_path = "/folder/{}/list".format(folder_id)
+        self._akeneo_model = resource_path
+        return super(ProjectAdapter, self).create(data)
 
-# import requests
+    def write(self, external_id, data):
+        """Update records on the external system"""
+        backend_record = self.backend_record
+        folder_id = backend_record.uri if backend_record.uri else None
 
-# folder_id = "YOUR_folder_id_PARAMETER"
-# url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
-
-# query = {
-#   "archived": "false"
-# }
-
-# headers = {"Authorization": "YOUR_API_KEY_HERE"}
-
-# response = requests.get(url, headers=headers, params=query)
-
-# data = response.json()
-# print(data)
-
-# import requests
-
-# folder_id = "YOUR_folder_id_PARAMETER"
-# url = "https://api.clickup.com/api/v2/folder/" + folder_id + "/list"
-
-# payload = {
-#   "name": "New List Name",
-#   "content": "New List Content",
-#   "due_date": 1567780450202,
-#   "due_date_time": False,
-#   "priority": 1,
-#   "assignee": 183,
-#   "status": "red"
-# }
-
-# headers = {
-#   "Content-Type": "application/json",
-#   "Authorization": "YOUR_API_KEY_HERE"
-# }
-
-# response = requests.post(url, json=payload, headers=headers)
-
-# data = response.json()
-# print(data)
+        resource_path = "/folder/{}/list".format(folder_id)
+        self._akeneo_model = resource_path
+        if external_id:
+            resource_path = "/list/{}".format(external_id)
+            self._akeneo_model = resource_path
+            return super(ProjectAdapter, self).write(external_id, data)

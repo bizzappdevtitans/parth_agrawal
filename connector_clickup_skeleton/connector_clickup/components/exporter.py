@@ -10,10 +10,13 @@ In addition to its export job, an exporter has to:
 """
 import logging
 
+import psycopg2
+
 from odoo import _, tools
 from odoo.exceptions import ValidationError
 
 from odoo.addons.component.core import AbstractComponent
+from odoo.addons.connector.exception import RetryableJobError
 from odoo.addons.queue_job.job import identity_exact
 
 _logger = logging.getLogger(__name__)
@@ -25,86 +28,131 @@ class ClickupExporter(AbstractComponent):
     _name = "clickup.exporter"
     _inherit = ["base.exporter", "base.clickup.connector"]
     _usage = "record.exporter"
-    _default_binding_field = "id"
+    _default_binding_field = "clickup_bind_ids"
 
     def __init__(self, work_context):
         super(ClickupExporter, self).__init__(work_context)
         self.binding = None
         self.external_id = None
 
-    def create_get_binding(self, record, extra_data=None):
-        """Search for the existing binding else create a new binding"""
+    def _has_to_skip(self):
+        """Return True if the export can be skipped"""
+        return False
 
+    def _map_data(self):
+        """Returns an instance of
+        :py:class:`~odoo.addons.connector.components.mapper.MapRecord`
+
+        """
+        return self.mapper.map_record(self.binding)
+
+    def _lock(self):
+        """Lock the binding record.
+
+        Lock the binding record so we are sure that only one export
+        job is running for this record if concurrent jobs have to export the
+        same record.
+
+        When concurrent jobs try to export the same record, the first one
+        will lock and proceed, the others will fail to lock and will be
+        retried later.
+
+        This behavior works also when the export becomes multilevel
+        with :meth:`_export_dependencies`. Each level will set its own lock
+        on the binding record it has to export.
+
+        """
+        sql = "SELECT id FROM %s WHERE ID = %%s FOR UPDATE NOWAIT" % self.model._table
+        try:
+            self.env.cr.execute(sql, (self.binding.id,), log_exceptions=False)
+        except psycopg2.OperationalError:
+            _logger.info(
+                "A concurrent job is already exporting the same "
+                "record (%s with id %s). Job delayed later.",
+                self.model._name,
+                self.binding.id,
+            )
+            raise RetryableJobError(
+                "A concurrent job is already exporting the same record "
+                "(%s with id %s). The job will be retried later."
+                % (self.model._name, self.binding.id)
+            )
+
+    def _validate_create_data(self, data):
+        """Check if the values to import are correct
+
+        Pro-actively check before the ``Model.create`` if some fields
+        are missing or invalid
+
+        Raise `InvalidDataError`
+        """
+        return
+
+    def _validate_update_data(self, data):
+        """Check if the values to import are correct
+
+        Pro-actively check before the ``Model.update`` if some fields
+        are missing or invalid
+
+        Raise `InvalidDataError`
+        """
+        return
+
+    def _create_data(self, map_record, fields=None, **kwargs):
+        """Get the data to pass to :py:meth:`_create`"""
+        return map_record.values(for_create=True, fields=fields, **kwargs)
+
+    def _create(self, data):
+        """Create the Magento record"""
+        # special check on data before export
+        self._validate_create_data(data)
+        return self.backend_adapter.create(data)
+
+    def _update_data(self, map_record, fields=None, **kwargs):
+        """Get the data to pass to :py:meth:`_update`"""
+        return map_record.values(fields=fields, **kwargs)
+
+    def _update(self, data):
+        """Update an Magento record"""
+        assert self.external_id
+        # special check on data before export
+        self._validate_update_data(data)
+        self.backend_adapter.write(self.external_id, data)
+
+    def create_get_binding(self, record, extra_data=None):
+        """Search for the existing binding else create new binding"""
         binder = self.binder_for(model=self.model._name)
         external_id = False
-        binding = record[self._default_binding_field]
-
-        if binding and isinstance(binding, dict):
-            external_id = binding.get(self.backend_adapter._odoo_ext_id_key)
+        if self._default_binding_field and record[self._default_binding_field]:
+            binding = record[self._default_binding_field][:1]
+            external_id = binding[self.backend_adapter._odoo_ext_id_key]
 
         binding = False
         if external_id:
             binding = binder.to_internal(external_id, unwrap=False)
-
         if not binding:
             binding = self.model.search(
                 [
-                    ("external_id", "=", record.get("id")),
+                    ("odoo_id", "=", record.id),
+                    ("external_id", "=", False),
                     ("backend_id", "=", self.backend_record.id),
                 ],
                 limit=1,
             )
-
         if not binding:
-            # create a new binding
+            # create new binding
             data = {}
             if extra_data and isinstance(extra_data, dict):
                 data.update(extra_data)
             data.update(
                 {
-                    "odoo_id": False,
-                    "external_id": record.get("id"),
+                    "odoo_id": record.id,
+                    "external_id": False,
                     "backend_id": self.backend_record.id,
                 }
             )
             binding = self.model.create(data)
-
         return binding
-
-    # def create_get_binding(self, record, extra_data=None):
-    #     """Search for the existing binding else create new binding"""
-    #     binder = self.binder_for(model=self.model._name)
-    #     external_id = False
-    #     if self._default_binding_field and record[self._default_binding_field]:
-    #         binding = record[self._default_binding_field][:1]
-    #         external_id = binding[self.backend_adapter._odoo_ext_id_key]
-
-    #     binding = False
-    #     if external_id:
-    #         binding = binder.to_internal(external_id, unwrap=False)
-    #     if not binding:
-    #         binding = self.model.search(
-    #             [
-    #                 ("odoo_id", "=", record.id),
-    #                 ("external_id", "=", False),
-    #                 ("backend_id", "=", self.backend_record.id),
-    #             ],
-    #             limit=1,
-    #         )
-    #     if not binding:
-    #         # create new binding
-    #         data = {}
-    #         if extra_data and isinstance(extra_data, dict):
-    #             data.update(extra_data)
-    #         data.update(
-    #             {
-    #                 "odoo_id": record.id,
-    #                 "external_id": False,
-    #                 "backend_id": self.backend_record.id,
-    #             }
-    #         )
-    #         binding = self.model.create(data)
-    #     return binding
 
     def run(self, binding, record=None, *args, **kwargs):
         if not binding:
@@ -215,6 +263,7 @@ class ClickupExporter(AbstractComponent):
 
     def _run(self, fields=None):
         """Flow of the synchronization, implemented in inherited classes"""
+
         assert self.binding
 
         if not self.external_id:
@@ -229,6 +278,7 @@ class ClickupExporter(AbstractComponent):
 
         # prevent other jobs to export the same record
         # will be released on commit (or rollback)
+        self._lock()
 
         map_record = self._map_data()
 
@@ -243,7 +293,7 @@ class ClickupExporter(AbstractComponent):
                 return _("Nothing to export.")
             res = self._create(record)
             if isinstance(res, dict):
-                self.external_id = res.get(self.backend_adapter._odoo_ext_id_key)
+                self.external_id = res.get(self.backend_adapter._akeneo_ext_id_key)
             else:
                 self.external_id = self.binding[self.backend_adapter._odoo_ext_id_key]
 
@@ -273,12 +323,12 @@ class BatchExporter(AbstractComponent):
     #     for record in records["lists"]:
     #         self._export_record(record)
 
-    def run(self, filters=None):
-        """Run the synchronization"""
-        records = self.backend_adapter.search(filters)
+    # def run(self, filters=None):
+    #     """Run the synchronization"""
+    #     records = self.backend_adapter.search(filters)
 
-        for record in records:
-            self._export_record(record)
+    #     for record in records:
+    #         self._export_record(record)
 
     def _export_record(self, external_id):
         """Export a record directly or delay the export of the record.

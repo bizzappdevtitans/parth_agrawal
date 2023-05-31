@@ -45,6 +45,9 @@ class ProjectTaskTypeBatchImporter(Component):
         records = self.backend_adapter.search(filters)
 
         for record in records:
+            if record != []:
+                continue
+
             tasks = record.get("tasks", [])
             for task in tasks:
                 external_id = task.get(self.backend_adapter._akeneo_ext_id_key)
