@@ -157,6 +157,11 @@ class ClickupBackend(models.Model):
         """Add the work on for akeneo."""
 
         self.ensure_one()
+
+        # if model_name == "project.project":
+        #     location = self.backend_record.external_id
+        #     token = self.backend_record.api_token_data
+        # else:
         location = self.uri
         token = self.api_key
 

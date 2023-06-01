@@ -60,3 +60,9 @@ class ProjectTaskImportMapper(Component):
         content = record.description
 
         return {"description": content}
+
+    @mapping
+    def project_id(self, record):
+        content = record.project_id.external_id
+
+        return {"project_id": content}

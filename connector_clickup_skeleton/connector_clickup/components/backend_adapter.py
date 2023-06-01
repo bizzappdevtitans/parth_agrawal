@@ -72,6 +72,10 @@ class ClickupClient(object):
         search_json = arguments.get("search")
         search_dict = json.loads(search_json) if search_json else {}
         search_dict.get("updated", [{}])[0].get("action")
+        # if find == "import":
+        #     http_method = "get"
+        # if find == "export":
+        #     http_method = "post"
 
         url = self._location + resource_path
 

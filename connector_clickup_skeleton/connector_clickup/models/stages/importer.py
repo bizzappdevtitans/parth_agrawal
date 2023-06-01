@@ -39,15 +39,28 @@ class ProjectTaskTypeBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.task.type"
 
+    # def run(self, filters=None, force=False):
+    #     """Run the synchronization"""
+
+    #     records = self.backend_adapter.search(filters)
+    #     print("\n\n inside run records==", records)
+    #     for record in records:
+    #         print("\n\n loop record", record)
+    #         if record != []:
+    #             continue
+
+    #         tasks = record.get("tasks", [])
+    #         for task in tasks:
+    #             external_id = task.get(self.backend_adapter._akeneo_ext_id_key)
+
+    #             self._import_record(external_id, data=task, force=force)
+
     def run(self, filters=None, force=False):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
 
         for record in records:
-            if record != []:
-                continue
-
             tasks = record.get("tasks", [])
             for task in tasks:
                 external_id = task.get(self.backend_adapter._akeneo_ext_id_key)

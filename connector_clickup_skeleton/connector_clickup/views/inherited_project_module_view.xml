@@ -6,9 +6,28 @@
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.edit_project" />
         <field name="arch" type="xml">
+            <header>
+                <!-- <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="btn-primary"
+                    name="update_project"
+                    string="Update Project Now"
+                    type="object"
+                /> -->
 
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    name="export_changes_to_clickup_project"
+                    string="Export Changes to ClickUp"
+                    type="object"
+                    class="oe_highlight"
+                />
+            </header>
             <xpath expr="//page[@name='settings']" position="after">
-                <page string="Connector Clickup Project">
+                <page
+                    string="Connector Clickup Project"
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                >
                     <field invisible="1" name="clickup_bind_ids" />
                     <group>
                         <field name="external_id" />
@@ -33,8 +52,28 @@
         <field name="model">project.task</field>
         <field name="inherit_id" ref="project.view_task_form2" />
         <field name="arch" type="xml">
+            <header>
+                <!-- <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="btn-primary"
+                    name="update_task"
+                    string="Update Task Now"
+                    type="object"
+                /> -->
+
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    name="export_changes_to_clickup_task"
+                    string="Export Changes to ClickUp"
+                    type="object"
+                    class="oe_highlight"
+                />
+            </header>
             <xpath expr="//page[@name='extra_info']" position="after">
-                <page string="Connector Clickup Task">
+                <page
+                    string="Connector Clickup Task"
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                >
                     <field invisible="1" name="clickup_bind_ids" />
                     <group>
                         <field name="external_id" />
@@ -62,7 +101,10 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='description']" position="after">
                 <notebook>
-                    <page string="Connector Clickup Stage">
+                    <page
+                        string="Connector Clickup Stage"
+                        attrs="{'invisible': [('external_id', '=', False)]}"
+                    >
                         <field invisible="1" name="clickup_bind_ids" />
                         <group>
                             <field name="external_id" />

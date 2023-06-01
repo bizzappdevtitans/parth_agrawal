@@ -1,5 +1,5 @@
 from odoo import _, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.component.core import Component
 
@@ -86,6 +86,38 @@ class ProjectProject(models.Model):
             }
 
             return result
+
+        # self, backend, external_id, force=False, data=None, **kwargs
+
+    def update_project(self, job_options=None):
+        pass
+
+    #     self.ensure_one()
+    #     if not self.backend_id:
+    #         raise UserError(_("Please add backend!!!"))
+    #     delayable = self.env["clickup.project.project"].with_delay(**job_options or {})
+
+    #     delayable.import_record(
+    #         external_id=self.external_id,
+    #         backend=self.sudo().backend_id,
+    #     )
+
+    def export_changes_to_clickup_project(self, job_options=None):
+        self.ensure_one()
+        if not self.backend_id:
+            raise UserError(_("Please add backend!!!"))
+        delayable = self.env["clickup.project.project"].with_delay(**job_options or {})
+
+        delayable.export_record(backend=self.sudo().backend_id, record=self)
+
+        task_model = self.env["project.task"]
+        tasks = task_model.search([("project_id", "=", self.id)])
+
+        for task in tasks:
+            delayable_task = self.env["clickup.project.tasks"].with_delay(
+                **job_options or {}
+            )
+            delayable_task.export_record(backend=self.sudo().backend_id, record=task)
 
 
 class ProjectAdapter(Component):
