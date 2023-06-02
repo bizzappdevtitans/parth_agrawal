@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
@@ -20,15 +21,7 @@ class ProjectTaskImporter(Component):
 
     def _after_import(self, binding, **kwargs):
         """Hook called at the end of the import"""
-        # images
-        # T-02210 Iterate over all akeneo_image_ids read file and set image URL
-        # for akeneo_image in binding.akeneo_image_ids:
-        #     if not akeneo_image.image_path:
-        #         continue
-        #     image_path = akeneo_image.image_path
-        #     image_value = self.get_image_url(image_path)
-        #     image_url = image_value.get("value", {}).get("value")
-        #     akeneo_image.write({"image_url": image_url})
+
         return super(ProjectTaskImporter, self)._after_import(binding, **kwargs)
 
 
@@ -47,7 +40,7 @@ class ProjectTaskBatchImporter(Component):
         for record in records:
             tasks = record.get("tasks", [])
             for task in tasks:
-                external_id = task.get(self.backend_adapter._akeneo_ext_id_key)
+                external_id = task.get(self.backend_adapter._clickup_ext_id_key)
 
                 self._import_record(external_id, data=task, force=force)
 
@@ -75,13 +68,11 @@ class ProjectTaskImportMapper(Component):
 
         project = self.env["project.project"].search([("external_id", "=", project_id)])
 
-        stage_id = record.get("status")
-        stage = self.env["project.task.type"].search(
-            [("external_id", "=", stage_id)], limit=1
-        )
+        stage_id = record.get("status").get("status")
+        stage = self.env["project.task.type"].search([("name", "=", stage_id)], limit=1)
         if project and stage:
             name = record.get("name")
-            return {"name": name, "project_id": project.id, "stage_id": stage.id}
+            return {"name": name, "project_id": project.id, "stage_id": stage}
         else:
             _logger.warning(
                 "Project or Stage not found for external ID: %s", project_id
@@ -121,3 +112,13 @@ class ProjectTaskImportMapper(Component):
         data = self.backend_record.uri
 
         return {"folder_id": data}
+
+    @mapping
+    def date_deadline(self, record):
+        """Mapped the backend id"""
+        data = record.get("due_date")
+
+        if data:
+            timestamp = int(data) / 1000
+            due_date = date.fromtimestamp(timestamp)
+            return {"date_deadline": due_date}

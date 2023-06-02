@@ -58,7 +58,7 @@ class ClickupBackend(models.Model):
                 from_date = backend[from_date_field]
             search_dict = filters.get("search", {})
             if from_date:
-                # T-02383: akeneo accepts different date time format
+                # T-02383: clickup accepts different date time format
                 # for category and variant.
                 if model in [
                     "akeneo.product.category",
@@ -105,13 +105,13 @@ class ClickupBackend(models.Model):
                 job_options["description"] = "Prepare jobs for clickup Task import"
             if model == "clickup.project.task.type":
                 job_options["description"] = "Prepare jobs for clickup Stage import"
-            akeneo_model = (
+            clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay
                 else self.env[model]
             )
 
-            akeneo_model.import_batch(
+            clickup_model.import_batch(
                 backend,
                 filters=filters,
                 force=force,
@@ -125,7 +125,7 @@ class ClickupBackend(models.Model):
             self.write({from_date_field: next_time})
 
     def import_projects(self, with_delay=True, from_sync=False):
-        """#T-02421 Import Akeneo References"""
+        """#T-02421 Import Clickup References"""
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.project",
@@ -154,7 +154,7 @@ class ClickupBackend(models.Model):
 
     @contextmanager
     def work_on(self, model_name, **kwargs):
-        """Add the work on for akeneo."""
+        """Add the work on for clickup."""
 
         self.ensure_one()
 
@@ -165,20 +165,20 @@ class ClickupBackend(models.Model):
         location = self.uri
         token = self.api_key
 
-        akeneo_location = ClickupLocation(
+        clickup_location = ClickupLocation(
             location=location, token=token, model=model_name
         )
 
-        # akeneo have different endpoint/credentials for token
-        akeneo_location_token = ClickupTokenLocation(
+        # clickup have different endpoint/credentials for token
+        clickup_location_token = ClickupTokenLocation(
             location=location, model=model_name
         )
         with ClickupAPI(
-            akeneo_location, akeneo_location_token, model=model_name
-        ) as akeneo_api:
+            clickup_location, clickup_location_token, model=model_name
+        ) as clickup_api:
             _super = super(ClickupBackend, self)
-            # from the components we'll be able to do: self.work.akeneo_api
-            with _super.work_on(model_name, akeneo_api=akeneo_api, **kwargs) as work:
+            # from the components we'll be able to do: self.work.clickup_api
+            with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
                 yield work
 
     def export_projects(self, with_delay=True, from_sync=False):
@@ -223,7 +223,7 @@ class ClickupBackend(models.Model):
                 from_date = backend[from_date_field]
             search_dict = filters.get("search", {})
             if from_date:
-                # T-02383: akeneo accepts different date time format
+                # T-02383: clickup accepts different date time format
                 # for category and variant.
                 if model in [
                     "akeneo.product.category",
@@ -270,13 +270,13 @@ class ClickupBackend(models.Model):
                 job_options["description"] = "Prepare jobs for clickup Task Export"
             if model == "clickup.project.task.type":
                 job_options["description"] = "Prepare jobs for clickup Stage Export"
-            akeneo_model = (
+            clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay
                 else self.env[model]
             )
 
-            akeneo_model.export_batch(
+            clickup_model.export_batch(
                 backend,
                 filters=filters,
             )

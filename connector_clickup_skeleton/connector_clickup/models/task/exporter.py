@@ -1,4 +1,7 @@
 import logging
+from datetime import datetime
+
+from bs4 import BeautifulSoup
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping
@@ -58,6 +61,8 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def description(self, record):
         content = record.description
+        soup = BeautifulSoup(content, "html.parser")
+        content = soup.get_text()
 
         return {"description": content}
 
@@ -66,3 +71,33 @@ class ProjectTaskImportMapper(Component):
         content = record.project_id.external_id
 
         return {"project_id": content}
+
+    # @mapping
+    # def due_date(self, record):
+    #     """Map the backend id"""
+    #     data = record.date_deadline
+
+    #     if data:
+    #         data = str(data)
+    #         date_object = datetime.strptime(data, "%Y-%m-%d").date()
+    #         timestamp = datetime.combine(date_object, datetime.min.time()).timestamp()
+    #         unix_timestamp = int(timestamp)
+    #         return {"due_date": unix_timestamp}
+
+    @mapping
+    def due_date(self, record):
+        data = record.date_deadline
+
+        if data:
+            date_object = datetime.strptime(str(data), "%Y-%m-%d")
+
+            unix_timestamp = int(date_object.timestamp() * 1000)
+
+            return {"due_date": str(unix_timestamp)}
+
+    @mapping
+    def status(self, record):
+        data = record.stage_id.name
+
+        if data:
+            return {"status": data}

@@ -70,8 +70,8 @@ class TaskAdapter(Component):
     _name = "clickup.project.task.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.tasks"
-    _akeneo_model = "/list/{}/task"
-    _akeneo_ext_id_key = "id"
+    _clickup_model = "/list/{}/task"
+    _clickup_ext_id_key = "id"
 
     def search(self, filters=None):
         """
@@ -95,45 +95,12 @@ class TaskAdapter(Component):
             list_id = external_id
 
             resource_path = "/list/{}/task".format(list_id)
-            self._akeneo_model = resource_path
+            self._clickup_model = resource_path
 
             super_result = super(TaskAdapter, self).search(filters)
             result.append(super_result)
 
         return result
-
-    # def create(self, data):
-    #     """
-    #     Returns the information of a record
-
-    #     :rtype: dict
-    #     """
-    #     backend_record = self.backend_record  # Retrieve the first record
-    #     folder_id = backend_record.uri if backend_record.uri else None
-    #     print("folder_id==", folder_id)
-
-    #     task_model = self.env["project.task"]
-
-    #     tasks = task_model.search([("folder_id", "=", folder_id)])
-    #     result = []
-    #     print("\n\nDATA of new project=\n\n", data)
-    #     for task_record in tasks:
-    #         print("\n\nTHE task record==", task_record)
-    #         external_id = task_record.project_id.external_id
-    #         print("\n\n This is task record's external_id==", external_id)
-    #         if not external_id:
-    #             continue
-
-    #         if external_id:
-    #             list_id = external_id
-    #             print("list_id =", list_id)
-    #             resource_path = "/list/{}/task".format(list_id)
-    #             self._akeneo_model = resource_path
-
-    #             return super(TaskAdapter, self).create(data)
-    #             # result.append(super_result)
-
-    #             # return result
 
     def create(self, data):
         """
@@ -145,12 +112,12 @@ class TaskAdapter(Component):
         external_id = data.get("project_id")
         if external_id:
             resource_path = "/list/{}/task".format(external_id)
-            self._akeneo_model = resource_path
+            self._clickup_model = resource_path
             return super(TaskAdapter, self).create(data)
 
     def write(self, external_id, data):
         """Update records on the external system"""
         if external_id:
             resource_path = "/task/{}".format(external_id)
-            self._akeneo_model = resource_path
+            self._clickup_model = resource_path
             return super(TaskAdapter, self).write(external_id, data)

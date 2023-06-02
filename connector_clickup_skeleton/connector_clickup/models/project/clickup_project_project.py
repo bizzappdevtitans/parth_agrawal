@@ -124,9 +124,9 @@ class ProjectAdapter(Component):
     _name = "clickup.project.project.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.project"
-    _akeneo_model = "/folder/{}/list"
+    _clickup_model = "/folder/{}/list"
     _odoo_ext_id_key = "external_id"
-    _akeneo_ext_id_key = "id"
+    _clickup_ext_id_key = "id"
 
     def search(self, filters=None):
         """
@@ -139,7 +139,7 @@ class ProjectAdapter(Component):
         folder_id = backend_record.uri if backend_record.uri else None
 
         resource_path = "/folder/{}/list".format(folder_id)
-        self._akeneo_model = resource_path
+        self._clickup_model = resource_path
         return super(ProjectAdapter, self).search(filters)
         # result = self._call(resource_path, arguments=filters)
         # return super(ProjectAdapter, self).search(filters)
@@ -156,7 +156,7 @@ class ProjectAdapter(Component):
         folder_id = backend_record.uri if backend_record.uri else None
 
         resource_path = "/folder/{}/list".format(folder_id)
-        self._akeneo_model = resource_path
+        self._clickup_model = resource_path
         return super(ProjectAdapter, self).create(data)
 
     def write(self, external_id, data):
@@ -165,8 +165,8 @@ class ProjectAdapter(Component):
         folder_id = backend_record.uri if backend_record.uri else None
 
         resource_path = "/folder/{}/list".format(folder_id)
-        self._akeneo_model = resource_path
+        self._clickup_model = resource_path
         if external_id:
             resource_path = "/list/{}".format(external_id)
-            self._akeneo_model = resource_path
+            self._clickup_model = resource_path
             return super(ProjectAdapter, self).write(external_id, data)

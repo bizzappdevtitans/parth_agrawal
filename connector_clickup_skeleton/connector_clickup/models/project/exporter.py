@@ -1,5 +1,7 @@
 import logging
 
+from bs4 import BeautifulSoup
+
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping
 
@@ -58,5 +60,8 @@ class ProjectProjectImportMapper(Component):
     @mapping
     def content(self, record):
         content = record.description
+
+        soup = BeautifulSoup(content, "html.parser")
+        content = soup.get_text()
 
         return {"content": content}

@@ -35,42 +35,43 @@
                             </group>
                         </page>
                         <page string="Import">
-                            <group>
+
                                 <group>
                                 <span><b>Click to Import Projects of ClickUp</b></span>
                                 <button
-                                        class="oe_highlight"
-                                        name="import_projects"
-                                        string="Import Projects"
-                                        style=" width: 150px; height: 30px;"
-                                        type="object"
-                                    />
+                                    class="oe_highlight"
+                                    name="import_projects"
+                                    string="Import Projects"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
                             </group>
                             <br />
                             <group>
                                 <span><b>Click to Import Stages of ClickUp</b></span>
                                 <button
-                                        class="oe_highlight"
-                                        name="import_stages"
-                                        string="Import Stages"
-                                        style=" width: 150px; height: 30px;"
-                                        type="object"
-                                    />
+                                    class="oe_highlight"
+                                    name="import_stages"
+                                    string="Import Stages"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
                             </group>
                             <br />
                             <group>
                                 <span><b>Click to Import Tasks of ClickUp</b></span>
                                 <button
-                                        class="oe_highlight"
-                                        name="import_tasks"
-                                        string="Import Tasks"
-                                        style=" width: 150px; height: 30px;"
-                                        type="object"
-                                    />
+                                    class="oe_highlight"
+                                    name="import_tasks"
+                                    string="Import Tasks"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
                             </group>
-                        </group>
+
                         </page>
                         <page string="Export">
+
                             <group>
                                 <span><b
                                     >Click to Export Projects In ClickUp remote</b></span>
@@ -94,6 +95,7 @@
                                     type="object"
                                 />
                             </group>
+
                         </page>
                     </notebook>
                 </sheet>

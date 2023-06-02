@@ -32,7 +32,7 @@ class ClickupAbstractModel(models.AbstractModel):
 
     @api.model
     def export_batch(self, backend, filters=None):
-        """Prepare the import of records modified on Odoo"""
+        """Prepare to export the records modified on Odoo"""
         if filters is None:
             filters = {}
         with backend.work_on(self._name) as work:
@@ -40,7 +40,7 @@ class ClickupAbstractModel(models.AbstractModel):
             return exporter.run(filters=filters)
 
     def export_record(self, backend, record, fields=None):
-        """Export a record on scayle"""
+        """Export a record on ClickUp"""
 
         record.ensure_one()
         with backend.work_on(self._name) as work:

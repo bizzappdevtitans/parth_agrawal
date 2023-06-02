@@ -2,7 +2,7 @@ from odoo.addons.component.core import AbstractComponent
 
 
 class BaseClickupConnectorComponent(AbstractComponent):
-    """Base Akeneo Connector Component
+    """Base Clickup Connector Component
     All components of this connector should inherit from it.
     """
 

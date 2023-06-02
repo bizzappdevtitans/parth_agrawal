@@ -44,8 +44,8 @@ class TaskTypeAdapter(Component):
     _name = "clickup.project.task.type.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.task.type"
-    _akeneo_model = "/list/{}/task"
-    _akeneo_ext_id_key = "status"
+    _clickup_model = "/list/{}/task"
+    _clickup_ext_id_key = "status"
 
     def search(self, filters=None):
         """
@@ -69,7 +69,7 @@ class TaskTypeAdapter(Component):
             list_id = external_id
 
             resource_path = "/list/{}/task".format(list_id)
-            self._akeneo_model = resource_path
+            self._clickup_model = resource_path
             # project_result = self._call(resource_path, arguments=filters)
 
             # result.append(resource_path)

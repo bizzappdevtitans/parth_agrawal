@@ -5,13 +5,11 @@ import urllib
 from datetime import datetime
 
 import requests
+from simplejson.errors import JSONDecodeError
 
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import InvalidDataError, NetworkRetryableError
 from odoo.addons.queue_job.exception import RetryableJobError
-
-MAGENTO_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-from simplejson.errors import JSONDecodeError
 
 _logger = logging.getLogger(__name__)
 
@@ -24,7 +22,7 @@ class ClickupTokenLocation(object):
 
     @property
     def location(self):
-        """Token location of the Akeneo"""
+        """Token location of the Clickup"""
         return self._location
 
 
@@ -38,7 +36,7 @@ class ClickupLocation(object):
 
     @property
     def location(self):
-        """Main location of the Akeneo"""
+        """Main location of the Clickup"""
         location = "https://api.clickup.com/api/v2"
         return location
 
@@ -60,7 +58,7 @@ class ClickupClient(object):
         self._model = model
 
     def get_header(self):
-        """Headers for the akeneo api"""
+        """Headers for the clickup api"""
         headers = {
             "Content-Type": "application/json",
             "Authorization": "%s" % (self._token),
@@ -72,10 +70,6 @@ class ClickupClient(object):
         search_json = arguments.get("search")
         search_dict = json.loads(search_json) if search_json else {}
         search_dict.get("updated", [{}])[0].get("action")
-        # if find == "import":
-        #     http_method = "get"
-        # if find == "export":
-        #     http_method = "post"
 
         url = self._location + resource_path
 
@@ -141,7 +135,7 @@ class ClickupClient(object):
 
             return result
         except JSONDecodeError:
-            _logger.warning("\n Everstox Response Content :%s \n" % (res._content))
+            _logger.warning("\n Clickup Response Content :%s \n" % (res._content))
             return res._content
 
 
@@ -156,12 +150,12 @@ class ClickupAPI(object):
     def api(self):
         """Config the API values"""
         if self._api is None:
-            akeneo_client = ClickupClient(
+            clickup_client = ClickupClient(
                 self.location.location,
                 self.location.token,
                 self.location.model,
             )
-            self._api = akeneo_client
+            self._api = clickup_client
 
         return self._api
 
@@ -237,7 +231,7 @@ class ClickupAPI(object):
 
 
 class ClickupCRUDAdapter(AbstractComponent):
-    """External Records Adapter for Magento"""
+    """External Records Adapter for Clickup"""
 
     # pylint: disable=method-required-super
 
@@ -261,14 +255,14 @@ class ClickupCRUDAdapter(AbstractComponent):
 
     def _call(self, resource_path, arguments=None, http_method=None, storeview=None):
         try:
-            akeneo_api = getattr(self.work, "akeneo_api")  # noqa: B009
+            clickup_api = getattr(self.work, "clickup_api")  # noqa: B009
         except AttributeError:
             raise AttributeError(
-                "You must provide a magento_api attribute with a "
-                "MagentoAPI instance to be able to use the "
+                "You must provide a clickup_api attribute with a "
+                "ClickUpAPI instance to be able to use the "
                 "Backend Adapter."
             )
-        return akeneo_api.call(resource_path, arguments, http_method=http_method)
+        return clickup_api.call(resource_path, arguments, http_method=http_method)
 
 
 class GenericAdapter(AbstractComponent):
@@ -277,7 +271,7 @@ class GenericAdapter(AbstractComponent):
     _name = "clickup.adapter"
     _inherit = "clickup.crud.adapter"
     _odoo_ext_id_key = "external_id"
-    _akeneo_model = None
+    _clickup_model = None
     _last_update_date = "updated"
 
     def search(self, filters=None):
@@ -287,7 +281,7 @@ class GenericAdapter(AbstractComponent):
         :rtype: dict
         """
 
-        resource_path = self._akeneo_model
+        resource_path = self._clickup_model
 
         result = self._call(resource_path, arguments=filters)
         return result
@@ -297,7 +291,7 @@ class GenericAdapter(AbstractComponent):
         Search records according to some criteria
         and returns their information
         """
-        resource_path = self._akeneo_model
+        resource_path = self._clickup_model
         result = self._call(resource_path, arguments=filters)
         return result
 
@@ -306,7 +300,7 @@ class GenericAdapter(AbstractComponent):
 
         :rtype: dict
         """
-        resource_path = self._akeneo_model
+        resource_path = self._clickup_model
         if external_id:
             resource_path = "{}/{}".format(resource_path, external_id)
         result = self._call(resource_path)
@@ -315,14 +309,14 @@ class GenericAdapter(AbstractComponent):
     def create(self, data):
         """Create a record on the external system"""
 
-        resource_path = self._akeneo_model
+        resource_path = self._clickup_model
         result = self._call(resource_path, data, http_method="post")
         return result
 
     def write(self, external_id, data):
         """Update records on the external system"""
 
-        resource_path = self._akeneo_model
+        resource_path = self._clickup_model
         # resource_path = "{}/{}".format(resource_path, external_id)
         # if self._remote_model_extension:
         #     resource_path = "{}/{}".format(resource_path, self._remote_model_extension)
@@ -332,7 +326,7 @@ class GenericAdapter(AbstractComponent):
 
     def delete(self, external_id):
         """Delete a record on the external system"""
-        resource_path = self._akeneo_model
+        resource_path = self._clickup_model
         resource_path = "{}/{}".format(resource_path, external_id)
         result = self._call(resource_path, http_method="delete")
         return result

@@ -1,13 +1,3 @@
-"""
-Exporters for Everstox.
-
-In addition to its export job, an exporter has to:
-
-* check in Everstox if the record has been updated more recently than the
-  last sync date and if yes, delay an import
-* call the ``bind`` method of the binder to update the last sync date
-
-"""
 import logging
 
 import psycopg2
@@ -23,7 +13,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ClickupExporter(AbstractComponent):
-    """A common flow for the exports to Everstox"""
+    """A common flow for the exports to Clickup"""
 
     _name = "clickup.exporter"
     _inherit = ["base.exporter", "base.clickup.connector"]
@@ -103,7 +93,7 @@ class ClickupExporter(AbstractComponent):
         return map_record.values(for_create=True, fields=fields, **kwargs)
 
     def _create(self, data):
-        """Create the Magento record"""
+        """Create the Clickup record"""
         # special check on data before export
         self._validate_create_data(data)
         return self.backend_adapter.create(data)
@@ -113,7 +103,7 @@ class ClickupExporter(AbstractComponent):
         return map_record.values(fields=fields, **kwargs)
 
     def _update(self, data):
-        """Update an Magento record"""
+        """Update an Clickup record"""
         assert self.external_id
         # special check on data before export
         self._validate_update_data(data)
@@ -207,8 +197,8 @@ class ClickupExporter(AbstractComponent):
         if not relation:
             return
         # wrap is typically True if the relation is for instance a
-        # 'product.product' record but the binding model is
-        # 'my_bakend.product.product'
+        # 'project.project' record but the binding model is
+        # 'my_bakend.project.project'
         wrap = relation._name != binding_model
 
         if wrap and hasattr(relation, binding_field):
@@ -222,10 +212,10 @@ class ClickupExporter(AbstractComponent):
                     "only 1 binding for a backend is " "supported in _export_dependency"
                 )
             # we are working with a unwrapped record (e.g.
-            # product.category) and the binding does not exist yet.
-            # Example: I created a product.product and its binding
-            # my_backend.product.product and we are exporting it, but we need
-            # to create the binding for the product.category on which it
+            # project.project) and the binding does not exist yet.
+            # Example: I created a project.task and its binding
+            # my_backend.project.task and we are exporting it, but we need
+            # to create the binding for the project.project on which it
             # depends.
             else:
                 with self._retry_unique_violation():
@@ -293,7 +283,7 @@ class ClickupExporter(AbstractComponent):
                 return _("Nothing to export.")
             res = self._create(record)
             if isinstance(res, dict):
-                self.external_id = res.get(self.backend_adapter._akeneo_ext_id_key)
+                self.external_id = res.get(self.backend_adapter._clickup_ext_id_key)
             else:
                 self.external_id = self.binding[self.backend_adapter._odoo_ext_id_key]
 
@@ -313,13 +303,13 @@ class BatchExporter(AbstractComponent):
     # def run(self, filters=None):
     #     """Run the synchronization"""
     #     records = self.backend_adapter.search(filters)
-    #     print("\n\nInside batch=", records)
+
     #     self._export_record(records)
 
     # def run(self, filters=None):
     #     """Run the synchronization"""
     #     records = self.backend_adapter.search(filters)
-    #     print("\n\n batch run=", records)
+
     #     for record in records["lists"]:
     #         self._export_record(record)
 

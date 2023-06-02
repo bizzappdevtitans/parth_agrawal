@@ -20,15 +20,7 @@ class ProjectProjectImporter(Component):
 
     def _after_import(self, binding, **kwargs):
         """Hook called at the end of the import"""
-        # images
-        # T-02210 Iterate over all akeneo_image_ids read file and set image URL
-        # for akeneo_image in binding.akeneo_image_ids:
-        #     if not akeneo_image.image_path:
-        #         continue
-        #     image_path = akeneo_image.image_path
-        #     image_value = self.get_image_url(image_path)
-        #     image_url = image_value.get("value", {}).get("value")
-        #     akeneo_image.write({"image_url": image_url})
+
         return super(ProjectProjectImporter, self)._after_import(binding, **kwargs)
 
 
@@ -45,7 +37,7 @@ class ProjectProjectBatchImporter(Component):
         records = self.backend_adapter.search(filters)
 
         for record in records["lists"]:
-            external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
+            external_id = record.get(self.backend_adapter._clickup_ext_id_key)
 
             self._import_record(external_id, data=record, force=force)
 

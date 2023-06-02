@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ClickupImporter(AbstractComponent):
-    """Base importer for akeneo"""
+    """Base importer for clickup"""
 
     _name = "clickup.importer"
     _inherit = ["base.importer", "base.clickup.connector"]
@@ -24,18 +24,18 @@ class ClickupImporter(AbstractComponent):
         """Inherit init method."""
         super(ClickupImporter, self).__init__(work_context)
         self.external_id = None
-        self.akeneo_record = None
+        self.clickup_record = None
 
-    def _get_akeneo_data(self):
-        """Return the raw akeneo data for ``self.external_id``"""
+    def _get_clickup_data(self):
+        """Return the raw clickup data for ``self.external_id``"""
         data = self.backend_adapter.read(self.external_id)
-        if not data.get(self.backend_adapter._akeneo_ext_id_key):
-            data[self.backend_adapter._akeneo_ext_id_key] = self.external_id
+        if not data.get(self.backend_adapter._clickup_ext_id_key):
+            data[self.backend_adapter._clickup_ext_id_key] = self.external_id
         return data
 
     def _before_import(self):
         """
-        Hook called before the import, when we have the akeneo
+        Hook called before the import, when we have the clickup
         data
         """
         # pass
@@ -45,26 +45,26 @@ class ClickupImporter(AbstractComponent):
         Return True if the import should be skipped because
         it is already up-to-date in OpenERP
         """
-        assert self.akeneo_record
+        assert self.clickup_record
         last_update_date = self.backend_adapter._last_update_date
-        update_date = self.akeneo_record.get(last_update_date, "")
+        update_date = self.clickup_record.get(last_update_date, "")
         if (
             not update_date
             or not binding
             or (binding and not hasattr(binding, "updated_at"))
         ):
-            return  # no update date on akeneo, always import it.
+            return  # no update date on clickup, always import it.
         sync = binding.updated_at
         from_string = dtparser.parse
         sync_date = sync.replace(tzinfo=pytz.UTC)
-        akeneo_date = from_string(update_date).replace(tzinfo=pytz.UTC)
+        clickup_date = from_string(update_date).replace(tzinfo=pytz.UTC)
         # if the last synchronization date is greater than the last
-        # update in akeneo, we skip the import.
+        # update in clickup, we skip the import.
         # Important: at the beginning of the exporters flows, we have to
-        # check if the akeneo_date is more recent than the sync_date
+        # check if the clickup_date is more recent than the sync_date
         # and if so, schedule a new import. If we don't do that, we'll
-        # miss changes done in akeneo
-        return akeneo_date <= sync_date
+        # miss changes done in clickup
+        return clickup_date <= sync_date
 
     def _import_dependency(
         self, external_id, binding_model, importer=None, always=False
@@ -73,7 +73,7 @@ class ClickupImporter(AbstractComponent):
         Import a dependency.
 
         The importer class is a class or subclass of
-        :class:`akeneoImporter`. A specific class can be defined.
+        :class:`ClickupImporter`. A specific class can be defined.
 
         :param external_id: id of the related binding to import
         :param binding_model: name of the binding model for the relation
@@ -83,7 +83,7 @@ class ClickupImporter(AbstractComponent):
         :type importer_component: Component
         :param always: if True, the record is updated even if it already
                        exists, note that it is still skipped if it has
-                       not been modified on akeneo since the last
+                       not been modified on clickup since the last
                        update. When False, it will import it only when
                        it does not yet exist.
         :type always: boolean
@@ -114,7 +114,7 @@ class ClickupImporter(AbstractComponent):
         if not hasattr(self.backend_adapter, "_model_dependencies"):
             return
         for dependency in self.backend_adapter._model_dependencies:
-            record = self.akeneo_record
+            record = self.clickup_record
             model, key = dependency
             external_id = record.get(key)
             self._import_dependency(external_id=external_id, binding_model=model)
@@ -125,7 +125,7 @@ class ClickupImporter(AbstractComponent):
         :py:class:`~odoo.addons.connector.components.mapper.MapRecord`
 
         """
-        return self.mapper.map_record(self.akeneo_record)
+        return self.mapper.map_record(self.clickup_record)
 
     def _validate_data(self, data):
         """
@@ -169,7 +169,7 @@ class ClickupImporter(AbstractComponent):
         )
         binding = model.sudo().create(data)
 
-        _logger.debug("%d created from akeneo %s", binding, self.external_id)
+        _logger.debug("%d created from clickup %s", binding, self.external_id)
         return binding
 
     def _update_data(self, map_record, **kwargs):
@@ -180,7 +180,7 @@ class ClickupImporter(AbstractComponent):
         # special check on data before import
         self._validate_data(data)
         binding.with_context(connector_no_export=True).write(data)
-        _logger.debug("%d updated from Akeneo %s", binding, self.external_id)
+        _logger.debug("%d updated from clickup %s", binding, self.external_id)
         return
 
     def _after_import(self, binding, **kwargs):
@@ -191,7 +191,7 @@ class ClickupImporter(AbstractComponent):
         """
         Run the synchronization
 
-        :param external_id: code of the record on akeneo
+        :param external_id: code of the record on clickup
         """
         self.external_id = external_id
         lock_name = "import({}, {}, {}, {})".format(
@@ -202,10 +202,10 @@ class ClickupImporter(AbstractComponent):
         )
 
         if data:
-            self.akeneo_record = data
+            self.clickup_record = data
         else:
             try:
-                self.akeneo_record = self._get_akeneo_data()
+                self.clickup_record = self._get_clickup_data()
             except IDMissingInBackend:
                 return _("Record does no longer exist in akeneo")
 
@@ -255,9 +255,9 @@ class BatchImporter(AbstractComponent):
     #     """Run the synchronization"""
 
     #     records = self.backend_adapter.search(filters)
-    #     print("\n\nBatch run=", records)
+
     #     for record in records:
-    #         external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
+    #         external_id = record.get(self.backend_adapter._clickup_ext_id_key)
 
     #         self._import_record(external_id, data=record, force=force)
 
