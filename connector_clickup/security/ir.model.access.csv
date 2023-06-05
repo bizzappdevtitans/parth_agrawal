@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_clickup_backend,access_clickup_backend,model_clickup_backend,base.group_user,1,1,1,1
+access_clickup_project_project,access_clickup_project_project,model_clickup_project_project,base.group_user,1,1,1,1
+access_clickup_project_tasks,access_clickup_project_tasks,model_clickup_project_tasks,base.group_user,1,1,1,1
+access_clickup_project_task_type,access_clickup_project_task_type,model_clickup_project_task_type,base.group_user,1,1,1,1

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- Form view for clickup.backend model -->
+        <record id="view_clickup_backend_form" model="ir.ui.view">
+            <field name="name">Clickup Backend Form</field>
+            <field name="model">clickup.backend</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field
+                                name="name"
+                                placeholder="Ex:-Test 1"
+                                style="font-size:13pt;"
+                            />
+                            <field name="api_key" />
+                            <field name="uri" />
+                        </group>
+                        <footer>
+                            <button
+                                class="oe_highlight"
+                                name="import_projects"
+                                string="Import Projects"
+                                style="margin-right:10px;"
+                                type="object"
+                            />
+                            <button
+                                class="oe_highlight"
+                                name="import_stages"
+                                string="Import Stages"
+                                style="margin-right:10px;"
+                                type="object"
+                            />
+                            <button
+                                class="oe_highlight"
+                                name="import_tasks"
+                                string="Import Tasks"
+                                style="margin-right:10px;"
+                                type="object"
+                            />
+                        </footer>
+                        <notebook>
+                            <page string="Basic Information">
+                                <group>
+                                    <span><b>
+                                    1) You need API Token as well as Endpoint Location ID(Folder_id) in order to successfully import Projects, Tasks and Stages from ClickUp Project Management.<br
+                                            /><br />
+                                    2) If you are Importing first time from Connector ClickUp, you need to First Import Projects then Stages and Lastly Tasks.<br
+                                            /><br />
+                                    3) If you made changes only in tasks in ClickUp project management you can directly import tasks in order to update that specific task's data.<br
+                                            /><br />
+                                    4) This module uses binding terminology to import projects, tasks and stages from ClickUp project management so you can not directly delete any of these data from Project module without deleting it from it's co-responsible binding models.<br
+                                            /></b>
+                                    </span>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Tree view for clickup.backend model -->
+        <record id="view_clickup_backend_tree" model="ir.ui.view">
+            <field name="name">Clickup Backend Tree</field>
+            <field name="model">clickup.backend</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="api_key" />
+                    <field name="uri" />
+                </tree>
+            </field>
+        </record>
+        <!-- Action to open the clickup.backend view -->
+        <record id="action_clickup_backend_form" model="ir.actions.act_window">
+            <field name="name">Clickup Backend</field>
+            <field name="res_model">clickup.backend</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- Menu item to open the clickup.backend -->
+        <menuitem id="menu_clickup_backend_form_main" name="Connector Clickup" />
+        <menuitem
+            action="action_clickup_backend_form"
+            id="menu_clickup_backend_form"
+            name="Clickup Backend"
+            parent="menu_clickup_backend_form_main"
+        />
+    </data>
+</odoo>

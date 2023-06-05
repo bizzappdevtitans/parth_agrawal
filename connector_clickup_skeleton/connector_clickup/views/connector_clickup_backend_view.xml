@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_clickup_backend_form" model="ir.ui.view">
+        <field name="name">clickup.backend.form</field>
+        <field name="model">clickup.backend</field>
+        <field name="arch" type="xml">
+            <form string="Clickup Backend">
+                <sheet>
+                    <group>
+                        <field
+                            name="name"
+                            placeholder="Ex:-Test 1"
+                            style="font-size:13pt;"
+                        />
+                        <field name="api_key" />
+                        <field name="uri" />
+                    </group>
+                    <notebook>
+                        <page string="Basic Information">
+                            <group>
+                                <span>
+                                    <b
+                                    >1) You need API Token as well as Endpoint Location ID(Folder_id) in order to successfully import Projects, Tasks and Stages from ClickUp Project Management.
+                                        <br />
+                                        <br />
+                                        2) If you are Importing first time from Connector ClickUp, you need to First Import Projects then Stages and Lastly Tasks.
+                                        <br />
+                                        <br />
+                                        3) If you made changes only in tasks in ClickUp project management you can directly import tasks in order to update that specific task's data.
+                                        <br />
+                                        <br />
+                                        4) This module uses binding terminology to import projects, tasks and stages from ClickUp project management so you can not directly delete any of these data from Project module without deleting it from it's co-responsible binding models.
+                                        <br /></b>
+                                </span>
+                            </group>
+                        </page>
+                        <page string="Import">
+
+                                <group>
+                                <span><b>Click to Import Projects of ClickUp</b></span>
+                                <button
+                                    class="oe_highlight"
+                                    name="import_projects"
+                                    string="Import Projects"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
+                            </group>
+                            <br />
+                            <group>
+                                <span><b>Click to Import Stages of ClickUp</b></span>
+                                <button
+                                    class="oe_highlight"
+                                    name="import_stages"
+                                    string="Import Stages"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
+                            </group>
+                            <br />
+                            <group>
+                                <span><b>Click to Import Tasks of ClickUp</b></span>
+                                <button
+                                    class="oe_highlight"
+                                    name="import_tasks"
+                                    string="Import Tasks"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
+                            </group>
+
+                        </page>
+                        <page string="Export">
+
+                            <group>
+                                <span><b
+                                    >Click to Export Projects In ClickUp remote</b></span>
+                                <button
+                                    class="oe_highlight"
+                                    name="export_projects"
+                                    string="Export Projects"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
+                            </group>
+                            <br />
+                            <group>
+                                <span><b
+                                    >Click to Export Tasks In ClickUp remote</b></span>
+                                <button
+                                    class="oe_highlight"
+                                    name="export_tasks"
+                                    string="Export Tasks"
+                                    style=" width: 150px; height: 30px;"
+                                    type="object"
+                                />
+                            </group>
+
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_clickup_backend_tree" model="ir.ui.view">
+        <field name="name">clickup.backend.tree</field>
+        <field name="model">clickup.backend</field>
+        <field name="arch" type="xml">
+            <tree string="Clickup Backend">
+                <field name="name" />
+                <field name="uri" />
+            </tree>
+        </field>
+    </record>
+    <record id="action_clickup_backend" model="ir.actions.act_window">
+        <field name="name">Clickup Backend</field>
+        <field name="res_model">clickup.backend</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_clickup_backend_tree" />
+    </record>
+    <menuitem
+        id="menu_clickup_root"
+        name="Clickup"
+        parent="connector.menu_connector_root"
+    />
+    <menuitem
+        action="action_clickup_backend"
+        id="menu_clickup_backend"
+        name="Backends"
+        parent="menu_clickup_root"
+        sequence="2"
+    />
+</odoo>
