@@ -1,0 +1,69 @@
+interactions:
+  - request:
+      body: null
+      headers:
+        Accept: ["*/*"]
+        Accept-Encoding: ["gzip, deflate, br"]
+        Connection: [keep-alive]
+        User-Agent: [python-requests/2.19.1]
+      method: GET
+      uri: https://api.clickup.com/api/v2/list/%7B%7D/task/85zt6b21b
+    response:
+      body: {string:
+                  '{
+                    "id": "85zt6b21b",
+                    "name": "again inside again",
+                    "status": {
+                      "status": "to do",
+                      "color": "#d3d3d3",
+                      "orderindex": 0,
+                      "type": "open"
+                    },
+                    "orderindex": "39714443.00000000000000000000000000000000",
+                    "date_created": "1685517648660",
+                    "date_updated": "1685688260381",
+                    "date_closed": null,
+                    "date_done": null,
+                    "creator": {
+                      "id": 67222607,
+                      "username": "Parth",
+                      "color": "#202020",
+                      "profilePicture": null,
+                    },
+                    "assignees": [],
+                    "checklists": [],
+                    "tags": [],
+                    "parent": null,
+                    "priority": null,
+                    "due_date": null,
+                    "start_date": null,
+                    "time_estimate": null,
+                    "time_spent": null,
+                    "list": {
+                      "id": "900200890774"
+                    },
+                    "folder": {
+                      "id": "90020435594"
+                    },
+                    "space": {
+                      "id": "90020155368"
+                    },
+                    "url": "https://app.clickup.com/t/85zt6b21b"
+                  }'
+            }
+
+
+      headers:
+        Cache-Control: ["no-store, no-cache, must-revalidate"]
+        Connection: [keep-alive]
+        Content-Type: [application/json; charset=utf-8]
+        Date: ["Thu, 05 Jun 2023 05:38:29 GMT"]
+        Expires: ["Jan 23 23:59:59 2024 GMT"]
+        Server: [nginx/1.14.0 (Ubuntu)]
+        Set-Cookie:
+          ["expires=Fri, 30-Jun-2017 15:27:02 GMT; path=/; domain=everstox; HttpOnly"]
+        Transfer-Encoding: [chunked]
+        Vary: [Accept-Encoding]
+        X-Frame-Options: [SAMEORIGIN]
+        content-length: ["13780"]
+      status: {code: 200, message: OK}
