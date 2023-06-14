@@ -77,6 +77,8 @@ class ClickupClient(object):
         if headers:
             default_headers.update(headers)
         kwargs = {"headers": default_headers}
+        if arguments and arguments.get("next_url"):
+            url = arguments.pop("next_url")
         if http_method == "get":
             kwargs["params"] = arguments
         elif isinstance(arguments, str):

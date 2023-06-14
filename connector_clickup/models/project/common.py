@@ -152,17 +152,17 @@ class ProjectAdapter(Component):
 
     def write(self, external_id, data):
         """Update records on the external system"""
-        if self.backend_record.test_mode is True:
-            backend_record = self.backend_record
-            folder_id = (
-                backend_record.test_location if backend_record.test_location else None
-            )
-        else:
-            backend_record = self.backend_record
-            folder_id = backend_record.uri if backend_record.uri else None
+        # if self.backend_record.test_mode is True:
+        #     backend_record = self.backend_record
+        #     folder_id = (
+        #         backend_record.test_location if backend_record.test_location else None
+        #     )
+        # else:
+        #     backend_record = self.backend_record
+        #     folder_id = backend_record.uri if backend_record.uri else None
 
-        resource_path = "/folder/{}/list".format(folder_id)
-        self._clickup_model = resource_path
+        # resource_path = "/folder/{}/list".format(folder_id)
+        # self._clickup_model = resource_path
         if external_id:
             resource_path = "/list/{}".format(external_id)
             self._clickup_model = resource_path

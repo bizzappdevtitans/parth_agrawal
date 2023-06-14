@@ -66,3 +66,9 @@ class ProjectProjectImportMapper(Component):
         content = soup.get_text()
 
         return {"content": content}
+
+    @mapping
+    def folder_id(self, record):
+        content = record.folder_id
+
+        return {"folder_id": content}

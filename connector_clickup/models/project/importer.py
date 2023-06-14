@@ -21,15 +21,46 @@ class ProjectProjectBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.project"
 
+    # def run(self, filters=None, force=False):
+    #     """Run the synchronization"""
+
+    #     records = self.backend_adapter.search(filters)
+    #     print("\n\nFull Payload =", records, "\n\n")
+    #     next_url = self.get_data_items(result=records, only_ids=True)
+    #     for record in records["lists"]:
+    #         external_id = record.get(self.backend_adapter._clickup_ext_id_key)
+
+    #         self._import_record(external_id, data=record, force=force)
+    #     if next_url:
+    #         filters["next_url"] = next_url
+    #         self.process_next_page(filters=filters)
+
     def run(self, filters=None, force=False):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
+        print("\n\nFull Payload =", records, "\n\n")
+        items, next_url = self.get_data_items(result=records, only_ids=False)
 
-        for record in records["lists"]:
+        print("items==", items)
+        for record in items:
             external_id = record.get(self.backend_adapter._clickup_ext_id_key)
 
             self._import_record(external_id, data=record, force=force)
+        if next_url:
+            filters["next_url"] = next_url
+            self.process_next_page(filters=filters)
+
+    # def run(self, filters=None, force=False):
+    #     """Run the synchronization"""
+    #     try:
+    #         records = self.backend_adapter.search(filters)
+    #         for record in records:
+    #             external_id = record.get(self.backend_adapter._akeneo_ext_id_key)
+    #             self._import_record(external_id, data=record, force=force)
+    #         self.process_next_page(filters)
+    #     except Exception as err:
+    #         raise ValidationError(_("Error : %s" % (err)))
 
 
 class ProjectProjectImportMapper(Component):

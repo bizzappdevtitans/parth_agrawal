@@ -26,7 +26,13 @@ class ClickupBackend(models.Model):
     _description = "Clickup backend"
 
     name = fields.Char(string="Clickup Backend ID", required=True)
-
+    auth_type = fields.Selection(
+        [("api_key", "API Key"), ("Oauth", "Oauth Authentication")],
+        string="Authentication type",
+        required=True,
+        default="api_key",
+    )
+    datetime_filter = fields.Datetime(string="Import From")
     # Live
     api_key = fields.Char(string="API Key/Token", required=True)
     uri = fields.Char(string="URI/Location", required=True)
@@ -35,6 +41,8 @@ class ClickupBackend(models.Model):
     test_mode = fields.Boolean(string="Test Mode", default=True)
     test_token = fields.Char(string="Test API Key/Token")
     test_location = fields.Char(string="Test URI/Location")
+
+    limit = fields.Integer(string="Limit", default=100)
 
     def toggle_test_mode(self):
         for record in self:
@@ -78,7 +86,7 @@ class ClickupBackend(models.Model):
             )
 
             filters["search"] = json.dumps(search_dict)
-            # filters["limit"] = backend.limit
+            filters["limit"] = backend.limit
             filters["with_count"] = "true"
             force = False
             if force_update_field:
@@ -110,12 +118,14 @@ class ClickupBackend(models.Model):
 
     def import_projects(self, with_delay=True, from_sync=False):
         """#T-02421 Import Clickup References"""
-
+        filters = {}
         for backend in self:
+            filters.update({"limit": backend.limit})
             backend._import_from_date(
                 model="clickup.project.project",
                 from_date_field=None if not from_sync else False,
                 priority=0,
+                filters=filters,
                 with_delay=with_delay,
             )
 

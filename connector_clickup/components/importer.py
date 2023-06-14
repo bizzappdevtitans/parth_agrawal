@@ -233,6 +233,20 @@ class BatchImporter(AbstractComponent):
     _inherit = ["base.importer", "base.clickup.connector"]
     _usage = "batch.importer"
 
+    def get_data_items(self, result, only_ids=False):
+        """Split the ids and next page information from result of Akeneo"""
+        next_url = []
+
+        for record in result["lists"]:
+            external_id = record.get("permission_level")
+            next_url.append(external_id)
+        print("\n\ninside get data items=\n\n", next_url)
+        items = result.get("lists", [])
+        if only_ids:
+            key = self.backend_adapter._clickup_ext_id_key
+            items = [item[key] for item in items]
+        return items, next_url
+
     def _import_record(self, external_id):
         """Import a record directly or delay the import of the record.
 
@@ -242,6 +256,7 @@ class BatchImporter(AbstractComponent):
 
     def process_next_page(self, filters=None, job_options=None, **kwargs):
         """Method to trigger batch import for Next page"""
+        print("\n\n\n\nfilters in process next page==", filters)
         if not filters:
             filters = {}
         job_options = job_options or {}

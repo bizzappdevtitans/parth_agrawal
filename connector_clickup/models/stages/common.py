@@ -47,9 +47,16 @@ class TaskTypeAdapter(Component):
         Returns the information of a record
         :rtype: dict
         """
-
-        backend_record = self.backend_record  # Retrieve the first record
-        folder_id = backend_record.uri if backend_record.uri else None
+        if self.backend_record.test_mode is True:
+            print("\n\ntest_mode\n\n")
+            backend_record = self.backend_record
+            folder_id = (
+                backend_record.test_location if backend_record.test_location else None
+            )
+        else:
+            print("\n\nproduction\n\n")
+            backend_record = self.backend_record
+            folder_id = backend_record.uri if backend_record.uri else None
 
         project_model = self.env["project.project"]
 
