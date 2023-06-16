@@ -43,46 +43,14 @@ class ProjectProject(models.Model):
 
     folder_id = fields.Char(string="Folder Id", readonly=True)
 
-    def get_clickup_project_payload(self):
-        """This method returns the clickup's project and task payload"""
-        import requests
-
-        list_id = self.external_id
-        url = "https://api.clickup.com/api/v2/list/" + list_id
-
-        headers = {"Authorization": self.api_token_data}
-
-        response = requests.get(url, headers=headers)
-
-        if response.status_code != 200:
-            raise ValidationError(
-                _(
-                    "Invalid API key to update the project,Please import project to update",
-                )
-            )
-
-        data = response.json()
-
-        tasks_url = "https://api.clickup.com/api/v2/list/{}/task".format(list_id)
-        tasks_response = requests.get(tasks_url, headers=headers)
-        tasks_data = tasks_response.json()
-
-        data["tasks"] = tasks_data["tasks"]
-
-        return data
-
     def open_project(self):
-        data = self.get_clickup_project_payload()
-        for task in data.get("tasks", []):
-            team_id = task.get("team_id")
+        result = {
+            "type": "ir.actions.act_url",
+            "url": f"https://app.clickup.com/{self.folder_id}/v/l/li/{self.external_id}",
+            "target": "new",
+        }
 
-            result = {
-                "type": "ir.actions.act_url",
-                "url": f"https://app.clickup.com/{team_id}/v/l/li/{self.external_id}",
-                "target": "new",
-            }
-
-            return result
+        return result
 
     def update_project(self, job_options=None):
         pass
@@ -105,9 +73,37 @@ class ProjectAdapter(Component):
     _name = "clickup.project.project.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.project"
-    _clickup_model = "/folder/{}/list"
+    # _clickup_model = "/folder/{}/list"
+    # _clickup_model = "/team"
+    _clickup_model = "/space/{}/folder"
     _odoo_ext_id_key = "external_id"
     _clickup_ext_id_key = "id"
+
+    # def search(self, filters=None):
+    #     """
+    #     Returns the information of a record
+
+    #     :rtype: dict
+    #     """
+    #     # if self.backend_record.test_mode is True:
+    #     #     print("comming inside")
+    #     #     backend_record = self.backend_record
+    #     #     folder_id = (
+    #     #         backend_record.test_location if backend_record.test_location else None
+    #     #     )
+    #     #     print("\n\n folder id", folder_id)
+    #     # else:
+    #     #     print("production")
+    #     #     backend_record = self.backend_record
+    #     #     folder_id = backend_record.uri if backend_record.uri else None
+    #     space_id = self.backend_record.uri
+    #     resource_path = "/space/{}/folder".format(space_id)
+    #     # if not filters.get("folder_id"):
+    #     #     resource_path = "/space/{}/list".format(space_id)
+    #     # records = self.search(filters)
+    #     # print("payload inside search", records)
+    #     self._clickup_model = resource_path
+    #     return super(ProjectAdapter, self).search(filters)
 
     def search(self, filters=None):
         """
@@ -115,21 +111,20 @@ class ProjectAdapter(Component):
 
         :rtype: dict
         """
-        if self.backend_record.test_mode is True:
-            print("comming inside")
-            backend_record = self.backend_record
-            folder_id = (
-                backend_record.test_location if backend_record.test_location else None
-            )
-            print("\n\n folder id", folder_id)
-        else:
-            print("production")
-            backend_record = self.backend_record
-            folder_id = backend_record.uri if backend_record.uri else None
+        space_id = self.backend_record.uri
 
-        resource_path = "/folder/{}/list".format(folder_id)
-        self._clickup_model = resource_path
-        return super(ProjectAdapter, self).search(filters)
+        # Run resource_path = "/space/{}/list".format(space_id)
+        list_resource_path = "/space/{}/list".format(space_id)
+        self._clickup_model = list_resource_path
+        list_results = super(ProjectAdapter, self).search(filters)
+
+        # Run resource_path = "/space/{}/folder".format(space_id)
+        folder_resource_path = "/space/{}/folder".format(space_id)
+        self._clickup_model = folder_resource_path
+        folder_results = super(ProjectAdapter, self).search(filters)
+
+        # Return the combined results
+        return {"list_results": list_results, "folder_results": folder_results}
 
     def create(self, data):
         """
@@ -137,16 +132,17 @@ class ProjectAdapter(Component):
 
         :rtype: dict
         """
-        if self.backend_record.test_mode is True:
-            backend_record = self.backend_record
-            folder_id = (
-                backend_record.test_location if backend_record.test_location else None
-            )
-        else:
-            backend_record = self.backend_record
-            folder_id = backend_record.uri if backend_record.uri else None
+        # if self.backend_record.test_mode is True:
+        #     backend_record = self.backend_record
+        #     folder_id = (
+        #         backend_record.test_location if backend_record.test_location else None
+        #     )
+        # else:
+        #     backend_record = self.backend_record
+        #     folder_id = backend_record.uri if backend_record.uri else None
+        space_id = self.backend_record.uri
+        resource_path = "/space/{}/list".format(space_id)
 
-        resource_path = "/folder/{}/list".format(folder_id)
         self._clickup_model = resource_path
         return super(ProjectAdapter, self).create(data)
 

@@ -40,16 +40,37 @@ class ProjectProjectBatchImporter(Component):
 
         records = self.backend_adapter.search(filters)
         print("\n\nFull Payload =", records, "\n\n")
-        items, next_url = self.get_data_items(result=records, only_ids=False)
 
-        print("items==", items)
-        for record in items:
-            external_id = record.get(self.backend_adapter._clickup_ext_id_key)
+        list_results = records.get("list_results", {})
+        print("\n\noutside project Payload =", list_results, "\n\n")
+        folder_results = records.get("folder_results", {})
+        print("\n\ninside folder project Payload =", folder_results, "\n\n")
 
-            self._import_record(external_id, data=record, force=force)
-        if next_url:
-            filters["next_url"] = next_url
-            self.process_next_page(filters=filters)
+        if folder_results:
+            for rec in folder_results["folders"]:
+                for item in rec["lists"]:
+                    external_id = item.get(self.backend_adapter._clickup_ext_id_key)
+                    self._import_record(
+                        external_id, data=item, force=force, model=self._apply_on
+                    )
+
+        if list_results:
+            for item in list_results["lists"]:
+                external_id = item.get(self.backend_adapter._clickup_ext_id_key)
+                self._import_record(
+                    external_id, data=item, force=force, model=self._apply_on
+                )
+
+        # else:
+        #     records = self.backend_adapter.search(filters)
+        #     print("\n\nFull Payload =", records, "\n\n")
+
+        #     for item in records["lists"]:
+        #         external_id = item.get(self.backend_adapter._clickup_ext_id_key)
+
+        #         self._import_record(external_id, data=item, force=force)
+
+        # self.process_next_page(filters=filters)
 
     # def run(self, filters=None, force=False):
     #     """Run the synchronization"""

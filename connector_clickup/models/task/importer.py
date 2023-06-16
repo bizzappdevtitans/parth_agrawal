@@ -39,6 +39,30 @@ class ProjectTaskImporter(Component):
         clickup_date = datetime.fromtimestamp(timestamp)
         return clickup_date <= sync_date
 
+    def _before_import(self):
+        """
+        Hook called before the import, when we have the clickup
+        data
+        """
+        super(ProjectTaskImporter, self)._before_import()
+
+        tags_payload = self.clickup_record.get("tags")
+        print("\n\nTag Payload\n\n", tags_payload)
+
+        data = []
+        for record in tags_payload:
+            record = record.get("name")
+            data.append(record)
+
+        Tag = self.env["project.tags"]
+        for record in data:
+            if record in Tag:
+                continue
+
+            Tag.create({"name": record.get("name")})
+
+        return
+
 
 class ProjectTaskBatchImporter(Component):
     """Delay import of the records"""
@@ -51,13 +75,15 @@ class ProjectTaskBatchImporter(Component):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
-
+        print("\n\nTask records\n\n", records)
         for record in records:
             tasks = record.get("tasks", [])
             for task in tasks:
                 external_id = task.get(self.backend_adapter._clickup_ext_id_key)
 
-                self._import_record(external_id, data=task, force=force)
+                self._import_record(
+                    external_id, data=task, force=force, model=self._apply_on
+                )
 
 
 class ProjectTaskImportMapper(Component):
@@ -153,3 +179,16 @@ class ProjectTaskImportMapper(Component):
             return {"updated_at": date_updated}
         else:
             return {}
+
+    @mapping
+    def tag_ids(self, record):
+        """Map the backend id"""
+        commands = []
+        Tag = self.env["project.tags"]
+        for data in record["tags"]:
+            tag_name = data.get("name")
+            if tag_name:
+                tag = Tag.search([("name", "=", tag_name)], limit=1)
+                if tag:
+                    commands.append((4, tag.id))
+        return {"tag_ids": commands}

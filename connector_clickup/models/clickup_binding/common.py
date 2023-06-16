@@ -14,7 +14,6 @@ class ClickupAbstractModel(models.AbstractModel):
     def import_batch(
         self, backend, filters=None, force=False, job_options=None, **kwargs
     ):
-        """Prepare the import of records from ClickUp"""
         if filters is None:
             filters = {}
         print("\n\n\n\nfilters==", filters)
@@ -24,8 +23,6 @@ class ClickupAbstractModel(models.AbstractModel):
 
     @api.model
     def import_record(self, backend, external_id, force=False, data=None, **kwargs):
-        """Import a ClickUp Project record"""
-
         with backend.work_on(self._name) as work:
             importer = work.component(usage="record.importer")
 

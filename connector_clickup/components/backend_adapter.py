@@ -68,7 +68,7 @@ class ClickupClient(object):
         """Call method for the Token API execution with all headers and parameters."""
 
         url = self._location + resource_path
-
+        print("\n\n url=", url)
         if http_method is None:
             http_method = "get"
         function = getattr(requests, http_method)
@@ -79,6 +79,7 @@ class ClickupClient(object):
         kwargs = {"headers": default_headers}
         if arguments and arguments.get("next_url"):
             url = arguments.pop("next_url")
+            print("\n\n pop url=", url)
         if http_method == "get":
             kwargs["params"] = arguments
         elif isinstance(arguments, str):

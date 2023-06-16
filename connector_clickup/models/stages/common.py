@@ -39,43 +39,68 @@ class TaskTypeAdapter(Component):
     _name = "clickup.project.task.type.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.task.type"
-    _clickup_model = "/list/{}/task"
-    _clickup_ext_id_key = "status"
+    _clickup_model = "/space/{}/folder"
+    _clickup_ext_id_key = "id"
+
+    # def search(self, filters=None):
+    #     """
+    #     Returns the information of a record
+    #     :rtype: dict
+    #     """
+    #     if self.backend_record.test_mode is True:
+    #         print("\n\ntest_mode\n\n")
+    #         backend_record = self.backend_record
+    #         folder_id = (
+    #             backend_record.test_location if backend_record.test_location else None
+    #         )
+    #     else:
+    #         print("\n\nproduction\n\n")
+    #         backend_record = self.backend_record
+    #         folder_id = backend_record.uri if backend_record.uri else None
+
+    #     project_model = self.env["project.project"]
+
+    #     projects = project_model.search([("folder_id", "=", folder_id)])
+    #     result = []
+
+    #     for project_record in projects:
+    #         external_id = project_record.external_id
+    #         if not external_id:
+    #             continue
+
+    #         list_id = external_id
+
+    #         resource_path = "/list/{}/task".format(list_id)
+    #         self._clickup_model = resource_path
+    #         # project_result = self._call(resource_path, arguments=filters)
+
+    #         # result.append(resource_path)
+    #         super_result = super(TaskTypeAdapter, self).search(filters)
+    #         result.append(super_result)
+
+    #     return result
 
     def search(self, filters=None):
         """
         Returns the information of a record
+
         :rtype: dict
         """
-        if self.backend_record.test_mode is True:
-            print("\n\ntest_mode\n\n")
-            backend_record = self.backend_record
-            folder_id = (
-                backend_record.test_location if backend_record.test_location else None
-            )
-        else:
-            print("\n\nproduction\n\n")
-            backend_record = self.backend_record
-            folder_id = backend_record.uri if backend_record.uri else None
+        # if self.backend_record.test_mode is True:
+        #     print("comming inside")
+        #     backend_record = self.backend_record
+        #     folder_id = (
+        #         backend_record.test_location if backend_record.test_location else None
+        #     )
+        #     print("\n\n folder id", folder_id)
+        # else:
+        #     print("production")
+        #     backend_record = self.backend_record
+        #     folder_id = backend_record.uri if backend_record.uri else None
+        space_id = self.backend_record.uri
+        resource_path = "/space/{}/folder".format(space_id)
 
-        project_model = self.env["project.project"]
-
-        projects = project_model.search([("folder_id", "=", folder_id)])
-        result = []
-
-        for project_record in projects:
-            external_id = project_record.external_id
-            if not external_id:
-                continue
-
-            list_id = external_id
-
-            resource_path = "/list/{}/task".format(list_id)
-            self._clickup_model = resource_path
-            # project_result = self._call(resource_path, arguments=filters)
-
-            # result.append(resource_path)
-            super_result = super(TaskTypeAdapter, self).search(filters)
-            result.append(super_result)
-
-        return result
+        # records = self.search(filters)
+        # print("payload inside search", records)
+        self._clickup_model = resource_path
+        return super(TaskTypeAdapter, self).search(filters)

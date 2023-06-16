@@ -33,16 +33,15 @@ class ClickupBackend(models.Model):
         default="api_key",
     )
     datetime_filter = fields.Datetime(string="Import From")
+    limit = fields.Integer(string="Limit", default=100)
     # Live
     api_key = fields.Char(string="API Key/Token", required=True)
-    uri = fields.Char(string="URI/Location", required=True)
+    uri = fields.Char(string="URI/Location")
 
     # Test
     test_mode = fields.Boolean(string="Test Mode", default=True)
     test_token = fields.Char(string="Test API Key/Token")
     test_location = fields.Char(string="Test URI/Location")
-
-    limit = fields.Integer(string="Limit", default=100)
 
     def toggle_test_mode(self):
         for record in self:
@@ -65,9 +64,20 @@ class ClickupBackend(models.Model):
         if priority or priority == 0:
             job_options["priority"] = priority
         for backend in self:
-            if from_date_field:
-                backend[from_date_field]
+            #     if from_date_field:
+            #         from_date = backend[from_date_field]
             search_dict = filters.get("search", {})
+            #     if from_date:
+            #         if model in [
+            #             "akeneo.product.category",
+            #             "akeneo.attribute",
+            #             "akeneo.reference",
+            #             "akeneo.product.product.image",
+            #         ]:
+            #             from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+            #         else:
+            #             from_date = to_iso_datetime(from_date)
+            #         search_dict.update({"updated": [{"operator": ">", "value": from_date}]})
 
             if model in [
                 "clickup.project.project",
@@ -118,13 +128,16 @@ class ClickupBackend(models.Model):
 
     def import_projects(self, with_delay=True, from_sync=False):
         """#T-02421 Import Clickup References"""
-        filters = {}
+
         for backend in self:
-            filters.update({"limit": backend.limit})
+            filters = {
+                "limit": backend.limit,
+                "offset": 0,
+            }
             backend._import_from_date(
                 model="clickup.project.project",
                 from_date_field=None if not from_sync else False,
-                priority=0,
+                priority=5,
                 filters=filters,
                 with_delay=with_delay,
             )
@@ -133,8 +146,8 @@ class ClickupBackend(models.Model):
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.tasks",
-                from_date_field=None if not from_sync else False,
-                priority=0,
+                from_date_field="datetime_filter",
+                priority=10,
                 with_delay=with_delay,
             )
 
@@ -143,7 +156,7 @@ class ClickupBackend(models.Model):
             backend._import_from_date(
                 model="clickup.project.task.type",
                 from_date_field=None if not from_sync else False,
-                priority=0,
+                priority=7,
                 with_delay=with_delay,
             )
 
