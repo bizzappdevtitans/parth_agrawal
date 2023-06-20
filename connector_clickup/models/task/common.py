@@ -76,6 +76,12 @@ class TaskAdapter(Component):
     _apply_on = "clickup.project.tasks"
     _clickup_model = "/list/{}/task"
     _clickup_ext_id_key = "id"
+    # _model_dependencies = [
+    #     (
+    #         "clickup.project.task.type",
+    #         "family",
+    #     ),
+    # ]
 
     def search(self, filters=None):
         """

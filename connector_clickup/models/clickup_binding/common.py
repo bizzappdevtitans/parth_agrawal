@@ -19,7 +19,9 @@ class ClickupAbstractModel(models.AbstractModel):
         print("\n\n\n\nfilters==", filters)
         with backend.work_on(self._name) as work:
             importer = work.component(usage="batch.importer")
-            return importer.run(filters=filters, force=force)
+            return importer.run(
+                filters=filters, force=force, job_options=job_options, **kwargs
+            )
 
     @api.model
     def import_record(self, backend, external_id, force=False, data=None, **kwargs):

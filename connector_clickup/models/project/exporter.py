@@ -72,3 +72,9 @@ class ProjectProjectImportMapper(Component):
         content = record.folder_id
 
         return {"folder_id": content}
+
+    @mapping
+    def folder(self, record):
+        content = record.folder
+
+        return {"folder": content}

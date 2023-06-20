@@ -236,6 +236,8 @@ class GenericAdapter(AbstractComponent):
     _odoo_ext_id_key = "external_id"
     _last_update_date = "date_updated"
     _clickup_model = None
+    _clickup_ext_id_key = "uuid"
+    # _model_dependencies = []
 
     def search(self, filters=None):
         """

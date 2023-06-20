@@ -62,12 +62,13 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def description(self, record):
         content = record.description
-        if not content:
-            return {}
+        print("content=", content)
+
         soup = BeautifulSoup(content, "html.parser")
         content = soup.get_text()
-
-        return {"description": content}
+        print("content=", content)
+        if content:
+            return {"description": content}
 
     @mapping
     def project_id(self, record):

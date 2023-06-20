@@ -7,10 +7,12 @@
         <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
             <header>
-                <button attrs="{'invisible': [('external_id', '=', False)]}" class="oe_highlight" name="export_changes_to_clickup_project" string="Export Changes to ClickUp" type="object"/>
+                <button attrs="{'invisible': [('external_id', '=', False)]}" class="oe_highlight" name="export_changes_to_clickup_project" string="Export Changes To ClickUp" type="object"/>
+                <button attrs="{'invisible': [('external_id', '=', False)]}" class="oe_highlight" name="import_changes_from_clickup_project" string="Import Changes From ClickUp" type="object"/>
+                <button attrs="{'invisible': [('external_id', '!=', False)]}" class="oe_highlight" name="export_to_clickup" string="Export To ClickUp" type="object"/>
             </header>
             <xpath expr="//page[@name='settings']" position="after">
-                <page attrs="{'invisible': [('external_id', '=', False)]}" string="Connector Clickup Project">
+                <page string="Connector Clickup Project">
                     <group>
                         <field name="clickup_bind_ids"/>
                         <field name="external_id"/>
@@ -21,6 +23,12 @@
                         <span style="margin-right: 10px;"><b>Click To Open Project in ClickUp</b></span>
                         <button class="oe_highlight" name="open_project" string="Open In ClickUp" type="object"/>
                 </page>
+            </xpath>
+             <xpath expr="//group[@name='extra_settings']" position="after">
+                        <label for= "export_to_folder">Export To Folder</label>
+                        <field name="export_to_folder"/>
+                        <label for= "folder"  attrs="{'invisible': [('export_to_folder', '=', False)]}">Folder Id</label>
+                        <field name="folder"  attrs="{'invisible': [('export_to_folder', '=', False)]}"/>
             </xpath>
         </field>
     </record>

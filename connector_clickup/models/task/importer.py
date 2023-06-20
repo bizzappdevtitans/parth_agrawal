@@ -11,57 +11,73 @@ class ProjectTaskImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.tasks"
 
-    def _is_uptodate(self, binding):
-        """
-        Return True if the import should be skipped because
-        it is already up-to-date in OpenERP
-        """
-        # if the last synchronization date is greater than the last
-        # update in clickup, we skip the import.
-        # Important: at the beginning of the exporters flows, we have to
-        # check if the clickup_date is more recent than the sync_date
-        # and if so, schedule a new import. If we don't do that, we'll
-        # miss changes done in clickup
-        super(ProjectTaskImporter, self)._is_uptodate(binding)
-        assert self.clickup_record
-        last_update_date = self.backend_adapter._last_update_date
-        update_date = self.clickup_record.get(last_update_date, "")
-        timestamp = int(update_date) / 1000
-        if (
-            not update_date
-            or not binding
-            or (binding and not hasattr(binding, "updated_at"))
-        ):
-            return  # no update date on clickup, always import it.
-        sync_date = binding.updated_at
-        if not sync_date:
-            return
-        clickup_date = datetime.fromtimestamp(timestamp)
-        return clickup_date <= sync_date
+    # def _is_uptodate(self, binding):
+    #     """
+    #     Return True if the import should be skipped because
+    #     it is already up-to-date in OpenERP
+    #     """
+    #     # if the last synchronization date is greater than the last
+    #     # update in clickup, we skip the import.
+    #     # Important: at the beginning of the exporters flows, we have to
+    #     # check if the clickup_date is more recent than the sync_date
+    #     # and if so, schedule a new import. If we don't do that, we'll
+    #     # miss changes done in clickup
+    #     super(ProjectTaskImporter, self)._is_uptodate(binding)
+    #     assert self.clickup_record
+    #     last_update_date = self.backend_adapter._last_update_date
+    #     update_date = self.clickup_record.get(last_update_date, "")
+    #     timestamp = int(update_date) / 1000
+    #     if (
+    #         not update_date
+    #         or not binding
+    #         or (binding and not hasattr(binding, "updated_at"))
+    #     ):
+    #         return  # no update date on clickup, always import it.
+    #     sync_date = binding.updated_at
+    #     if not sync_date:
+    #         return
+    #     clickup_date = datetime.fromtimestamp(timestamp)
+    #     return clickup_date <= sync_date
 
     def _before_import(self):
         """
         Hook called before the import, when we have the clickup
         data
         """
-        super(ProjectTaskImporter, self)._before_import()
+        # res = super(ProjectTaskImporter, self)._before_import()
 
-        tags_payload = self.clickup_record.get("tags")
-        print("\n\nTag Payload\n\n", tags_payload)
+        # tags_payload = self.clickup_record.get("tags")
+        # print("\n\nTag Payload\n\n", tags_payload)
+        # data = []
+        # data.append(tags_payload[0].get("name"))
+        # print("data ==", data)
+        # Tag = self.env["project.tags"]
+        # for record in data:
+        #     if record in Tag:
+        #         continue
 
-        data = []
-        for record in tags_payload:
-            record = record.get("name")
-            data.append(record)
+        #     Tag.create({"name": record})
+        # return res
 
-        Tag = self.env["project.tags"]
-        for record in data:
-            if record in Tag:
-                continue
+        res = super(ProjectTaskImporter, self)._before_import()
 
-            Tag.create({"name": record.get("name")})
-
-        return
+        # tags_payload = self.clickup_record
+        # print("\n\nTag Payload\n\n", tags_payload)
+        # data = []
+        # for record in tags_payload["tags"]:
+        #     name = record.get("name")
+        #     print("record printed =", record)
+        #     data.append(name)
+        # print("data ==", data)
+        # Tag = self.env["project.tags"]
+        # for record in data:
+        #     print("record in data ==", record)
+        #     if record not in Tag:
+        #         Tag.create({"name": record})
+        #     else:
+        #         print("inside else condition")
+        #         continue
+        return res
 
 
 class ProjectTaskBatchImporter(Component):
@@ -180,15 +196,16 @@ class ProjectTaskImportMapper(Component):
         else:
             return {}
 
-    @mapping
-    def tag_ids(self, record):
-        """Map the backend id"""
-        commands = []
-        Tag = self.env["project.tags"]
-        for data in record["tags"]:
-            tag_name = data.get("name")
-            if tag_name:
-                tag = Tag.search([("name", "=", tag_name)], limit=1)
-                if tag:
-                    commands.append((4, tag.id))
-        return {"tag_ids": commands}
+    # @mapping
+    # def tag_ids(self, record):
+    #     """Map the backend id"""
+    #     commands = []
+    #     Tag = self.env["project.tags"]
+    #     for data in record["tags"]:
+    #         tag_name = data.get("name")
+    #         if tag_name:
+    #             tag = Tag.search([("name", "=", tag_name)])
+    #             print("tag of mapping", tag)
+    #             if tag:
+    #                 commands.append([(6, 0, tag.ids)])
+    #     return {"tag_ids": commands}

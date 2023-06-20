@@ -14,6 +14,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/ir_cron_data.xml",
+        "data/queue_job_data.xml",
         "views/connector_clickup_backend_view.xml",
         "views/inherited_project_module_view.xml",
     ],

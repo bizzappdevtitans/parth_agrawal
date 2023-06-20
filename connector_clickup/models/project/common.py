@@ -1,5 +1,5 @@
 from odoo import _, fields, models
-
+from odoo.tools.misc import ustr
 from odoo.addons.component.core import Component
 from odoo.exceptions import UserError, ValidationError
 
@@ -34,7 +34,8 @@ class ProjectProject(models.Model):
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
         string="Clickup Backend",
-        readonly=True,
+        readonly=False,
+        store=True,
     )
 
     synced_at = fields.Datetime(
@@ -42,6 +43,10 @@ class ProjectProject(models.Model):
     )
 
     folder_id = fields.Char(string="Folder Id", readonly=True)
+
+    export_to_folder = fields.Boolean(string="Export To Folder")
+
+    folder = fields.Char(string="Enter Folder Id")
 
     def open_project(self):
         result = {
@@ -52,8 +57,21 @@ class ProjectProject(models.Model):
 
         return result
 
-    def update_project(self, job_options=None):
-        pass
+    # self, backend, external_id, force=False, data=None, **kwargs
+
+    def import_changes_from_clickup_project(self, job_options=None):
+        self.ensure_one()
+        if not self.backend_id:
+            raise UserError(_("Please add backend!!!"))
+        self.env["clickup.project.project"].import_record(
+            backend=self.sudo().backend_id,
+            external_id=self.external_id,
+        )
+
+        # for task in self.tasks:
+        #     self.env["clickup.project.tasks"].import_record(
+        #         backend=self.sudo().backend_id, record=task
+        #     )
 
     def export_changes_to_clickup_project(self):
         self.ensure_one()
@@ -68,6 +86,17 @@ class ProjectProject(models.Model):
                 backend=self.sudo().backend_id, record=task
             )
 
+    def export_to_clickup(self):
+        self.ensure_one()
+        if not self.backend_id:
+            raise UserError(_("Please add backend!!!"))
+        try:
+            self.env["clickup.project.project"].export_record(
+                backend=self.sudo().backend_id, record=self
+            )
+        except Exception as ex:
+            raise ValidationError(ustr(ex))
+
 
 class ProjectAdapter(Component):
     _name = "clickup.project.project.adapter"
@@ -75,7 +104,7 @@ class ProjectAdapter(Component):
     _apply_on = "clickup.project.project"
     # _clickup_model = "/folder/{}/list"
     # _clickup_model = "/team"
-    _clickup_model = "/space/{}/folder"
+    _clickup_model = "/list"
     _odoo_ext_id_key = "external_id"
     _clickup_ext_id_key = "id"
 
@@ -105,26 +134,70 @@ class ProjectAdapter(Component):
     #     self._clickup_model = resource_path
     #     return super(ProjectAdapter, self).search(filters)
 
-    def search(self, filters=None):
+    # def search(self, filters=None):
+    #     """
+    #     Returns the information of a record
+
+    #     :rtype: dict
+    #     """
+    #     print("new filter in search", filters)
+    #     space_id = self.backend_record.uri
+    #     print("\n\nbackend record\n\n", self.backend_record)
+
+    #     list_resource_path = "/space/{}/list".format(space_id)
+    #     self._clickup_model = list_resource_path
+    #     list_results = super(ProjectAdapter, self).search(filters)
+
+    #     folder_resource_path = "/space/{}/folder".format(space_id)
+    #     self._clickup_model = folder_resource_path
+    #     folder_results = super(ProjectAdapter, self).search(filters)
+
+    #     # particular_resource_path = "/list/{}".format(space_id)
+    #     # self._clickup_model = particular_resource_path
+    #     # particular_result = super(ProjectAdapter, self).search(filters)
+
+    #     data = []
+    #     if folder_results:
+    #         for rec in folder_results["folders"]:
+    #             for item in rec["lists"]:
+    #                 data.append(item)
+    #     if list_results:
+    #         for rec in list_results["lists"]:
+    #             data.append(rec)
+
+    #     return data
+
+    #     # result = self._call(resource_path, arguments=filters)
+    #     # filters.update({"entity": entity})
+    #     # return result
+
+    def search_read(self, filters=None):
         """
         Returns the information of a record
 
         :rtype: dict
         """
+        print("new filter in search", filters)
         space_id = self.backend_record.uri
+        print("\n\nbackend record\n\n", self.backend_record)
 
-        # Run resource_path = "/space/{}/list".format(space_id)
         list_resource_path = "/space/{}/list".format(space_id)
         self._clickup_model = list_resource_path
-        list_results = super(ProjectAdapter, self).search(filters)
+        result_1 = self._call(list_resource_path, arguments=filters)
 
-        # Run resource_path = "/space/{}/folder".format(space_id)
         folder_resource_path = "/space/{}/folder".format(space_id)
         self._clickup_model = folder_resource_path
-        folder_results = super(ProjectAdapter, self).search(filters)
+        result_2 = self._call(folder_resource_path, arguments=filters)
 
-        # Return the combined results
-        return {"list_results": list_results, "folder_results": folder_results}
+        data = []
+        if result_1:
+            for rec in result_1["lists"]:
+                data.append(rec)
+        if result_2:
+            for rec in result_2["folders"]:
+                for item in rec["lists"]:
+                    data.append(item)
+        return data
 
     def create(self, data):
         """
@@ -142,6 +215,11 @@ class ProjectAdapter(Component):
         #     folder_id = backend_record.uri if backend_record.uri else None
         space_id = self.backend_record.uri
         resource_path = "/space/{}/list".format(space_id)
+        folder = data.get("folder")
+        project = self.env["project.project"].search([("folder", "=", folder)])
+        if project:
+            resource_path = "/folder/{}/list".format(folder)
+            self._clickup_model = resource_path
 
         self._clickup_model = resource_path
         return super(ProjectAdapter, self).create(data)

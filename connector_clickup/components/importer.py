@@ -233,22 +233,6 @@ class BatchImporter(AbstractComponent):
     _inherit = ["base.importer", "base.clickup.connector"]
     _usage = "batch.importer"
 
-    # def get_data_items(self, result, only_ids=False):
-    #     """Split the ids and next page information from result of Akeneo"""
-    #     next_url = []
-    #     location = "https://api.clickup.com/api/v2/list/"
-    #     for record in result["lists"]:
-    #         external_id = location + record.get("id")
-    #         next_url.append({"next_url": external_id})
-    #     print("\n\ninside get data items=\n\n", next_url)
-    #     items = result.get("lists", [])
-    #     items = {"items": items, "urls": next_url}
-    #     print("\n\ninside get data items=\n\n", items)
-    #     if only_ids:
-    #         key = self.backend_adapter._clickup_ext_id_key
-    #         items = [item[key] for item in items]
-    #     return items, next_url
-
     def _import_record(self, external_id):
         """Import a record directly or delay the import of the record.
 
@@ -256,26 +240,22 @@ class BatchImporter(AbstractComponent):
         """
         raise NotImplementedError
 
-    # def process_next_page(self, filters=None, job_options=None, **kwargs):
-    #     """Method to trigger batch import for Next page"""
-    #     print("\n\n\n\nfilters in process next page==", filters)
-    #     if not filters:
-    #         filters = {}
-    #     job_options = job_options or {}
-    #     model = self.env[self.model._name]
-    #     if not kwargs.get("no_delay"):
-    #         model = model.with_delay(**job_options or {})
-    #     model.import_batch(
-    #         self.backend_record, filters=filters, job_options=job_options, **kwargs
-    #     )
-
     def process_next_batch(self, filters=None, force=False, count=0):
         """#T-02072 Method to trigger for next batch import"""
         filters["offset"] += filters["limit"]
+        print("off set=", filters["offset"])
+        print("count=", count)
         if filters["offset"] < count:
+            print("inside process next page loop")
             self.env[self.model._name].with_delay().import_batch(
                 self.backend_record, filters=filters, force=force
             )
+
+    # backend,
+    #             filters=filters,
+    #             force=force,
+    #             **{"no_delay": not with_delay},
+    #             job_options=job_options,
 
 
 class DirectBatchImporter(AbstractComponent):
