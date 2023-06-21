@@ -134,69 +134,43 @@ class ProjectAdapter(Component):
     #     self._clickup_model = resource_path
     #     return super(ProjectAdapter, self).search(filters)
 
-    # def search(self, filters=None):
-    #     """
-    #     Returns the information of a record
-
-    #     :rtype: dict
-    #     """
-    #     print("new filter in search", filters)
-    #     space_id = self.backend_record.uri
-    #     print("\n\nbackend record\n\n", self.backend_record)
-
-    #     list_resource_path = "/space/{}/list".format(space_id)
-    #     self._clickup_model = list_resource_path
-    #     list_results = super(ProjectAdapter, self).search(filters)
-
-    #     folder_resource_path = "/space/{}/folder".format(space_id)
-    #     self._clickup_model = folder_resource_path
-    #     folder_results = super(ProjectAdapter, self).search(filters)
-
-    #     # particular_resource_path = "/list/{}".format(space_id)
-    #     # self._clickup_model = particular_resource_path
-    #     # particular_result = super(ProjectAdapter, self).search(filters)
-
-    #     data = []
-    #     if folder_results:
-    #         for rec in folder_results["folders"]:
-    #             for item in rec["lists"]:
-    #                 data.append(item)
-    #     if list_results:
-    #         for rec in list_results["lists"]:
-    #             data.append(rec)
-
-    #     return data
-
-    #     # result = self._call(resource_path, arguments=filters)
-    #     # filters.update({"entity": entity})
-    #     # return result
-
     def search_read(self, filters=None):
         """
         Returns the information of a record
 
         :rtype: dict
         """
+        data = []
         print("new filter in search", filters)
         space_id = self.backend_record.uri
         print("\n\nbackend record\n\n", self.backend_record)
-
-        list_resource_path = "/space/{}/list".format(space_id)
-        self._clickup_model = list_resource_path
-        result_1 = self._call(list_resource_path, arguments=filters)
+        # external_id = self.backend_record.uri
 
         folder_resource_path = "/space/{}/folder".format(space_id)
         self._clickup_model = folder_resource_path
-        result_2 = self._call(folder_resource_path, arguments=filters)
+        result_1 = self._call(folder_resource_path, arguments=filters)
 
-        data = []
+        list_resource_path = "/space/{}/list".format(space_id)
+        self._clickup_model = list_resource_path
+        result_2 = self._call(list_resource_path, arguments=filters)
+
+        # if space_id != external_id:
+        #     print("\n\ncondition not matched\n\n")
+        #     particular_resource_path = "/list/{}".format(external_id)
+        #     self._clickup_model = particular_resource_path
+        #     result_3 = self._call(particular_resource_path, arguments=filters)
+        #     if result_3:
+        #         for rec in result_3:
+        #             data.append(rec)
+
         if result_1:
-            for rec in result_1["lists"]:
-                data.append(rec)
-        if result_2:
-            for rec in result_2["folders"]:
+            for rec in result_1["folders"]:
                 for item in rec["lists"]:
                     data.append(item)
+        if result_2:
+            for rec in result_2["lists"]:
+                data.append(rec)
+
         return data
 
     def create(self, data):

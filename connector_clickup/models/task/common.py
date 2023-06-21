@@ -1,5 +1,5 @@
 import xmlrpc.client
-
+from odoo.tools.misc import ustr
 from odoo import _, fields, models
 import json
 from odoo.addons.component.core import Component

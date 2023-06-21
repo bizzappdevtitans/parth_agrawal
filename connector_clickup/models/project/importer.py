@@ -115,19 +115,19 @@ class ProjectProjectBatchImporter(Component):
     #         )
     #     self.process_next_batch(filters, force=force, count=count)
 
-    def run(self, filters=None, force=False, job_options=None, **kwargs):
+    def run(self, filters=None, force=False):
         """Run the synchronization"""
 
         records = self.backend_adapter.search_read(filters)
         print("\n\nFull Payload =", records, "\n\n")
 
-        data = []
-        for record in records:
-            data.append(record)
-        count = len(data)
-        print("count ==", count)
+        # data = []
+        # for record in records:
+        #     data.append(record)
+        # count = len(data)
+        # print("count ==", count)
 
-        for rec in data:
+        for rec in records:
             external_id = rec.get(self.backend_adapter._clickup_ext_id_key)
             self._import_record(
                 external_id, data=rec, force=force, model=self._apply_on
