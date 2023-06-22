@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from odoo.addons.queue_job.job import identity_exact
 from odoo import fields, models
+from odoo.addons.component.core import Component
 
 # from ...components.backend_adapter import ClickUpBackendAdapter
 from ...components.backend_adapter import (
@@ -422,3 +423,20 @@ class ClickupBackend(models.Model):
                 backend,
                 filters=filters,
             )
+
+    def generate_token(self):
+        """Generate token for akeneo."""
+        with self.work_on(self._name) as work:
+            backend_adapter = work.component(usage="backend.adapter")
+            token_dict = backend_adapter.get_token()
+            token = token_dict.get("access_token")
+            if self.test_mode:
+                self.test_token = token
+            else:
+                self.api_key = token
+
+
+class ClickupBackendAdapter(Component):
+    _name = "clickup.backend.adapter"
+    _inherit = "clickup.adapter"
+    _apply_on = "clickup.backend"

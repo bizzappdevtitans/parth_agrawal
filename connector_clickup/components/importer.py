@@ -285,9 +285,6 @@ class DelayedBatchImporter(AbstractComponent):
         if "identity_key" not in job_options:
             job_options["identity_key"] = identity_exact
 
-        # model_name = model.replace(".", " ").title()  # Convert model name to title case
-        # job_name = f"Import record of {model_name} {external_id}"
-
         model_parts = model.split(".")
         model_name = " ".join(
             part.title() for part in model_parts[1:]

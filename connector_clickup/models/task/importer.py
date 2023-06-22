@@ -39,45 +39,29 @@ class ProjectTaskImporter(Component):
         clickup_date = datetime.fromtimestamp(timestamp)
         return clickup_date <= sync_date
 
-    def _before_import(self):
-        """
-        Hook called before the import, when we have the clickup
-        data
-        """
-        # res = super(ProjectTaskImporter, self)._before_import()
+    # def _before_import(self):
+    #     """
+    #     Hook called before the import, when we have the clickup
+    #     data
+    #     """
+    #     res = super(ProjectTaskImporter, self)._before_import()
 
-        # tags_payload = self.clickup_record.get("tags")
-        # print("\n\nTag Payload\n\n", tags_payload)
-        # data = []
-        # data.append(tags_payload[0].get("name"))
-        # print("data ==", data)
-        # Tag = self.env["project.tags"]
-        # for record in data:
-        #     if record in Tag:
-        #         continue
+    #     tags_payload = self.clickup_record
+    #     # print("\n\nTag Payload\n\n", tags_payload)
 
-        #     Tag.create({"name": record})
-        # return res
+    #     data = []
+    #     for record in tags_payload.get("tags"):
+    #         res = record.get("name")
+    #         data.append(res)
+    #     # print("data ==", data)
 
-        res = super(ProjectTaskImporter, self)._before_import()
-
-        # tags_payload = self.clickup_record
-        # print("\n\nTag Payload\n\n", tags_payload)
-        # data = []
-        # for record in tags_payload["tags"]:
-        #     name = record.get("name")
-        #     print("record printed =", record)
-        #     data.append(name)
-        # print("data ==", data)
-        # Tag = self.env["project.tags"]
-        # for record in data:
-        #     print("record in data ==", record)
-        #     if record not in Tag:
-        #         Tag.create({"name": record})
-        #     else:
-        #         print("inside else condition")
-        #         continue
-        return res
+    #     for record in data:
+    #         Tag = self.env["project.tags"].search([("name", "=", record)])
+    #         if Tag:
+    #             continue
+    #         else:
+    #             Tag.create({"name": record})
+    #     return res
 
 
 class ProjectTaskBatchImporter(Component):
@@ -201,11 +185,52 @@ class ProjectTaskImportMapper(Component):
     #     """Map the backend id"""
     #     commands = []
     #     Tag = self.env["project.tags"]
-    #     for data in record["tags"]:
+    #     tags_data = record.get("tags")
+    #     if not tags_data:
+    #         return {"tag_ids": [(6, 0, [])]}
+    #     for data in tags_data:
     #         tag_name = data.get("name")
     #         if tag_name:
     #             tag = Tag.search([("name", "=", tag_name)])
-    #             print("tag of mapping", tag)
     #             if tag:
-    #                 commands.append([(6, 0, tag.ids)])
+    #                 commands.append((4, tag.id))
     #     return {"tag_ids": commands}
+
+
+class ProjectTaskTagsImportMapperChild(Component):
+    """:py:class:`MapChild` for the Imports"""
+
+    _name = "project.task.tags.map.child.import"
+    _inherit = "clickup.map.child.import"
+    _apply_on = "clickup.project.tasks"
+
+    def skip_item(self, map_record):
+        print("MAP CHILD RECORD=", map_record)
+        record = map_record.source
+        if not record["attributes"]["quantity"]:
+            return True
+
+    def get_item_values(self, map_record, to_attr, options):
+        print("MAP CHILD RECORD=", map_record)
+        values = map_record.values(**options)
+        binder = self.binder_for()
+        binding = binder.to_internal(map_record.source["id"])
+        if binding:
+            # already exists, keeps the id
+            values["id"] = binding.id
+        return values
+
+    def format_items(self, items_values):
+        print("MAP CHILD RECORD=")
+        # if we already have an ID (found in get_item_values())
+        # we change the command to update the existing record
+        items = []
+        for item in items_values[:]:
+            if item.get("id"):
+                binding_id = item.pop("id")
+                # update the record
+                items.append((1, binding_id, item))
+            else:
+                # create the record
+                items.append((0, 0, item))
+        return items

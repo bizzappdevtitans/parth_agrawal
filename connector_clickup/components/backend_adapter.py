@@ -1,6 +1,7 @@
 import logging
 import socket
 import urllib
+import base64
 from datetime import datetime
 import json
 import requests
@@ -38,6 +39,66 @@ class ClickupLocation(object):
         """Main location of the Clickup"""
         location = "https://api.clickup.com/api/v2"
         return location
+
+
+class ClickupTokenClient(object):
+    """Main class responsible to sends request/get response (For Token)"""
+
+    def __init__(self, location, client_id, client_secret, username, password, version):
+        self._location = location
+        self._client_id = client_id
+        self._client_secret = client_secret
+        self._username = username
+        self._password = password
+        self._version = version
+
+    def get_header(self):
+        """Config the header of the akeneo"""
+        code = "{}:{}".format(self._client_id, self._client_secret)
+        auth = base64.b64encode(code.encode()).decode()
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Basic %s" % (auth),
+        }
+        return headers
+
+    def get_data(self):
+        """Get the token grant credentials"""
+        data = {
+            "username": self._username,
+            "password": self._password,
+            "grant_type": "password",
+        }
+        return data
+
+    def call(self, arguments=None, http_method=None, resource_path=None):
+        """Call method for the Token API execution with all headers and parameters."""
+        url = self._location
+        if resource_path:
+            url = "{}/api/oauth/{}/{}".format(
+                self._location, self._version, resource_path
+            )
+
+        if http_method is None:
+            http_method = "post"
+        function = getattr(requests, http_method)
+        headers = self.get_header()
+        # if not arguments:
+        if arguments is None:
+            arguments = self.get_data()
+
+        kwargs = {"headers": headers}
+        if http_method == "get":
+            kwargs["params"] = arguments
+        elif arguments is not None:
+            kwargs["json"] = arguments
+        res = function(url, **kwargs)
+        if res.status_code == 400 and res._content:
+            raise requests.HTTPError(
+                url, res.status_code, res._content, headers, __name__
+            )
+        res.raise_for_status()
+        return res.json()
 
 
 class ClickupClient(object):
@@ -112,6 +173,8 @@ class ClickupAPI(object):
         self._token = token
         self.model = model
         self._api = None
+        self._api_token = None
+        self._location_token = location
 
     @property
     def api(self):
@@ -125,6 +188,21 @@ class ClickupAPI(object):
             self._api = clickup_client
 
         return self._api
+
+    @property
+    def api_token(self):
+        """Config the API token values"""
+        if self._api_token is None:
+            akeneo_token_client = ClickupTokenClient(
+                self._location_token.location,
+                self._location_token.client_id,
+                self._location_token.client_secret,
+                self._location_token.username,
+                self._location_token.password,
+                self._location_token._version,
+            )
+            self._api_token = akeneo_token_client
+        return self._api_token
 
     def api_call(self, resource_path, arguments, http_method=None, is_token=False):
         """Adjust available arguments per API"""
@@ -216,16 +294,40 @@ class ClickupCRUDAdapter(AbstractComponent):
         and returns a list of ids"""
         raise NotImplementedError
 
-    def _call(self, resource_path, arguments=None, http_method=None, storeview=None):
+    def get_token(self, arguments=None, http_method=None):
+        """Method to get token from remote system"""
+        print("in get token main")
+        return self._call(
+            # resource_path="token",
+            resource_path="token",
+            arguments=arguments,
+            http_method=http_method,
+            is_token=True,
+        )
+
+    # def _call(self, resource_path, arguments=None, http_method=None, storeview=None):
+    #     try:
+    #         clickup_api = getattr(self.work, "clickup_api")  # noqa: B009
+    #     except AttributeError:
+    #         raise AttributeError(
+    #             "You must provide a clickup_api attribute with a "
+    #             "ClickUpAPI instance to be able to use the "
+    #             "Backend Adapter."
+    #         )
+    #     return clickup_api.call(resource_path, arguments, http_method=http_method)
+
+    def _call(self, resource_path, arguments=None, http_method=None, is_token=False):
         try:
-            clickup_api = getattr(self.work, "clickup_api")  # noqa: B009
+            clickup_api = getattr(self.work, "clickup_api")
         except AttributeError:
             raise AttributeError(
                 "You must provide a clickup_api attribute with a "
-                "ClickUpAPI instance to be able to use the "
+                "AkeneoAPI instance to be able to use the "
                 "Backend Adapter."
             )
-        return clickup_api.call(resource_path, arguments, http_method=http_method)
+        return clickup_api.call(
+            resource_path, arguments, http_method=http_method, is_token=is_token
+        )
 
 
 class GenericAdapter(AbstractComponent):
