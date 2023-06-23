@@ -1,11 +1,12 @@
 import logging
+from datetime import datetime
+
+from bs4 import BeautifulSoup
+
+from odoo.osv import expression
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping
-from datetime import datetime, time
-from bs4 import BeautifulSoup
-from odoo.osv import expression
-
 
 _logger = logging.getLogger(__name__)
 
@@ -42,9 +43,7 @@ class ProjectTaskDelayedBatchExporter(Component):
         job_options = job_options or {}
         if "priority" not in job_options:
             job_options["priority"] = 5
-        return super(ProjectTaskDelayedBatchExporter, self)._export_record(
-            record, job_options, **kwargs
-        )
+        return super()._export_record(record, job_options, **kwargs)
 
 
 class ProjectTaskImportMapper(Component):
@@ -62,11 +61,10 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def description(self, record):
         content = record.description
-        print("content=", content)
 
         soup = BeautifulSoup(content, "html.parser")
         content = soup.get_text()
-        print("content=", content)
+
         if content:
             return {"description": content}
 

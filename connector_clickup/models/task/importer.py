@@ -1,7 +1,8 @@
 import logging
+from datetime import date, datetime, timedelta
+
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-from datetime import datetime, date, timedelta
 
 _logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ class ProjectTaskImporter(Component):
         # check if the clickup_date is more recent than the sync_date
         # and if so, schedule a new import. If we don't do that, we'll
         # miss changes done in clickup
-        super(ProjectTaskImporter, self)._is_uptodate(binding)
+        super()._is_uptodate(binding)
         assert self.clickup_record
         last_update_date = self.backend_adapter._last_update_date
         update_date = self.clickup_record.get(last_update_date, "")
@@ -75,7 +76,7 @@ class ProjectTaskBatchImporter(Component):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
-        print("\n\nTask records\n\n", records)
+
         for record in records:
             tasks = record.get("tasks", [])
             for task in tasks:
@@ -205,13 +206,11 @@ class ProjectTaskTagsImportMapperChild(Component):
     _apply_on = "clickup.project.tasks"
 
     def skip_item(self, map_record):
-        print("MAP CHILD RECORD=", map_record)
         record = map_record.source
         if not record["attributes"]["quantity"]:
             return True
 
     def get_item_values(self, map_record, to_attr, options):
-        print("MAP CHILD RECORD=", map_record)
         values = map_record.values(**options)
         binder = self.binder_for()
         binding = binder.to_internal(map_record.source["id"])
@@ -221,7 +220,6 @@ class ProjectTaskTagsImportMapperChild(Component):
         return values
 
     def format_items(self, items_values):
-        print("MAP CHILD RECORD=")
         # if we already have an ID (found in get_item_values())
         # we change the command to update the existing record
         items = []

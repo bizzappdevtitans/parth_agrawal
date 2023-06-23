@@ -1,7 +1,8 @@
 from odoo import _, fields, models
-from odoo.tools.misc import ustr
-from odoo.addons.component.core import Component
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools.misc import ustr
+
+from odoo.addons.component.core import Component
 
 
 class ClickupProjectProject(models.Model):
@@ -10,10 +11,8 @@ class ClickupProjectProject(models.Model):
     _inherits = {"project.project": "odoo_id"}
     _description = "Clickup project.project binding model"
 
-    odoo_id = fields.Many2one(
-        "project.project", string="Project", required=True, ondelete="restrict"
-    )
-    synced_at = fields.Datetime(string="Synced At", readonly=True)
+    odoo_id = fields.Many2one("project.project", required=True, ondelete="restrict")
+    synced_at = fields.Datetime(readonly=True)
 
 
 class ProjectProject(models.Model):
@@ -23,7 +22,6 @@ class ProjectProject(models.Model):
     clickup_bind_ids = fields.One2many(
         "clickup.project.project",
         "odoo_id",
-        string="Clickup Backend ID",
         readonly=True,
     )
     external_id = fields.Char(
@@ -33,20 +31,17 @@ class ProjectProject(models.Model):
     backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
-        string="Clickup Backend",
         readonly=False,
         store=True,
     )
 
-    synced_at = fields.Datetime(
-        string="Synced At", related="clickup_bind_ids.synced_at", readonly=True
-    )
+    synced_at = fields.Datetime(related="clickup_bind_ids.synced_at", readonly=True)
 
-    folder_id = fields.Char(string="Folder Id", readonly=True)
+    folder_id = fields.Char(readonly=True)
 
-    export_to_folder = fields.Boolean(string="Export To Folder")
+    export_to_folder = fields.Boolean()
 
-    folder = fields.Char(string="Enter Folder Id")
+    folder = fields.Char()
 
     def open_project(self):
         result = {
@@ -95,7 +90,7 @@ class ProjectProject(models.Model):
                 backend=self.sudo().backend_id, record=self
             )
         except Exception as ex:
-            raise ValidationError(ustr(ex))
+            raise ValidationError from ex(ustr(ex))
 
 
 class ProjectAdapter(Component):
@@ -141,9 +136,9 @@ class ProjectAdapter(Component):
         :rtype: dict
         """
         data = []
-        print("new filter in search", filters)
+
         space_id = self.backend_record.uri
-        print("\n\nbackend record\n\n", self.backend_record)
+
         # external_id = self.backend_record.uri
 
         folder_resource_path = "/space/{}/folder".format(space_id)
@@ -196,7 +191,7 @@ class ProjectAdapter(Component):
             self._clickup_model = resource_path
 
         self._clickup_model = resource_path
-        return super(ProjectAdapter, self).create(data)
+        return super().create(data)
 
     def write(self, external_id, data):
         """Update records on the external system"""
@@ -214,4 +209,4 @@ class ProjectAdapter(Component):
         if external_id:
             resource_path = "/list/{}".format(external_id)
             self._clickup_model = resource_path
-            return super(ProjectAdapter, self).write(external_id, data)
+            return super().write(external_id, data)

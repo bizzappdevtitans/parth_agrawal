@@ -1,9 +1,8 @@
 import logging
+from datetime import date, datetime, timedelta
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-from datetime import datetime, date, timedelta
-
 
 _logger = logging.getLogger(__name__)
 
@@ -119,7 +118,6 @@ class ProjectProjectBatchImporter(Component):
         """Run the synchronization"""
 
         records = self.backend_adapter.search_read(filters)
-        print("\n\nFull Payload =", records, "\n\n")
 
         # data = []
         # for record in records:

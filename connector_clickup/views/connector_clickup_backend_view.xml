@@ -15,84 +15,151 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" icon="fa-play" name="toggle_test_mode" type="object">
-                            <field invisible="1" name="test_mode"/>
-                            <span attrs="{'invisible': [('test_mode', '=', True)]}" class="o_stat_text text-success">Production</span>
-                            <span attrs="{'invisible': [('test_mode', '=', False)]}" class="o_stat_text text-warning">Test</span>
+                        <button
+                            class="oe_stat_button"
+                            icon="fa-play"
+                            name="toggle_test_mode"
+                            type="object"
+                        >
+                            <field invisible="1" name="test_mode" />
+                            <span
+                                attrs="{'invisible': [('test_mode', '=', True)]}"
+                                class="o_stat_text text-success"
+                            >Production</span>
+                            <span
+                                attrs="{'invisible': [('test_mode', '=', False)]}"
+                                class="o_stat_text text-warning"
+                            >Test</span>
                         </button>
                     </div>
-                    <widget attrs="{'invisible': [('test_mode', '=', False)]}" bg_color="bg-warning" name="web_ribbon" title="Test Mode"/>
-                    <widget attrs="{'invisible': [('test_mode', '=', True)]}" bg_color="bg-success" name="web_ribbon" title="Production"/>
+                    <widget
+                        attrs="{'invisible': [('test_mode', '=', False)]}"
+                        bg_color="bg-warning"
+                        name="web_ribbon"
+                        title="Test Mode"
+                    />
+                    <widget
+                        attrs="{'invisible': [('test_mode', '=', True)]}"
+                        bg_color="bg-success"
+                        name="web_ribbon"
+                        title="Production"
+                    />
                     <group>
-                        <field name="name" placeholder="Ex:-Test 1" style="font-size:13pt;" />
-                        <field name="auth_type"/>
-                        <field attrs="{'invisible': [('test_mode', '=', True)]}" name="api_key"/>
-                        <field attrs="{'invisible': [('test_mode', '=', True)]}" name="uri"/>
-                        <field attrs="{'invisible': [('test_mode', '=', False)]}" name="test_token"/>
-                        <field attrs="{'invisible': [('test_mode', '=', False)]}" name="test_location"/>
-                        <field attrs="{'invisible': [('auth_type', '=', 'api_key')]}" name="client_id"/>
-                        <field attrs="{'invisible': [('auth_type', '=', 'api_key')]}" name="client_secret"/>
+                        <field
+                            name="name"
+                            placeholder="Ex:-Test 1"
+                            style="font-size:13pt;"
+                        />
+                        <field name="auth_type" />
+                        <field
+                            attrs="{'invisible': [('test_mode', '=', True)]}"
+                            name="api_key"
+                        />
+                        <field
+                            attrs="{'invisible': [('test_mode', '=', True)]}"
+                            name="uri"
+                        />
+                        <field
+                            attrs="{'invisible': [('test_mode', '=', False)]}"
+                            name="test_token"
+                        />
+                        <field
+                            attrs="{'invisible': [('test_mode', '=', False)]}"
+                            name="test_location"
+                        />
+                        <field
+                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                            name="client_id"
+                        />
+                        <field
+                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                            name="client_secret"
+                        />
+                        <field
+                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                            name="username"
+                        />
+                        <field
+                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                            name="password"
+                        />
 
                         <!-- {'invisible':['|',('filed_name_1','=',False),('fieled_name_2','=',False)]} -->
                     </group>
                     <notebook>
                         <page string="Basic Information">
                             <span>
-                                <b>1) You need API Token as well as Endpoint Location ID(Folder_id) in order to successfully import Projects, Tasks and Stages from ClickUp Project Management.
+                                <b
+                                >1) You need API Token as well as Endpoint Location ID(Folder_id) in order to successfully import Projects, Tasks and Stages from ClickUp Project Management.
 
 
-                                    <br/>
-                                    <br/>
+                                    <br />
+                                    <br />
                                     2) If you are Importing first time from Connector ClickUp, you need to First Import Projects then Stages and Lastly Tasks.
 
 
-                                    <br/>
-                                    <br/>
+                                    <br />
+                                    <br />
                                     3) If you made changes only in tasks in ClickUp project management you can directly import tasks in order to update that specific task's data.
 
 
-                                    <br/>
-                                    <br/>
+                                    <br />
+                                    <br />
                                     4) This module uses binding terminology to import projects, tasks and stages from ClickUp project management so you can not directly delete any of these data from Project module without deleting it from it's co-responsible binding models.
 
 
-                                    <br/></b>
+                                    <br /></b>
                             </span>
                         </page>
                         <page string="Import">
                             <span style="margin-right: 10px;">
                                 <b>Click to Import Projects of ClickUp</b>
                             </span>
-                            <button class="oe_highlight" name="import_projects" string="Import Projects" type="object"/>
+                            <button
+                                class="oe_highlight"
+                                name="import_projects"
+                                string="Import Projects"
+                                type="object"
+                            />
                             <group>
-                                <field name="force_update_projects"/>
+                                <field name="force_update_projects" />
                             </group>
-                            <group/>
-                            <br/>
+                            <group />
+                            <br />
                             <span style="margin-right: 19px; ">
                                 <b>Click to Import Stages of ClickUp</b>
                             </span>
-                            <button class="oe_highlight" name="import_stages" string="Import Stages" type="object"/>
+                            <button
+                                class="oe_highlight"
+                                name="import_stages"
+                                string="Import Stages"
+                                type="object"
+                            />
                             <group>
-                                <field name="force_update_stages"/>
+                                <field name="force_update_stages" />
                             </group>
-                            <group/>
-                            <br/>
+                            <group />
+                            <br />
                             <span style="margin-right: 27px;">
                                 <b>Click to Import Tasks of ClickUp</b>
                             </span>
-                            <button class="oe_highlight" name="import_tasks" string="Import Tasks" type="object"/>
+                            <button
+                                class="oe_highlight"
+                                name="import_tasks"
+                                string="Import Tasks"
+                                type="object"
+                            />
                             <group>
-                                <field name="force_update_tasks"/>
+                                <field name="force_update_tasks" />
                             </group>
-                            <group/>
+                            <group />
                         </page>
                         <page string="Advance Configuration">
                             <group>
                                 <group>
-                                <field name="datetime_filter_project"/>
-                                <field name="datetime_filter_task"/>
-                                <field name="limit"/>
+                                <field name="datetime_filter_project" />
+                                <field name="datetime_filter_task" />
+                                <field name="limit" />
                             </group>
                             </group>
                         </page>
@@ -100,14 +167,24 @@
                             <span style="margin-right: 10px;">
                                 <b>Click to Export Projects In ClickUp remote</b>
                             </span>
-                            <button class="oe_highlight" name="export_projects" string="Export Projects" type="object"/>
-                            <group/>
-                            <br/>
+                            <button
+                                class="oe_highlight"
+                                name="export_projects"
+                                string="Export Projects"
+                                type="object"
+                            />
+                            <group />
+                            <br />
                             <span style="margin-right: 27px;">
                                 <b>Click to Export Tasks In ClickUp remote</b>
                             </span>
-                            <button class="oe_highlight" name="export_tasks" string="Export Tasks" type="object"/>
-                            <group/>
+                            <button
+                                class="oe_highlight"
+                                name="export_tasks"
+                                string="Export Tasks"
+                                type="object"
+                            />
+                            <group />
                         </page>
                     </notebook>
                 </sheet>
@@ -119,8 +196,8 @@
         <field name="model">clickup.backend</field>
         <field name="arch" type="xml">
             <tree string="Clickup Backend">
-                <field name="name"/>
-                <field name="uri"/>
+                <field name="name" />
+                <field name="uri" />
             </tree>
         </field>
     </record>
@@ -128,8 +205,18 @@
         <field name="name">Clickup Backend</field>
         <field name="res_model">clickup.backend</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_clickup_backend_tree"/>
+        <field name="view_id" ref="view_clickup_backend_tree" />
     </record>
-    <menuitem id="menu_clickup_root" name="Clickup" parent="connector.menu_connector_root"/>
-    <menuitem action="action_clickup_backend" id="menu_clickup_backend" name="Backends" parent="menu_clickup_root" sequence="2"/>
+    <menuitem
+        id="menu_clickup_root"
+        name="Clickup"
+        parent="connector.menu_connector_root"
+    />
+    <menuitem
+        action="action_clickup_backend"
+        id="menu_clickup_backend"
+        name="Backends"
+        parent="menu_clickup_root"
+        sequence="2"
+    />
 </odoo>

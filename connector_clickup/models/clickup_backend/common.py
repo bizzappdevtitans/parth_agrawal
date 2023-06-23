@@ -2,9 +2,11 @@ import json
 import logging
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from odoo.addons.queue_job.job import identity_exact
+
 from odoo import fields, models
+
 from odoo.addons.component.core import Component
+from odoo.addons.queue_job.job import identity_exact
 
 # from ...components.backend_adapter import ClickUpBackendAdapter
 from ...components.backend_adapter import (
@@ -26,30 +28,31 @@ class ClickupBackend(models.Model):
     _inherit = "connector.backend"
     _description = "Clickup backend"
 
-    name = fields.Char(string="Clickup Backend ID")
+    name = fields.Char()
     auth_type = fields.Selection(
         [("api_key", "API Key"), ("Oauth", "Oauth Authentication")],
-        string="Authentication type",
         required=True,
         default="api_key",
     )
-    datetime_filter_project = fields.Datetime(string="Import From Date(Project)")
-    datetime_filter_task = fields.Datetime(string="Import From Date(Task)")
-    limit = fields.Integer(string="Limit", default=100)
-    force_update_projects = fields.Boolean(string="Force Update(Project)")
-    force_update_stages = fields.Boolean(string="Force Update(Stages)")
-    force_update_tasks = fields.Boolean(string="Force Update(Tasks)")
+    datetime_filter_project = fields.Datetime()
+    datetime_filter_task = fields.Datetime()
+    limit = fields.Integer(default=100)
+    force_update_projects = fields.Boolean()
+    force_update_stages = fields.Boolean()
+    force_update_tasks = fields.Boolean()
 
     # Live
-    api_key = fields.Char(string="API Key/Token")
-    uri = fields.Char(string="URI/Location")
-    client_id = fields.Char(string="Client Id")
-    client_secret = fields.Char(string="Client Secret")
+    api_key = fields.Char()
+    uri = fields.Char()
+    client_id = fields.Char()
+    client_secret = fields.Char()
+    username = fields.Char()
+    password = fields.Char()
 
     # Test
-    test_mode = fields.Boolean(string="Test Mode", default=True)
-    test_token = fields.Char(string="Test API Key/Token")
-    test_location = fields.Char(string="Test URI/Location")
+    test_mode = fields.Boolean(default=True)
+    test_token = fields.Char()
+    test_location = fields.Char()
 
     def toggle_test_mode(self):
         for record in self:
@@ -240,30 +243,67 @@ class ClickupBackend(models.Model):
                 with_delay=with_delay,
             )
 
+    # @contextmanager
+    # def work_on(self, model_name, **kwargs):
+    #     """Add the work on for clickup."""
+
+    #     self.ensure_one()
+    #     location = self.uri
+    #     token = self.api_key
+    #     if self.test_mode:
+    #         location = self.test_location
+    #         token = self.test_token
+
+    #     clickup_location = ClickupLocation(
+    #         location=location, token=token, model=model_name
+    #     )
+
+    #     # clickup have different endpoint/credentials for token
+    #     clickup_location_token = ClickupTokenLocation(
+    #         location=location, model=model_name
+    #     )
+    #     with ClickupAPI(
+    #         clickup_location, clickup_location_token, model=model_name
+    #     ) as clickup_api:
+    #         _super = super(ClickupBackend, self)
+    #         # from the components we'll be able to do: self.work.clickup_api
+    #         with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
+    #             yield work
+
     @contextmanager
     def work_on(self, model_name, **kwargs):
-        """Add the work on for clickup."""
-
+        """Add the work on for akeneo."""
         self.ensure_one()
         location = self.uri
+        client_id = self.client_id
+        client_secret = self.client_secret
         token = self.api_key
+        username = self.username
+        password = self.password
         if self.test_mode:
-            location = self.test_location
-            token = self.test_token
+            location = kwargs.get("location", self.location)
+            client_id = self.client_id
+            client_secret = self.client_secret
+            token = self.token
+            username = self.username
+            password = self.password
 
-        clickup_location = ClickupLocation(
-            location=location, token=token, model=model_name
+        akeneo_location = ClickupLocation(
+            location=location,
+            token=token,
         )
 
-        # clickup have different endpoint/credentials for token
-        clickup_location_token = ClickupTokenLocation(
-            location=location, model=model_name
+        # akeneo have different endpoint/credentials for token
+        akeneo_location_token = ClickupTokenLocation(
+            location=location,
+            client_id=client_id,
+            client_secret=client_secret,
+            username=username,
+            password=password,
         )
-        with ClickupAPI(
-            clickup_location, clickup_location_token, model=model_name
-        ) as clickup_api:
-            _super = super(ClickupBackend, self)
-            # from the components we'll be able to do: self.work.clickup_api
+        with ClickupAPI(akeneo_location, akeneo_location_token) as clickup_api:
+            _super = super()
+            # from the components we'll be able to do: self.work.akeneo_api
             with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
                 yield work
 

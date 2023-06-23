@@ -16,7 +16,7 @@ class ClickupAbstractModel(models.AbstractModel):
     ):
         if filters is None:
             filters = {}
-        print("\n\n\n\nfilters==", filters)
+
         with backend.work_on(self._name) as work:
             importer = work.component(usage="batch.importer")
             return importer.run(filters=filters, force=force)

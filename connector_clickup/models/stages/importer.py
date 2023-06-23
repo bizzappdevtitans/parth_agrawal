@@ -2,8 +2,6 @@ import logging
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-from odoo.exceptions import ValidationError
-from odoo import _
 from odoo.addons.connector.exception import MappingError
 
 # from ..exception import MappingError
@@ -42,7 +40,6 @@ class ProjectTaskTypeBatchImporter(Component):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
-        print("\n\nFull Payload =", records, "\n\n")
 
         for record in records["folders"]:
             for item in record["lists"]:

@@ -1,8 +1,5 @@
 import logging
 
-import pytz
-from dateutil import parser as dtparser
-from datetime import datetime
 from odoo import _
 
 from odoo.addons.component.core import AbstractComponent
@@ -22,7 +19,7 @@ class ClickupImporter(AbstractComponent):
 
     def __init__(self, work_context):
         """Inherit init method."""
-        super(ClickupImporter, self).__init__(work_context)
+        super().__init__(work_context)
         self.external_id = None
         self.clickup_record = None
 
@@ -45,8 +42,6 @@ class ClickupImporter(AbstractComponent):
         Return True if the import should be skipped because
         it is already up-to-date in OpenERP
         """
-
-        pass
 
     def _import_dependency(
         self, external_id, binding_model, importer=None, always=False
@@ -243,10 +238,8 @@ class BatchImporter(AbstractComponent):
     def process_next_batch(self, filters=None, force=False, count=0):
         """#T-02072 Method to trigger for next batch import"""
         filters["offset"] += filters["limit"]
-        print("off set=", filters["offset"])
-        print("count=", count)
+
         if filters["offset"] < count:
-            print("inside process next page loop")
             self.env[self.model._name].with_delay().import_batch(
                 self.backend_record, filters=filters, force=force
             )
@@ -280,7 +273,7 @@ class DelayedBatchImporter(AbstractComponent):
         self, external_id, job_options=None, data=None, model=None, **kwargs
     ):
         """Delay the import of the records"""
-        print("\n\n\nModel", model, "\n\n\n")
+
         job_options = job_options or {}
         if "identity_key" not in job_options:
             job_options["identity_key"] = identity_exact
