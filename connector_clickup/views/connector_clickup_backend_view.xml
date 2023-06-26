@@ -157,6 +157,7 @@
                         <page string="Advance Configuration">
                             <group>
                                 <group>
+                                <field name="company_id" />
                                 <field name="datetime_filter_project" />
                                 <field name="datetime_filter_task" />
                                 <field name="limit" />

@@ -7,7 +7,7 @@ from odoo.addons.component.core import Component
 
 class ClickupProjectProject(models.Model):
     _name = "clickup.project.project"
-    _inherit = ["clickup.model"]
+    _inherit = ["clickup.binding"]
     _inherits = {"project.project": "odoo_id"}
     _description = "Clickup project.project binding model"
 
@@ -28,22 +28,22 @@ class ProjectProject(models.Model):
         related="clickup_bind_ids.external_id",
         readonly=True,
     )
-    backend_id = fields.Many2one(
+    clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
+        string="Clickup Backend",
         readonly=False,
         store=True,
     )
-
-    synced_at = fields.Datetime(related="clickup_bind_ids.synced_at", readonly=True)
 
     folder_id = fields.Char(readonly=True)
 
     export_to_folder = fields.Boolean()
 
-    folder = fields.Char()
+    folder_info = fields.Char()
 
-    def open_project(self):
+    def action_open_project_in_clickup(self):
+        """Open co-responding project in clickup's website"""
         result = {
             "type": "ir.actions.act_url",
             "url": f"https://app.clickup.com/{self.folder_id}/v/l/li/{self.external_id}",
@@ -52,42 +52,43 @@ class ProjectProject(models.Model):
 
         return result
 
-    # self, backend, external_id, force=False, data=None, **kwargs
-
-    def import_changes_from_clickup_project(self, job_options=None):
+    def update_import_project(self):
+        """Update co-responding project and it's tasks from clickup website to odoo"""
         self.ensure_one()
-        if not self.backend_id:
+        if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         self.env["clickup.project.project"].import_record(
-            backend=self.sudo().backend_id,
+            backend=self.sudo().clickup_backend_id,
             external_id=self.external_id,
         )
 
-        # for task in self.tasks:
-        #     self.env["clickup.project.tasks"].import_record(
-        #         backend=self.sudo().backend_id, record=task
-        #     )
+        for task in self.tasks:
+            self.env["clickup.project.tasks"].import_record(
+                backend=self.sudo().clickup_backend_id, external_id=task.external_id
+            )
 
-    def export_changes_to_clickup_project(self):
+    def update_export_project(self):
+        """Update co-responding project and it's tasks from odoo to clickup website"""
         self.ensure_one()
-        if not self.backend_id:
+        if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         self.env["clickup.project.project"].export_record(
-            backend=self.sudo().backend_id, record=self
+            backend=self.sudo().clickup_backend_id, record=self
         )
 
         for task in self.tasks:
             self.env["clickup.project.tasks"].export_record(
-                backend=self.sudo().backend_id, record=task
+                backend=self.sudo().clickup_backend_id, record=task
             )
 
-    def export_to_clickup(self):
+    def export_project_to_clickup(self):
+        """Export newly created project from odoo to clickup website"""
         self.ensure_one()
-        if not self.backend_id:
+        if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         try:
             self.env["clickup.project.project"].export_record(
-                backend=self.sudo().backend_id, record=self
+                backend=self.sudo().clickup_backend_id, record=self
             )
         except Exception as ex:
             raise ValidationError from ex(ustr(ex))
@@ -97,37 +98,9 @@ class ProjectAdapter(Component):
     _name = "clickup.project.project.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.project"
-    # _clickup_model = "/folder/{}/list"
-    # _clickup_model = "/team"
     _clickup_model = "/list"
     _odoo_ext_id_key = "external_id"
     _clickup_ext_id_key = "id"
-
-    # def search(self, filters=None):
-    #     """
-    #     Returns the information of a record
-
-    #     :rtype: dict
-    #     """
-    #     # if self.backend_record.test_mode is True:
-    #     #     print("comming inside")
-    #     #     backend_record = self.backend_record
-    #     #     folder_id = (
-    #     #         backend_record.test_location if backend_record.test_location else None
-    #     #     )
-    #     #     print("\n\n folder id", folder_id)
-    #     # else:
-    #     #     print("production")
-    #     #     backend_record = self.backend_record
-    #     #     folder_id = backend_record.uri if backend_record.uri else None
-    #     space_id = self.backend_record.uri
-    #     resource_path = "/space/{}/folder".format(space_id)
-    #     # if not filters.get("folder_id"):
-    #     #     resource_path = "/space/{}/list".format(space_id)
-    #     # records = self.search(filters)
-    #     # print("payload inside search", records)
-    #     self._clickup_model = resource_path
-    #     return super(ProjectAdapter, self).search(filters)
 
     def search_read(self, filters=None):
         """
@@ -139,31 +112,20 @@ class ProjectAdapter(Component):
 
         space_id = self.backend_record.uri
 
-        # external_id = self.backend_record.uri
-
         folder_resource_path = "/space/{}/folder".format(space_id)
         self._clickup_model = folder_resource_path
-        result_1 = self._call(folder_resource_path, arguments=filters)
+        folder_project_payload = self._call(folder_resource_path, arguments=filters)
 
         list_resource_path = "/space/{}/list".format(space_id)
         self._clickup_model = list_resource_path
-        result_2 = self._call(list_resource_path, arguments=filters)
+        space_project_payload = self._call(list_resource_path, arguments=filters)
 
-        # if space_id != external_id:
-        #     print("\n\ncondition not matched\n\n")
-        #     particular_resource_path = "/list/{}".format(external_id)
-        #     self._clickup_model = particular_resource_path
-        #     result_3 = self._call(particular_resource_path, arguments=filters)
-        #     if result_3:
-        #         for rec in result_3:
-        #             data.append(rec)
-
-        if result_1:
-            for rec in result_1["folders"]:
+        if folder_project_payload:
+            for rec in folder_project_payload["folders"]:
                 for item in rec["lists"]:
                     data.append(item)
-        if result_2:
-            for rec in result_2["lists"]:
+        if space_project_payload:
+            for rec in space_project_payload["lists"]:
                 data.append(rec)
 
         return data

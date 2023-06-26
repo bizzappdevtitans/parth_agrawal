@@ -5,7 +5,6 @@ from odoo import _
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import IDMissingInBackend
 from odoo.addons.queue_job.exception import NothingToDoJob
-from odoo.addons.queue_job.job import identity_exact
 
 _logger = logging.getLogger(__name__)
 
@@ -275,8 +274,6 @@ class DelayedBatchImporter(AbstractComponent):
         """Delay the import of the records"""
 
         job_options = job_options or {}
-        if "identity_key" not in job_options:
-            job_options["identity_key"] = identity_exact
 
         model_parts = model.split(".")
         model_name = " ".join(

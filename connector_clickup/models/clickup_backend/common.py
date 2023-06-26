@@ -1,4 +1,3 @@
-import json
 import logging
 from contextlib import contextmanager
 from datetime import datetime, timedelta
@@ -6,7 +5,6 @@ from datetime import datetime, timedelta
 from odoo import fields, models
 
 from odoo.addons.component.core import Component
-from odoo.addons.queue_job.job import identity_exact
 
 # from ...components.backend_adapter import ClickUpBackendAdapter
 from ...components.backend_adapter import (
@@ -40,7 +38,7 @@ class ClickupBackend(models.Model):
     force_update_projects = fields.Boolean()
     force_update_stages = fields.Boolean()
     force_update_tasks = fields.Boolean()
-
+    company_id = fields.Many2one(comodel_name="res.company", string="Company")
     # Live
     api_key = fields.Char()
     uri = fields.Char()
@@ -77,18 +75,18 @@ class ClickupBackend(models.Model):
     #     for backend in self:
     #             if from_date_field:
     #                 from_date = backend[from_date_field]
-    #         search_dict = filters.get("search", {})
-    #         #     if from_date:
-    #         #         if model in [
-    #         #             "akeneo.product.category",
-    #         #             "akeneo.attribute",
-    #         #             "akeneo.reference",
-    #         #             "akeneo.product.product.image",
-    #         #         ]:
-    #         #             from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-    #         #         else:
-    #         #             from_date = to_iso_datetime(from_date)
-    #         #         search_dict.update({"updated": [{"operator": ">", "value": from_date}]})
+    #             search_dict = filters.get("search", {})
+    #             if from_date:
+    #                 if model in [
+    #                     "akeneo.product.category",
+    #                     "akeneo.attribute",
+    #                     "akeneo.reference",
+    #                     "akeneo.product.product.image",
+    #                 ]:
+    #                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+    #                 else:
+    #                     from_date = to_iso_datetime(from_date)
+    #         search_dict.update({"updated": [{"operator": ">", "value": from_date}]})
 
     #         if model in [
     #             "clickup.project.project",
@@ -157,31 +155,23 @@ class ClickupBackend(models.Model):
             from_date = None
             if from_date_field:
                 from_date = backend[from_date_field]
-            search_dict = filters.get("search", {})
+
             if from_date:
-                # T-02383: akeneo accepts different date time format
-                # for category and variant.
                 if model in [
                     "clickup.project.tasks",
                 ]:
                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                 else:
                     from_date = to_iso_datetime(from_date)
-                search_dict.update({"updated": [{"operator": ">", "value": from_date}]})
+
             if model != "akeneo.attribute":
                 if model in [
                     "clickup.project.project",
                 ]:
-                    to_date = import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
                 else:
-                    to_date = to_iso_datetime(import_start_time)
+                    to_iso_datetime(import_start_time)
 
-                if not search_dict.get("updated"):
-                    search_dict["updated"] = []
-
-                search_dict["updated"].append({"operator": "<", "value": to_date})
-
-            filters["search"] = json.dumps(search_dict)
             filters["limit"] = backend.limit
             filters["with_count"] = "true"
             force = False
@@ -189,12 +179,12 @@ class ClickupBackend(models.Model):
                 force = backend[force_update_field]
             if model == "clickup.project.project":
                 job_options["description"] = "Prepare jobs for akeneo images import"
-            akeneo_model = (
+            clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay
                 else self.env[model]
             )
-            akeneo_model.import_batch(
+            clickup_model.import_batch(
                 backend,
                 filters=filters,
                 force=force,
@@ -207,25 +197,19 @@ class ClickupBackend(models.Model):
         if from_date_field:
             self.write({from_date_field: next_time})
 
-    def import_projects(self, with_delay=True, from_sync=False):
+    def import_projects(self, with_delay=True):
         """#T-02421 Import Clickup References"""
 
         for backend in self:
-            filters = {
-                "limit": backend.limit,
-                "offset": 0,
-            }
             backend._import_from_date(
                 model="clickup.project.project",
-                # from_date_field=None if not from_sync else False,
                 from_date_field="datetime_filter_project",
                 priority=5,
-                filters=filters,
                 with_delay=with_delay,
                 force_update_field="force_update_projects",
             )
 
-    def import_tasks(self, with_delay=True, from_sync=False):
+    def import_tasks(self, with_delay=True):
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.tasks",
@@ -234,78 +218,72 @@ class ClickupBackend(models.Model):
                 with_delay=with_delay,
             )
 
-    def import_stages(self, with_delay=True, from_sync=False):
+    def import_stages(self, with_delay=True):
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.task.type",
-                from_date_field=None if not from_sync else False,
+                from_date_field=None,
                 priority=7,
                 with_delay=with_delay,
             )
 
-    # @contextmanager
-    # def work_on(self, model_name, **kwargs):
-    #     """Add the work on for clickup."""
-
-    #     self.ensure_one()
-    #     location = self.uri
-    #     token = self.api_key
-    #     if self.test_mode:
-    #         location = self.test_location
-    #         token = self.test_token
-
-    #     clickup_location = ClickupLocation(
-    #         location=location, token=token, model=model_name
-    #     )
-
-    #     # clickup have different endpoint/credentials for token
-    #     clickup_location_token = ClickupTokenLocation(
-    #         location=location, model=model_name
-    #     )
-    #     with ClickupAPI(
-    #         clickup_location, clickup_location_token, model=model_name
-    #     ) as clickup_api:
-    #         _super = super(ClickupBackend, self)
-    #         # from the components we'll be able to do: self.work.clickup_api
-    #         with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
-    #             yield work
-
     @contextmanager
     def work_on(self, model_name, **kwargs):
-        """Add the work on for akeneo."""
+        """Add the work on for clickup."""
+
         self.ensure_one()
         location = self.uri
-        client_id = self.client_id
-        client_secret = self.client_secret
         token = self.api_key
-        username = self.username
-        password = self.password
         if self.test_mode:
-            location = kwargs.get("location", self.location)
-            client_id = self.client_id
-            client_secret = self.client_secret
-            token = self.token
-            username = self.username
-            password = self.password
+            location = self.test_location
+            token = self.test_token
 
-        akeneo_location = ClickupLocation(
-            location=location,
-            token=token,
-        )
+        clickup_location = ClickupLocation(location=location, token=token)
 
-        # akeneo have different endpoint/credentials for token
-        akeneo_location_token = ClickupTokenLocation(
-            location=location,
-            client_id=client_id,
-            client_secret=client_secret,
-            username=username,
-            password=password,
-        )
-        with ClickupAPI(akeneo_location, akeneo_location_token) as clickup_api:
+        # clickup have different endpoint/credentials for token
+        clickup_location_token = ClickupTokenLocation(location=location)
+        with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
             _super = super()
-            # from the components we'll be able to do: self.work.akeneo_api
+            # from the components we'll be able to do: self.work.clickup_api
             with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
                 yield work
+
+    # @contextmanager
+    # def work_on(self, model_name, **kwargs):
+    #     """Add the work on for akeneo."""
+    #     self.ensure_one()
+    #     location = self.uri
+    #     client_id = self.client_id
+    #     client_secret = self.client_secret
+    #     token = self.api_key
+    #     username = self.username
+    #     password = self.password
+    #     if self.test_mode:
+    #         location = kwargs.get("location", self.location)
+    #         client_id = self.client_id
+    #         client_secret = self.client_secret
+    #         token = self.token
+    #         username = self.username
+    #         password = self.password
+
+    #     akeneo_location = ClickupLocation(
+    #         location=location,
+    #         token=token,
+    #     )
+
+    #     # akeneo have different endpoint/credentials for token
+    #     akeneo_location_token = ClickupTokenLocation(
+    #         location=location,
+    #         client_id=client_id,
+    #         client_secret=client_secret,
+    #         username=username,
+    #         password=password,
+    #     )
+    #     with ClickupAPI(akeneo_location, akeneo_location_token) as clickup_api:
+    #         _super = super()
+    #         # from the components we'll be able to do: self.work.akeneo_api
+    #         with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
+    #             yield work
 
     def export_projects(self, with_delay=True, from_sync=False):
         for backend in self.sudo():
@@ -313,7 +291,6 @@ class ClickupBackend(models.Model):
                 model="clickup.project.project",
                 from_date_field=None if not from_sync else False,
                 with_delay=with_delay,
-                identity_key=identity_exact,
             )
 
     def export_tasks(self, with_delay=True, from_sync=False):
@@ -322,7 +299,6 @@ class ClickupBackend(models.Model):
                 model="clickup.project.tasks",
                 from_date_field=None if not from_sync else False,
                 with_delay=with_delay,
-                identity_key=identity_exact,
             )
 
     def _export_from_date(
@@ -332,7 +308,6 @@ class ClickupBackend(models.Model):
         filters=None,
         force_update_field=None,
         priority=None,
-        identity_key=identity_exact,
         with_delay=True,
     ):
         """Common method for import data from from_date."""
@@ -347,7 +322,7 @@ class ClickupBackend(models.Model):
             from_date = None
             if from_date_field:
                 from_date = backend[from_date_field]
-            search_dict = filters.get("search", {})
+
             if from_date:
                 # T-02383: clickup accepts different date time format
                 # for category and variant.
@@ -360,31 +335,16 @@ class ClickupBackend(models.Model):
                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                 else:
                     from_date = to_iso_datetime(from_date)
-                search_dict.update(
-                    {
-                        "updated": [
-                            {"operator": ">", "value": from_date, "action": "export"}
-                        ]
-                    }
-                )
-            if model != "akeneo.attribute":
-                if model in [
-                    "clickup.project.project",
-                    "clickup.project.tasks",
-                    "clickup.project.task.type",
-                ]:
-                    to_date = import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-                else:
-                    to_date = to_iso_datetime(import_start_time)
 
-                if not search_dict.get("updated"):
-                    search_dict["updated"] = []
+            if model in [
+                "clickup.project.project",
+                "clickup.project.tasks",
+                "clickup.project.task.type",
+            ]:
+                import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                to_iso_datetime(import_start_time)
 
-                search_dict["updated"].append(
-                    {"operator": "<", "value": to_date, "action": "export"}
-                )
-
-            filters["search"] = json.dumps(search_dict)
             # filters["limit"] = backend.limit
             filters["with_count"] = "true"
             force = False
@@ -412,7 +372,7 @@ class ClickupBackend(models.Model):
         if from_date_field:
             self.write({from_date_field: next_time})
 
-    def test_cron_import_clickup_changes(
+    def cron_import_clickup_changes(
         self,
         filters=None,
         with_delay=True,
@@ -444,7 +404,7 @@ class ClickupBackend(models.Model):
                 **{"no_delay": not with_delay},
             )
 
-    def test_cron_export_clickup_changes(
+    def cron_export_clickup_changes(
         self,
         filters=None,
         with_delay=True,

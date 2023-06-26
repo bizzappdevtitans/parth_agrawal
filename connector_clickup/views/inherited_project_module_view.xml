@@ -2,76 +2,149 @@
 <odoo>
     <!-- Inherited project.project model form view to add external_id, clickup_backend_id -->
     <record id="inherit_project_project_form_view" model="ir.ui.view">
-        <field name="name">Project project Inherit Form</field>
+        <field name="name">project.project.inherit.form</field>
         <field name="model">project.project</field>
-        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="inherit_id" ref="project.edit_project" />
         <field name="arch" type="xml">
             <header>
-                <button attrs="{'invisible': [('external_id', '=', False)]}" class="oe_highlight" name="export_changes_to_clickup_project" string="Export Changes To ClickUp" type="object"/>
-                <button attrs="{'invisible': [('external_id', '=', False)]}" class="oe_highlight" name="import_changes_from_clickup_project" string="Import Changes From ClickUp" type="object"/>
-                <button attrs="{'invisible': [('external_id', '!=', False)]}" class="oe_highlight" name="export_to_clickup" string="Export To ClickUp" type="object"/>
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="oe_highlight"
+                    name="update_export_project"
+                    string="Update To ClickUp"
+                    type="object"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="oe_highlight"
+                    name="update_import_project"
+                    string="Update From ClickUp"
+                    type="object"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '!=', False)]}"
+                    class="oe_highlight"
+                    name="export_project_to_clickup"
+                    string="Export To ClickUp"
+                    type="object"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
             </header>
             <xpath expr="//page[@name='settings']" position="after">
-                <page string="Connector Clickup Project">
+                <page
+                    string="Connector Clickup Project"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                >
                     <group>
-                        <field name="clickup_bind_ids"/>
-                        <field name="external_id"/>
-                        <field name="folder_id"/>
-                        <field name="backend_id"/>
-                        <field name="synced_at"/>
+                        <field name="clickup_bind_ids" />
+                        <field name="external_id" />
+                        <field name="folder_id" string="Folder Id" />
+                        <field name="clickup_backend_id" />
+
                     </group>
-                        <span style="margin-right: 10px;"><b>Click To Open Project in ClickUp</b></span>
-                        <button class="oe_highlight" name="open_project" string="Open In ClickUp" type="object"/>
+                        <span style="margin-right: 10px;"><b
+                        >Click To Open Project in ClickUp</b></span>
+                        <button
+                        class="oe_highlight"
+                        name="action_open_project_in_clickup"
+                        string="Open In ClickUp"
+                        type="object"
+                    />
                 </page>
             </xpath>
              <xpath expr="//group[@name='extra_settings']" position="after">
-                        <label for= "export_to_folder">Export To Folder</label>
-                        <field name="export_to_folder"/>
-                        <label for= "folder"  attrs="{'invisible': [('export_to_folder', '=', False)]}">Folder Id</label>
-                        <field name="folder"  attrs="{'invisible': [('export_to_folder', '=', False)]}"/>
+                        <label
+                    for="export_to_folder"
+                    attrs="{'invisible': [('external_id', '!=', False)]}"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                >Export To Folder</label>
+                        <field
+                    name="export_to_folder"
+                    attrs="{'invisible': [('external_id', '!=', False)]}"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
+                        <label
+                    for="folder_info"
+                    attrs="{'invisible': [('export_to_folder', '=', False)]}"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                >Folder Info</label>
+                        <field
+                    name="folder_info"
+                    attrs="{'invisible': [('export_to_folder', '=', False)]}"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
             </xpath>
         </field>
     </record>
     <!-- Inherited project.task model form view to add external_id, clickup_backend_id -->
     <record id="inherit_project_task_form_view" model="ir.ui.view">
-        <field name="name">Project task Inherit Form</field>
+        <field name="name">project.task.inherit.form</field>
         <field name="model">project.task</field>
-        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="inherit_id" ref="project.view_task_form2" />
         <field name="arch" type="xml">
             <header>
-                <button attrs="{'invisible': [('external_id', '=', False)]}" class="oe_highlight" name="export_changes_to_clickup_task" string="Export Changes to ClickUp" type="object"/>
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="oe_highlight"
+                    name="update_export_task"
+                    string="Update To ClickUp"
+                    type="object"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
+                <button
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    class="oe_highlight"
+                    name="update_import_task"
+                    string="Update From ClickUp"
+                    type="object"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                />
             </header>
             <xpath expr="//page[@name='extra_info']" position="after">
-                <page attrs="{'invisible': [('external_id', '=', False)]}" string="Connector Clickup Task">
+                <page
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    string="Connector Clickup Task"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                >
                     <group>
-                        <field invisible="1" name="clickup_bind_ids"/>
-                        <field name="external_id"/>
-                        <field name="folder_id"/>
-                        <field name="backend_id"/>
-                        <field name="created_at"/>
-                        <field name="updated_at"/>
+                        <field invisible="1" name="clickup_bind_ids" />
+                        <field name="external_id" />
+                        <field name="folder_id" />
+                        <field name="clickup_backend_id" />
+                        <field name="created_at" />
+                        <field name="updated_at" />
                     </group>
-                     <span style="margin-right: 10px;"><b>Click To Open Task in ClickUp</b></span>
-                    <button class="oe_highlight" name="open_task" string="Open Task In ClickUp" type="object"/>
+                     <span style="margin-right: 10px;"><b
+                        >Click To Open Task in ClickUp</b></span>
+                    <button
+                        class="oe_highlight"
+                        name="action_open_task_in_clickup"
+                        string="Open Task In ClickUp"
+                        type="object"
+                    />
                 </page>
             </xpath>
         </field>
     </record>
     <!-- Inherited project.task.type model form view to add external_id, clickup_backend_id -->
     <record id="inherit_project_task_type_form_view" model="ir.ui.view">
-        <field name="name">Project task type Inherit Form</field>
+        <field name="name">project.task.type.inherit.form</field>
         <field name="model">project.task.type</field>
-        <field name="inherit_id" ref="project.task_type_edit"/>
+        <field name="inherit_id" ref="project.task_type_edit" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='description']" position="after">
-                <group string="Clickup Binding Details" attrs="{'invisible': [('external_id', '=', False)]}">
-                    <field invisible="1" name="clickup_bind_ids"/>
-                    <field name="external_id"/>
-                    <field name="backend_id"/>
+                <group
+                    string="Clickup Binding Details"
+                    attrs="{'invisible': [('external_id', '=', False)]}"
+                    groups="connector_clickup.group_connector_clickup_manager"
+                >
+                    <field invisible="1" name="clickup_bind_ids" />
+                    <field name="external_id" />
+                    <field name="clickup_backend_id" />
                 </group>
             </xpath>
         </field>
     </record>
 </odoo>
-
-

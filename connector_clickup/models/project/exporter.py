@@ -1,9 +1,11 @@
 import logging
 
+from bs4 import BeautifulSoup
+
+from odoo.osv import expression
+
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping
-from bs4 import BeautifulSoup
-from odoo.osv import expression
 
 _logger = logging.getLogger(__name__)
 
@@ -40,9 +42,7 @@ class ProjectProjectDelayedBatchExporter(Component):
         job_options = job_options or {}
         if "priority" not in job_options:
             job_options["priority"] = 5
-        return super(ProjectProjectDelayedBatchExporter, self)._export_record(
-            record, job_options, **kwargs
-        )
+        return super()._export_record(record, job_options, **kwargs)
 
 
 class ProjectProjectImportMapper(Component):
@@ -53,9 +53,7 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def name(self, record):
-        name = record.name
-
-        return {"name": name}
+        return {"name": record.name}
 
     @mapping
     def content(self, record):
@@ -69,12 +67,8 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def folder_id(self, record):
-        content = record.folder_id
-
-        return {"folder_id": content}
+        return {"folder_id": record.folder_id}
 
     @mapping
     def folder(self, record):
-        content = record.folder
-
-        return {"folder": content}
+        return {"folder": record.folder_info}

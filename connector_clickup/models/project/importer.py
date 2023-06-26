@@ -1,5 +1,5 @@
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
@@ -146,11 +146,11 @@ class ProjectProjectImportMapper(Component):
         """Getting product based on the SKU."""
 
         binder = self.binder_for(model="clickup.project.project")
-        odoo_id = binder.to_internal(record.get("id"), unwrap=True)
+        project = binder.to_internal(record.get("id"), unwrap=True)
 
-        if not odoo_id:
+        if not project:
             return {}
-        return {"odoo_id": odoo_id.id}
+        return {"odoo_id": project.id}
 
     @mapping
     def name(self, record):
@@ -160,9 +160,9 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def description(self, record):
-        content = record.get("content")
+        description = record.get("content")
 
-        return {"description": content}
+        return {"description": description}
 
     @mapping
     def external_id(self, record):
@@ -174,23 +174,16 @@ class ProjectProjectImportMapper(Component):
     @mapping
     def backend_id(self, record):
         """Mapped the backend id"""
-        data = self.backend_record.id
+        backend_id = self.backend_record.id
 
-        return {"backend_id": data}
+        return {"backend_id": backend_id}
 
     @mapping
     def folder_id(self, record):
         """Mapped the backend id"""
-        data = self.backend_record.uri
+        uri = self.backend_record.uri
 
-        return {"folder_id": data}
-
-    @mapping
-    def synced_at(self, record):
-        """Mapped the backend id"""
-        data = datetime.now()
-
-        return {"synced_at": data}
+        return {"folder_id": uri}
 
     @mapping
     def date_start(self, record):

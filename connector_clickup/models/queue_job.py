@@ -5,7 +5,7 @@ class QueueJob(models.Model):
     _inherit = "queue.job"
 
     def related_action_open_view(self):
-        """Used to open related record of queue job # T-02171"""
+        """Used to open related record of queue job"""
         self.ensure_one()
         if not self.args and not self.kwargs:
             return None

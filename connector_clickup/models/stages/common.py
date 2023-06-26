@@ -1,11 +1,12 @@
 from odoo import fields, models
+
 from odoo.addons.component.core import Component
 
 
 class ClickupProjectTaskType(models.Model):
     _name = "clickup.project.task.type"
     _inherits = {"project.task.type": "odoo_id"}
-    _inherit = ["clickup.model"]
+    _inherit = ["clickup.binding"]
     _description = "Clickup project.task.type binding model"
 
     odoo_id = fields.Many2one(
@@ -27,7 +28,7 @@ class ProjectTaskType(models.Model):
         related="clickup_bind_ids.external_id",
         readonly=True,
     )
-    backend_id = fields.Many2one(
+    clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
         string="Clickup Backend",
@@ -45,62 +46,52 @@ class TaskTypeAdapter(Component):
     # def search(self, filters=None):
     #     """
     #     Returns the information of a record
+
     #     :rtype: dict
     #     """
-    #     if self.backend_record.test_mode is True:
-    #         print("\n\ntest_mode\n\n")
-    #         backend_record = self.backend_record
-    #         folder_id = (
-    #             backend_record.test_location if backend_record.test_location else None
-    #         )
-    #     else:
-    #         print("\n\nproduction\n\n")
-    #         backend_record = self.backend_record
-    #         folder_id = backend_record.uri if backend_record.uri else None
+    #     # if self.backend_record.test_mode is True:
+    #     #     print("comming inside")
+    #     #     backend_record = self.backend_record
+    #     #     folder_id = (
+    #     #         backend_record.test_location if backend_record.test_location else None
+    #     #     )
+    #     #     print("\n\n folder id", folder_id)
+    #     # else:
+    #     #     print("production")
+    #     #     backend_record = self.backend_record
+    #     #     folder_id = backend_record.uri if backend_record.uri else None
+    #     space_id = self.backend_record.uri
+    #     resource_path = "/space/{}/folder".format(space_id)
 
-    #     project_model = self.env["project.project"]
+    #     # records = self.search(filters)
+    #     # print("payload inside search", records)
+    #     self._clickup_model = resource_path
+    #     return super(TaskTypeAdapter, self).search(filters)
 
-    #     projects = project_model.search([("folder_id", "=", folder_id)])
-    #     result = []
-
-    #     for project_record in projects:
-    #         external_id = project_record.external_id
-    #         if not external_id:
-    #             continue
-
-    #         list_id = external_id
-
-    #         resource_path = "/list/{}/task".format(list_id)
-    #         self._clickup_model = resource_path
-    #         # project_result = self._call(resource_path, arguments=filters)
-
-    #         # result.append(resource_path)
-    #         super_result = super(TaskTypeAdapter, self).search(filters)
-    #         result.append(super_result)
-
-    #     return result
-
-    def search(self, filters=None):
+    def search_read(self, filters=None):
         """
         Returns the information of a record
 
         :rtype: dict
         """
-        # if self.backend_record.test_mode is True:
-        #     print("comming inside")
-        #     backend_record = self.backend_record
-        #     folder_id = (
-        #         backend_record.test_location if backend_record.test_location else None
-        #     )
-        #     print("\n\n folder id", folder_id)
-        # else:
-        #     print("production")
-        #     backend_record = self.backend_record
-        #     folder_id = backend_record.uri if backend_record.uri else None
-        space_id = self.backend_record.uri
-        resource_path = "/space/{}/folder".format(space_id)
+        data = []
 
-        # records = self.search(filters)
-        # print("payload inside search", records)
-        self._clickup_model = resource_path
-        return super(TaskTypeAdapter, self).search(filters)
+        space_id = self.backend_record.uri
+
+        folder_resource_path = "/space/{}/folder".format(space_id)
+        self._clickup_model = folder_resource_path
+        folder_project_payload = self._call(folder_resource_path, arguments=filters)
+
+        list_resource_path = "/space/{}/list".format(space_id)
+        self._clickup_model = list_resource_path
+        space_project_payload = self._call(list_resource_path, arguments=filters)
+
+        if folder_project_payload:
+            for rec in folder_project_payload["folders"]:
+                for item in rec["lists"]:
+                    data.append(item)
+        if space_project_payload:
+            for rec in space_project_payload["lists"]:
+                data.append(rec)
+
+        return data

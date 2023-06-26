@@ -98,11 +98,11 @@ class ProjectTaskImportMapper(Component):
         """Getting product based on the SKU."""
 
         binder = self.binder_for(model="clickup.project.tasks")
-        odoo_id = binder.to_internal(record.get("id"), unwrap=True)
+        task = binder.to_internal(record.get("id"), unwrap=True)
 
-        if not odoo_id:
+        if not task:
             return {}
-        return {"odoo_id": odoo_id.id}
+        return {"odoo_id": task.id}
 
     @mapping
     def name(self, record):
@@ -122,9 +122,9 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def description(self, record):
-        content = record.get("text_content")
+        description = record.get("text_content")
 
-        return {"description": content}
+        return {"description": description}
 
     @mapping
     def external_id(self, record):
@@ -137,35 +137,35 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def backend_id(self, record):
         """Mapped the backend id"""
-        data = self.backend_record.id
+        backend_id = self.backend_record.id
 
-        return {"backend_id": data}
+        return {"backend_id": backend_id}
 
     @mapping
     def folder_id(self, record):
         """Mapped the backend id"""
-        data = self.backend_record.uri
+        uri = self.backend_record.uri
 
-        return {"folder_id": data}
+        return {"folder_id": uri}
 
     @mapping
     def date_deadline(self, record):
         """Mapped the backend id"""
-        data = record.get("due_date")
+        due_data = record.get("due_date")
 
-        if data:
-            timestamp = int(data) / 1000
+        if due_data:
+            timestamp = int(due_data) / 1000
             due_date = date.fromtimestamp(timestamp) + timedelta(days=1)
             return {"date_deadline": due_date}
 
     @mapping
     def created_at(self, record):
         """Mapped the backend id"""
-        created = record.get("date_created")
-        if created:
-            timestamp = int(created) / 1000
-            date_updated = datetime.fromtimestamp(timestamp)
-            return {"created_at": date_updated}
+        created_at = record.get("date_created")
+        if created_at:
+            timestamp = int(created_at) / 1000
+            date_created = datetime.fromtimestamp(timestamp)
+            return {"created_at": date_created}
         else:
             return {}
 
@@ -173,9 +173,9 @@ class ProjectTaskImportMapper(Component):
     def updated_at(self, record):
         """Mapped the backend id"""
 
-        updated = record.get("date_updated")
-        if updated:
-            timestamp = int(updated) / 1000
+        updated_at = record.get("date_updated")
+        if updated_at:
+            timestamp = int(updated_at) / 1000
             date_updated = datetime.fromtimestamp(timestamp)
             return {"updated_at": date_updated}
         else:

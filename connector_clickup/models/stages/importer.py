@@ -2,7 +2,6 @@ import logging
 
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-from odoo.addons.connector.exception import MappingError
 
 # from ..exception import MappingError
 
@@ -24,31 +23,49 @@ class ProjectTaskTypeBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.task.type"
 
-    # def run(self, filters=None, force=False):
+    # 1 def run(self, filters=None, force=False):
     #     """Run the synchronization"""
 
     #     records = self.backend_adapter.search(filters)
 
-    #     for record in records:
-    #         tasks = record.get("tasks", [])
-    #         for task in tasks:
-    #             external_id = task.get(self.backend_adapter._clickup_ext_id_key)
+    #     for record in records["folders"]:
+    #         for item in record["lists"]:
+    #             for data in item["statuses"]:
+    #                 external_id = data.get(self.backend_adapter._clickup_ext_id_key)
 
-    #             self._import_record(external_id, data=task, force=force)
+    #                 self._import_record(
+    #                     external_id, data=data, force=force, model=self._apply_on
+    #                 )
+
+    # 2 def run(self, filters=None, force=False):
+    #     """Run the synchronization"""
+
+    #     records = self.backend_adapter.search_read(filters)
+    #     print("\n\nFull records=\n\n", records)
+
+    #     for item in records.get("folders"):
+    #         print("\n\nFolder=\n\n", item)
+    #         for data in item.get("lists", []):
+    #             print("\n\nlist=\n\n", data)
+    #             for status in data.get("statuses", []):
+    #                 print("\n\nstatus=\n\n", status)
+    #                 external_id = status.get(self.backend_adapter._clickup_ext_id_key)
+
+    #                 self._import_record(
+    #                     external_id, data=status, force=force, model=self._apply_on
+    #                 )
 
     def run(self, filters=None, force=False):
         """Run the synchronization"""
 
-        records = self.backend_adapter.search(filters)
+        records = self.backend_adapter.search_read(filters)
 
-        for record in records["folders"]:
-            for item in record["lists"]:
-                for data in item["statuses"]:
-                    external_id = data.get(self.backend_adapter._clickup_ext_id_key)
-
-                    self._import_record(
-                        external_id, data=data, force=force, model=self._apply_on
-                    )
+        for rec in records:
+            for status in rec.get("statuses", []):
+                external_id = status.get(self.backend_adapter._clickup_ext_id_key)
+                self._import_record(
+                    external_id, data=status, force=force, model=self._apply_on
+                )
 
 
 class ProjectTaskTypeImportMapper(Component):
@@ -56,42 +73,37 @@ class ProjectTaskTypeImportMapper(Component):
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.task.type"
 
-    # @only_create
-    # @mapping
-    # def odoo_id(self, record):
-    #     """Getting product based on the SKU."""
-    #     result = record.get("status").get("status")
-    #     test = self.env["project.task.type"].search([("name", "=", result)])
-    #     if not test:
-    #         binder = self.binder_for(model="clickup.project.task.type")
-    #         odoo_id = binder.to_internal(
-    #             record.get("status").get("status"), unwrap=True
-    #         )
-    #         if not odoo_id:
-    #             return {}
-    #         return {"odoo_id": odoo_id.id}
-
     @only_create
     @mapping
     def odoo_id(self, record):
         """Getting product based on the SKU."""
 
         binder = self.binder_for(model="clickup.project.task.type")
-        odoo_id = binder.to_internal(record.get("id"), unwrap=True)
+        stage = binder.to_internal(record.get("id"), unwrap=True)
 
-        if not odoo_id:
+        if not stage:
             return {}
-        return {"odoo_id": odoo_id.id}
+        return {"odoo_id": stage.id}
 
     @mapping
     def name(self, record):
-        result = record.get("status")
-        # task_name = record.get("name")
-        test = self.env["project.task.type"].search([("name", "=", result)])
-        if not test:
-            return {"name": result}
+        name = record.get("status")
+
+        stage_name = self.env["project.task.type"].search([("name", "=", name)])
+        if not stage_name:
+            return {"name": name}
         else:
-            raise MappingError("Already existing stage in project.task.type model")
+            queue_job = self.env["queue.job"].search(
+                [("job_function_id", "=", "<clickup.project.task.type>.import_record")]
+            )
+            queue_job.write(
+                {
+                    "state": "done",
+                    "result": "Stage already exist in project.task.type model",
+                }
+            )
+
+            # return _("%s stage is already exist in project.task.type model.") % name
 
     def external_id(self, record):
         """#T-02383 Mapped external id"""
@@ -103,6 +115,6 @@ class ProjectTaskTypeImportMapper(Component):
     def backend_id(self, record):
         """Mapped the backend id"""
 
-        data = self.backend_record.id
+        backend_id = self.backend_record.id
 
-        return {"backend_id": data}
+        return {"backend_id": backend_id}

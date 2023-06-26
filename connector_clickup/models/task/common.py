@@ -1,23 +1,21 @@
-import xmlrpc.client
-from odoo.tools.misc import ustr
 from odoo import _, fields, models
-import json
+from odoo.exceptions import UserError
+
 from odoo.addons.component.core import Component
-from odoo.exceptions import ValidationError, UserError
 
 
 class ClickupProjectTasks(models.Model):
     _name = "clickup.project.tasks"
     _inherits = {"project.task": "odoo_id"}
-    _inherit = ["clickup.model"]
+    _inherit = ["clickup.binding"]
     _description = "Clickup project.tasks binding model"
 
     odoo_id = fields.Many2one(
         "project.task", string="Task", required=True, ondelete="restrict"
     )
-    created_at = fields.Datetime(string="Created At", readonly=True)
+    created_at = fields.Datetime(readonly=True)
 
-    updated_at = fields.Datetime(string="Updated At", readonly=True)
+    updated_at = fields.Datetime(readonly=True)
 
 
 class ProjectTask(models.Model):
@@ -34,23 +32,19 @@ class ProjectTask(models.Model):
         related="clickup_bind_ids.external_id",
         readonly=True,
     )
-    backend_id = fields.Many2one(
+    clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
         string="Clickup Backend",
         readonly=True,
     )
 
-    created_at = fields.Datetime(
-        string="Created At", related="clickup_bind_ids.created_at", readonly=True
-    )
+    created_at = fields.Datetime(related="clickup_bind_ids.created_at", readonly=True)
 
-    updated_at = fields.Datetime(
-        string="Updated At", related="clickup_bind_ids.updated_at", readonly=True
-    )
-    folder_id = fields.Char(string="Folder Id", readonly=True)
+    updated_at = fields.Datetime(related="clickup_bind_ids.updated_at", readonly=True)
+    folder_id = fields.Char(readonly=True)
 
-    def open_task(self):
+    def action_open_task_in_clickup(self):
         """This method open the particular task on clickup's website"""
         return {
             "type": "ir.actions.act_url",
@@ -58,15 +52,21 @@ class ProjectTask(models.Model):
             "target": "new",
         }
 
-    def update_task(self):
-        pass
-
-    def export_changes_to_clickup_task(self):
+    def update_import_task(self):
         self.ensure_one()
-        if not self.backend_id:
+        if not self.clickup_backend_id:
+            raise UserError(_("Please add backend!!!"))
+        self.env["clickup.project.tasks"].import_record(
+            backend=self.sudo().clickup_backend_id,
+            external_id=self.external_id,
+        )
+
+    def update_export_task(self):
+        self.ensure_one()
+        if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         self.env["clickup.project.tasks"].export_record(
-            backend=self.sudo().backend_id, record=self
+            backend=self.sudo().clickup_backend_id, record=self
         )
 
 
@@ -74,7 +74,7 @@ class TaskAdapter(Component):
     _name = "clickup.project.task.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.tasks"
-    _clickup_model = "/list/{}/task"
+    _clickup_model = "/task"
     _clickup_ext_id_key = "id"
     # _model_dependencies = [
     #     (
@@ -115,7 +115,7 @@ class TaskAdapter(Component):
             resource_path = "/list/{}/task".format(list_id)
             self._clickup_model = resource_path
 
-            super_result = super(TaskAdapter, self).search(filters)
+            super_result = super().search(filters)
             result.append(super_result)
 
         return result
@@ -131,11 +131,11 @@ class TaskAdapter(Component):
         if external_id:
             resource_path = "/list/{}/task".format(external_id)
             self._clickup_model = resource_path
-            return super(TaskAdapter, self).create(data)
+            return super().create(data)
 
     def write(self, external_id, data):
         """Update records on the external system"""
         if external_id:
             resource_path = "/task/{}".format(external_id)
             self._clickup_model = resource_path
-            return super(TaskAdapter, self).write(external_id, data)
+            return super().write(external_id, data)

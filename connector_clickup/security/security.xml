@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="module_category_connector_clickup" model="ir.module.category">
+        <field name="name">Connector_Clickup</field>
+        <field name="description">Category of Connector ClickUp</field>
+    </record>
+    <record id="group_connector_clickup_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_connector_clickup" />
+    </record>
+    <record id="group_connector_clickup_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_connector_clickup" />
+        <field
+            name="implied_ids"
+            eval="[(4,ref('connector_clickup.group_connector_clickup_user'))]"
+        />
+    </record>
+
+
+</odoo>

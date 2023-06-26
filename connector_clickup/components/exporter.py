@@ -1,11 +1,12 @@
 import logging
-from odoo import _, tools
-from odoo.addons.component.core import AbstractComponent
-from odoo.addons.queue_job.job import identity_exact
-from odoo.exceptions import ValidationError
-from odoo.addons.connector.exception import RetryableJobError
 
 import psycopg2
+
+from odoo import _, tools
+from odoo.exceptions import ValidationError
+
+from odoo.addons.component.core import AbstractComponent
+from odoo.addons.connector.exception import RetryableJobError
 
 _logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class ClickupExporter(AbstractComponent):
     _default_binding_field = "clickup_bind_ids"
 
     def __init__(self, work_context):
-        super(ClickupExporter, self).__init__(work_context)
+        super().__init__(work_context)
         self.binding = None
         self.external_id = None
 
@@ -53,14 +54,14 @@ class ClickupExporter(AbstractComponent):
         sql = "SELECT id FROM %s WHERE ID = %%s FOR UPDATE NOWAIT" % self.model._table
         try:
             self.env.cr.execute(sql, (self.binding.id,), log_exceptions=False)
-        except psycopg2.OperationalError:
+        except psycopg2.OperationalError as err:
             _logger.info(
                 "A concurrent job is already exporting the same "
                 "record (%s with id %s). Job delayed later.",
                 self.model._name,
                 self.binding.id,
             )
-            raise RetryableJobError(
+            raise RetryableJobError from err(
                 "A concurrent job is already exporting the same record "
                 "(%s with id %s). The job will be retried later."
                 % (self.model._name, self.binding.id)
@@ -322,7 +323,5 @@ class DelayedBatchExporter(AbstractComponent):
         """Delay the export of the records"""
 
         job_options = job_options or {}
-        if "identity_key" not in job_options:
-            job_options["identity_key"] = identity_exact
         delayable = self.model.with_delay(**job_options or {})
         delayable.export_record(self.backend_record, record, **kwargs)
