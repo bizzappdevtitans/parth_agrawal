@@ -1,6 +1,5 @@
 from odoo import _, fields, models
-from odoo.exceptions import UserError, ValidationError
-from odoo.tools.misc import ustr
+from odoo.exceptions import UserError
 
 from odoo.addons.component.core import Component
 
@@ -40,7 +39,14 @@ class ProjectProject(models.Model):
 
     export_to_folder = fields.Boolean()
 
-    folder_info = fields.Char()
+    folder_info = fields.Selection(selection="_get_folder_options")
+
+    def _get_folder_options(self):
+        folder_model = self.env["project.project"]
+        folder_records = folder_model.search([])
+
+        unique_folders = list({record.folder_id for record in folder_records})
+        return [(folder_id, folder_id) for folder_id in unique_folders]
 
     def action_open_project_in_clickup(self):
         """Open co-responding project in clickup's website"""
@@ -90,8 +96,10 @@ class ProjectProject(models.Model):
             self.env["clickup.project.project"].export_record(
                 backend=self.sudo().clickup_backend_id, record=self
             )
-        except Exception as ex:
-            raise ValidationError from ex(ustr(ex))
+        except Exception:
+            raise UserError from None(
+                _("Choose different folder id as this folder is hidden")
+            )
 
 
 class ProjectAdapter(Component):
@@ -102,6 +110,34 @@ class ProjectAdapter(Component):
     _odoo_ext_id_key = "external_id"
     _clickup_ext_id_key = "id"
 
+    # def search_read(self, filters=None):
+    #     """
+    #     Returns the information of a record
+
+    #     :rtype: dict
+    #     """
+    #     data = []
+
+    #     space_id = self.backend_record.uri
+
+    #     folder_resource_path = "/space/{}/folder".format(space_id)
+    #     self._clickup_model = folder_resource_path
+    #     folder_project_payload = self._call(folder_resource_path, arguments=filters)
+
+    #     list_resource_path = "/space/{}/list".format(space_id)
+    #     self._clickup_model = list_resource_path
+    #     space_project_payload = self._call(list_resource_path, arguments=filters)
+
+    #     if folder_project_payload:
+    #         for rec in folder_project_payload["folders"]:
+    #             for item in rec["lists"]:
+    #                 data.append(item)
+    #     if space_project_payload:
+    #         for rec in space_project_payload["lists"]:
+    #             data.append(rec)
+
+    #     return data
+
     def search_read(self, filters=None):
         """
         Returns the information of a record
@@ -109,24 +145,36 @@ class ProjectAdapter(Component):
         :rtype: dict
         """
         data = []
+        folder_ids = []
 
-        space_id = self.backend_record.uri
+        space_ids = self.backend_record.uri.split(",")
 
-        folder_resource_path = "/space/{}/folder".format(space_id)
-        self._clickup_model = folder_resource_path
-        folder_project_payload = self._call(folder_resource_path, arguments=filters)
+        for space_id in space_ids:
+            folder_resource_path = "/space/{}/folder".format(space_id)
 
-        list_resource_path = "/space/{}/list".format(space_id)
-        self._clickup_model = list_resource_path
-        space_project_payload = self._call(list_resource_path, arguments=filters)
+            self._clickup_model = folder_resource_path
+            folder_project_payload = self._call(folder_resource_path, arguments=filters)
 
-        if folder_project_payload:
-            for rec in folder_project_payload["folders"]:
-                for item in rec["lists"]:
-                    data.append(item)
-        if space_project_payload:
-            for rec in space_project_payload["lists"]:
-                data.append(rec)
+            list_resource_path = "/space/{}/list".format(space_id)
+
+            self._clickup_model = list_resource_path
+            space_project_payload = self._call(list_resource_path, arguments=filters)
+
+            if folder_project_payload:
+                for record in folder_project_payload.get("folders", []):
+                    items = record.get("id")
+                    folder_ids.append(items)
+
+            for folder_id in folder_ids:
+                folder_path = "/folder/{}/list".format(folder_id)
+
+                self._clickup_model = folder_path
+                folder_payload = self._call(folder_path, arguments=filters)
+
+                data.append(folder_payload)
+
+            if space_project_payload:
+                data.append(space_project_payload)
 
         return data
 
@@ -144,11 +192,13 @@ class ProjectAdapter(Component):
         # else:
         #     backend_record = self.backend_record
         #     folder_id = backend_record.uri if backend_record.uri else None
+
         space_id = self.backend_record.uri
         resource_path = "/space/{}/list".format(space_id)
         folder = data.get("folder")
-        project = self.env["project.project"].search([("folder", "=", folder)])
-        if project:
+        # project = self.env["project.project"].search([("folder", "=", folder)])
+
+        if folder:
             resource_path = "/folder/{}/list".format(folder)
             self._clickup_model = resource_path
 

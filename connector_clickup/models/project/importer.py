@@ -119,19 +119,12 @@ class ProjectProjectBatchImporter(Component):
 
         records = self.backend_adapter.search_read(filters)
 
-        # data = []
-        # for record in records:
-        #     data.append(record)
-        # count = len(data)
-        # print("count ==", count)
-
         for rec in records:
-            external_id = rec.get(self.backend_adapter._clickup_ext_id_key)
-            self._import_record(
-                external_id, data=rec, force=force, model=self._apply_on
-            )
-        # if filters:
-        #     self.process_next_batch(filters, force=force, count=count)
+            for data in rec.get("lists", []):
+                external_id = data.get(self.backend_adapter._clickup_ext_id_key)
+                self._import_record(
+                    external_id, data=data, force=force, model=self._apply_on
+                )
 
 
 class ProjectProjectImportMapper(Component):
@@ -181,9 +174,9 @@ class ProjectProjectImportMapper(Component):
     @mapping
     def folder_id(self, record):
         """Mapped the backend id"""
-        uri = self.backend_record.uri
+        folder_id = record.get("folder").get("id")
 
-        return {"folder_id": uri}
+        return {"folder_id": folder_id}
 
     @mapping
     def date_start(self, record):

@@ -31,6 +31,7 @@ class ClickupBackend(models.Model):
         [("api_key", "API Key"), ("Oauth", "Oauth Authentication")],
         required=True,
         default="api_key",
+        help="Select Authentication Type",
     )
     datetime_filter_project = fields.Datetime()
     datetime_filter_task = fields.Datetime()
@@ -40,8 +41,8 @@ class ClickupBackend(models.Model):
     force_update_tasks = fields.Boolean()
     company_id = fields.Many2one(comodel_name="res.company", string="Company")
     # Live
-    api_key = fields.Char()
-    uri = fields.Char()
+    api_key = fields.Char(help="Enter API Key")
+    uri = fields.Char(help="Enter End Point Location Of Space Id")
     client_id = fields.Char()
     client_secret = fields.Char()
     username = fields.Char()
@@ -55,85 +56,6 @@ class ClickupBackend(models.Model):
     def toggle_test_mode(self):
         for record in self:
             record.test_mode = not record.test_mode
-
-    # def _import_from_date(
-    #     self,
-    #     model,
-    #     from_date_field=None,
-    #     filters=None,
-    #     force_update_field=None,
-    #     priority=None,
-    #     with_delay=True,
-    # ):
-    #     """Common method for import data from from_date."""
-    #     if not filters:
-    #         filters = {}
-    #     import_start_time = datetime.now()
-    #     job_options = {}
-    #     if priority or priority == 0:
-    #         job_options["priority"] = priority
-    #     for backend in self:
-    #             if from_date_field:
-    #                 from_date = backend[from_date_field]
-    #             search_dict = filters.get("search", {})
-    #             if from_date:
-    #                 if model in [
-    #                     "akeneo.product.category",
-    #                     "akeneo.attribute",
-    #                     "akeneo.reference",
-    #                     "akeneo.product.product.image",
-    #                 ]:
-    #                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-    #                 else:
-    #                     from_date = to_iso_datetime(from_date)
-    #         search_dict.update({"updated": [{"operator": ">", "value": from_date}]})
-
-    #         if model in [
-    #             "clickup.project.project",
-    #             "clickup.project.tasks",
-    #             "clickup.project.task.type",
-    #         ]:
-    #             to_date = import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-    #         else:
-    #             to_date = to_iso_datetime(import_start_time)
-
-    #         if not search_dict.get("updated"):
-    #             search_dict["updated"] = []
-
-    #         search_dict["updated"].append(
-    #             {"operator": "<", "value": to_date, "action": "import"}
-    #         )
-
-    #         filters["search"] = json.dumps(search_dict)
-    #         filters["limit"] = backend.limit
-    #         filters["with_count"] = "true"
-    #         force = False
-    #         if force_update_field:
-    #             force = backend[force_update_field]
-    #         if model == "clickup.project.project":
-    #             job_options["description"] = "Prepare jobs for clickup Project import"
-    #         if model == "clickup.project.tasks":
-    #             job_options["description"] = "Prepare jobs for clickup Task import"
-    #         if model == "clickup.project.task.type":
-    #             job_options["description"] = "Prepare jobs for clickup Stage import"
-    #         clickup_model = (
-    #             self.env[model].with_delay(**job_options or {})
-    #             if with_delay
-    #             else self.env[model]
-    #         )
-
-    #         clickup_model.import_batch(
-    #             backend,
-    #             filters=filters,
-    #             force=force,
-    #             **{"no_delay": not with_delay},
-    #             job_options=job_options,
-    #         )
-    #         if force:
-    #             backend[force_update_field] = False
-    #     next_time = import_start_time - timedelta(seconds=IMPORT_DELTA_BUFFER)
-    #     if from_date_field:
-    #         self.write({from_date_field: next_time})
 
     def _import_from_date(
         self,
@@ -152,25 +74,10 @@ class ClickupBackend(models.Model):
         if priority or priority == 0:
             job_options["priority"] = priority
         for backend in self:
-            from_date = None
             if from_date_field:
                 from_date = backend[from_date_field]
-
-            if from_date:
-                if model in [
-                    "clickup.project.tasks",
-                ]:
+                if from_date:
                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-                else:
-                    from_date = to_iso_datetime(from_date)
-
-            if model != "akeneo.attribute":
-                if model in [
-                    "clickup.project.project",
-                ]:
-                    import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-                else:
-                    to_iso_datetime(import_start_time)
 
             filters["limit"] = backend.limit
             filters["with_count"] = "true"
@@ -178,7 +85,11 @@ class ClickupBackend(models.Model):
             if force_update_field:
                 force = backend[force_update_field]
             if model == "clickup.project.project":
-                job_options["description"] = "Prepare jobs for akeneo images import"
+                job_options["description"] = "Prepare jobs for clickup Project import"
+            if model == "clickup.project.tasks":
+                job_options["description"] = "Prepare jobs for clickup Task import"
+            if model == "clickup.project.task.type":
+                job_options["description"] = "Prepare jobs for clickup Stage import"
             clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay
@@ -248,43 +159,6 @@ class ClickupBackend(models.Model):
             with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
                 yield work
 
-    # @contextmanager
-    # def work_on(self, model_name, **kwargs):
-    #     """Add the work on for akeneo."""
-    #     self.ensure_one()
-    #     location = self.uri
-    #     client_id = self.client_id
-    #     client_secret = self.client_secret
-    #     token = self.api_key
-    #     username = self.username
-    #     password = self.password
-    #     if self.test_mode:
-    #         location = kwargs.get("location", self.location)
-    #         client_id = self.client_id
-    #         client_secret = self.client_secret
-    #         token = self.token
-    #         username = self.username
-    #         password = self.password
-
-    #     akeneo_location = ClickupLocation(
-    #         location=location,
-    #         token=token,
-    #     )
-
-    #     # akeneo have different endpoint/credentials for token
-    #     akeneo_location_token = ClickupTokenLocation(
-    #         location=location,
-    #         client_id=client_id,
-    #         client_secret=client_secret,
-    #         username=username,
-    #         password=password,
-    #     )
-    #     with ClickupAPI(akeneo_location, akeneo_location_token) as clickup_api:
-    #         _super = super()
-    #         # from the components we'll be able to do: self.work.akeneo_api
-    #         with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
-    #             yield work
-
     def export_projects(self, with_delay=True, from_sync=False):
         for backend in self.sudo():
             backend._export_from_date(
@@ -322,30 +196,12 @@ class ClickupBackend(models.Model):
             from_date = None
             if from_date_field:
                 from_date = backend[from_date_field]
-
-            if from_date:
-                # T-02383: clickup accepts different date time format
-                # for category and variant.
-                if model in [
-                    "akeneo.product.category",
-                    "akeneo.attribute",
-                    "akeneo.reference",
-                    "akeneo.product.product.image",
-                ]:
+                if from_date:
                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                 else:
                     from_date = to_iso_datetime(from_date)
 
-            if model in [
-                "clickup.project.project",
-                "clickup.project.tasks",
-                "clickup.project.task.type",
-            ]:
-                import_start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-            else:
-                to_iso_datetime(import_start_time)
-
-            # filters["limit"] = backend.limit
+            filters["limit"] = backend.limit
             filters["with_count"] = "true"
             force = False
             if force_update_field:
@@ -434,6 +290,15 @@ class ClickupBackend(models.Model):
                 self.test_token = token
             else:
                 self.api_key = token
+
+    def _get_company_domain(self):
+        """Add company related domain for export product # T-02039"""
+        domain = [
+            "|",
+            ("company_id", "=", self.company_id.id),
+            ("company_id", "=", False),
+        ]
+        return domain
 
 
 class ClickupBackendAdapter(Component):

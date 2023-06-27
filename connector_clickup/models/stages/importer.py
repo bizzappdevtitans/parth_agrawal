@@ -15,6 +15,22 @@ class ProjectTaskTypeImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.task.type"
 
+    # def _before_import(self):
+    #     """
+    #     Hook called before the import, when we have the clickup
+    #     data
+    #     """
+    #     res = super()._before_import()
+
+    #     status_payload = self.clickup_record
+
+    #     status = status_payload.get("status")
+
+    #     check = self.env["project.task.type"].search([])
+    #     if status in check:
+
+    #     return res
+
 
 class ProjectTaskTypeBatchImporter(Component):
     """Delay import of the records"""
@@ -102,8 +118,6 @@ class ProjectTaskTypeImportMapper(Component):
                     "result": "Stage already exist in project.task.type model",
                 }
             )
-
-            # return _("%s stage is already exist in project.task.type model.") % name
 
     def external_id(self, record):
         """#T-02383 Mapped external id"""

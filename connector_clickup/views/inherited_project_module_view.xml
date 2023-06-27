@@ -13,7 +13,7 @@
                     name="update_export_project"
                     string="Update To ClickUp"
                     type="object"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 />
                 <button
                     attrs="{'invisible': [('external_id', '=', False)]}"
@@ -21,7 +21,7 @@
                     name="update_import_project"
                     string="Update From ClickUp"
                     type="object"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 />
                 <button
                     attrs="{'invisible': [('external_id', '!=', False)]}"
@@ -29,13 +29,13 @@
                     name="export_project_to_clickup"
                     string="Export To ClickUp"
                     type="object"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 />
             </header>
             <xpath expr="//page[@name='settings']" position="after">
                 <page
                     string="Connector Clickup Project"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 >
                     <group>
                         <field name="clickup_bind_ids" />
@@ -58,22 +58,22 @@
                         <label
                     for="export_to_folder"
                     attrs="{'invisible': [('external_id', '!=', False)]}"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 >Export To Folder</label>
                         <field
                     name="export_to_folder"
                     attrs="{'invisible': [('external_id', '!=', False)]}"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 />
                         <label
                     for="folder_info"
-                    attrs="{'invisible': [('export_to_folder', '=', False)]}"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    attrs="{'invisible': [('export_to_folder', '!=', True)]}"
+                    groups="connector.group_connector_manager"
                 >Folder Info</label>
                         <field
                     name="folder_info"
-                    attrs="{'invisible': [('export_to_folder', '=', False)]}"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    attrs="{'invisible': [('export_to_folder', '!=', True)]}"
+                    groups="connector.group_connector_manager"
                 />
             </xpath>
         </field>
@@ -91,7 +91,7 @@
                     name="update_export_task"
                     string="Update To ClickUp"
                     type="object"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 />
                 <button
                     attrs="{'invisible': [('external_id', '=', False)]}"
@@ -99,14 +99,14 @@
                     name="update_import_task"
                     string="Update From ClickUp"
                     type="object"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 />
             </header>
             <xpath expr="//page[@name='extra_info']" position="after">
                 <page
                     attrs="{'invisible': [('external_id', '=', False)]}"
                     string="Connector Clickup Task"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 >
                     <group>
                         <field invisible="1" name="clickup_bind_ids" />
@@ -138,7 +138,7 @@
                 <group
                     string="Clickup Binding Details"
                     attrs="{'invisible': [('external_id', '=', False)]}"
-                    groups="connector_clickup.group_connector_clickup_manager"
+                    groups="connector.group_connector_manager"
                 >
                     <field invisible="1" name="clickup_bind_ids" />
                     <field name="external_id" />

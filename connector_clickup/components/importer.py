@@ -234,20 +234,36 @@ class BatchImporter(AbstractComponent):
         """
         raise NotImplementedError
 
-    def process_next_batch(self, filters=None, force=False, count=0):
-        """#T-02072 Method to trigger for next batch import"""
-        filters["offset"] += filters["limit"]
+    # def process_next_batch(self, filters=None, force=False, count=0):
+    #     """#T-02072 Method to trigger for next batch import"""
+    #     filters["offset"] += filters["limit"]
 
-        if filters["offset"] < count:
-            self.env[self.model._name].with_delay().import_batch(
-                self.backend_record, filters=filters, force=force
-            )
+    #     if filters["offset"] < count:
+    #         self.env[self.model._name].with_delay().import_batch(
+    #             self.backend_record, filters=filters, force=force
+    #         )
 
-    # backend,
-    #             filters=filters,
-    #             force=force,
-    #             **{"no_delay": not with_delay},
-    #             job_options=job_options,
+    # def get_data_items(self, result, only_ids=False):
+    #     """Split the ids and next page information from result of Akeneo"""
+    #     next_url = result.get("lists", [])
+    #     print("next_url", next_url)
+    #     items = result.get("_embedded", {}).get("items", [])
+    #     if only_ids:
+    #         key = self.backend_adapter._akeneo_ext_id_key
+    #         items = [item[key] for item in items]
+    #     return items, next_url
+
+    # def process_next_page(self, filters=None, job_options=None, **kwargs):
+    #     """Method to trigger batch import for Next page"""
+    #     if not filters:
+    #         filters = {}
+    #     job_options = job_options or {}
+    #     model = self.env[self.model._name]
+    #     if not kwargs.get("no_delay"):
+    #         model = model.with_delay(**job_options or {})
+    #     model.import_batch(
+    #         self.backend_record, filters=filters, job_options=job_options, **kwargs
+    #     )
 
 
 class DirectBatchImporter(AbstractComponent):
