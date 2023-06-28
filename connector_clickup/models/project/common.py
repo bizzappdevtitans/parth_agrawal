@@ -39,7 +39,7 @@ class ProjectProject(models.Model):
 
     export_to_folder = fields.Boolean()
 
-    folder_info = fields.Selection(selection="_get_folder_options")
+    folder_info = fields.Selection(selection="_get_folder_options", readonly=False)
 
     def _get_folder_options(self):
         folder_model = self.env["project.project"]

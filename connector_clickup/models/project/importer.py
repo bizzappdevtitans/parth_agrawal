@@ -12,6 +12,13 @@ class ProjectProjectImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.project"
 
+    # def _after_import(self, binding, **kwargs):
+    #     """Hook called at the end of the import"""
+    #     item = binding.odoo_id
+    #     backend_id = self.env["clickup.backend"]
+    #     item["company_id"] = backend_id.company_id
+    #     return super()._after_import(binding, **kwargs)
+
 
 class ProjectProjectBatchImporter(Component):
     """Delay import of the records"""
@@ -198,3 +205,8 @@ class ProjectProjectImportMapper(Component):
         timestamp = int(data_end) / 1000
         data_end = date.fromtimestamp(timestamp) + timedelta(days=1)
         return {"date": data_end}
+
+    # @mapping
+    # def company_id(self, record):
+    #     """Mapped the backend id"""
+    #     return {"company_id": self.backend_record.company_id}

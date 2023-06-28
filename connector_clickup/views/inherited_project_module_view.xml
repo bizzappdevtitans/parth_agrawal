@@ -111,7 +111,7 @@
                     <group>
                         <field invisible="1" name="clickup_bind_ids" />
                         <field name="external_id" />
-                        <field name="folder_id" />
+                        <field name="project_info" />
                         <field name="clickup_backend_id" />
                         <field name="created_at" />
                         <field name="updated_at" />

@@ -427,8 +427,6 @@ from datetime import datetime
 import requests
 from simplejson.errors import JSONDecodeError
 
-from odoo.exceptions import ValidationError
-
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import InvalidDataError, NetworkRetryableError
 from odoo.addons.queue_job.exception import RetryableJobError
@@ -569,8 +567,10 @@ class ClickupClient:
         res = function(url, **kwargs)
 
         if res.status_code == 400 and res._content:
-            # raise UserError(_("Choose other folder as this folder is hidden"))
-            raise ValidationError(url, res.status_code, res._content, headers, __name__)
+            raise InvalidDataError(
+                url, res.status_code, res._content, headers, __name__
+            )
+
         if res.status_code == 404 and res.json().get("status") == 404:
             raise InvalidDataError(
                 url, res.status_code, res._content, headers, __name__

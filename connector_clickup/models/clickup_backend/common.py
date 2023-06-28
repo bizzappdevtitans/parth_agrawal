@@ -84,24 +84,20 @@ class ClickupBackend(models.Model):
             force = False
             if force_update_field:
                 force = backend[force_update_field]
-            if model == "clickup.project.project":
-                job_options["description"] = "Prepare jobs for clickup Project import"
-            if model == "clickup.project.tasks":
-                job_options["description"] = "Prepare jobs for clickup Task import"
-            if model == "clickup.project.task.type":
-                job_options["description"] = "Prepare jobs for clickup Stage import"
-            clickup_model = (
-                self.env[model].with_delay(**job_options or {})
-                if with_delay
-                else self.env[model]
-            )
-            clickup_model.import_batch(
+
+            model_parts = model.split(".")
+            model_name = " ".join(part.title() for part in model_parts[1:])
+            job_options["description"] = f"Prepare Batch To Import {model_name}"
+
+            self.env[model].with_company(backend.company_id).with_delay(
+                **job_options or {}
+            ).import_batch(
                 backend,
                 filters=filters,
                 force=force,
-                **{"no_delay": not with_delay},
                 job_options=job_options,
             )
+
             if force:
                 backend[force_update_field] = False
         next_time = import_start_time - timedelta(seconds=IMPORT_DELTA_BUFFER)
@@ -119,6 +115,13 @@ class ClickupBackend(models.Model):
                 with_delay=with_delay,
                 force_update_field="force_update_projects",
             )
+
+    # def import_projects(self, with_delay=True):
+    #     force = True
+    #     for backend in self.sudo():
+    #         self.env["clickup.project.project"].with_company(
+    #             backend.sudo().company_id
+    #         ).with_delay(priority=5).import_batch(backend=backend, force=force)
 
     def import_tasks(self, with_delay=True):
         for backend in self:
@@ -206,12 +209,9 @@ class ClickupBackend(models.Model):
             force = False
             if force_update_field:
                 force = backend[force_update_field]
-            if model == "clickup.project.project":
-                job_options["description"] = "Prepare jobs for clickup Project Export"
-            if model == "clickup.project.tasks":
-                job_options["description"] = "Prepare jobs for clickup Task Export"
-            if model == "clickup.project.task.type":
-                job_options["description"] = "Prepare jobs for clickup Stage Export"
+            model_parts = model.split(".")
+            model_name = " ".join(part.title() for part in model_parts[1:])
+            job_options["description"] = f"Prepare Batch To Export {model_name}"
             clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay

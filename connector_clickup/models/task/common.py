@@ -42,7 +42,7 @@ class ProjectTask(models.Model):
     created_at = fields.Datetime(related="clickup_bind_ids.created_at", readonly=True)
 
     updated_at = fields.Datetime(related="clickup_bind_ids.updated_at", readonly=True)
-    folder_id = fields.Char(readonly=True)
+    project_info = fields.Char(readonly=True)
 
     def action_open_task_in_clickup(self):
         """This method open the particular task on clickup's website"""

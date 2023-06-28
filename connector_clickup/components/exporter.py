@@ -319,9 +319,22 @@ class DelayedBatchExporter(AbstractComponent):
     _name = "clickup.delayed.batch.exporter"
     _inherit = "clickup.batch.exporter"
 
-    def _export_record(self, record, job_options=None, **kwargs):
+    def _export_record(self, record, model, job_options=None, **kwargs):
         """Delay the export of the records"""
 
         job_options = job_options or {}
+        if job_options:
+            model_parts = model.split(".")
+            model_name = " ".join(part.title() for part in model_parts[1:])
+            job_name = f"Export record of {model_name}"
+            job_options["description"] = job_name
+
         delayable = self.model.with_delay(**job_options or {})
         delayable.export_record(self.backend_record, record, **kwargs)
+
+    # def _export_record(self, record, job_options=None, **kwargs):
+    #     """Delay the export of the records"""
+    #     job_options = job_options or {}
+    #     if "priority" not in job_options:
+    #         job_options["priority"] = 5
+    #     return super()._export_record(record, job_options, **kwargs)

@@ -161,6 +161,7 @@ class ClickupImporter(AbstractComponent):
 
     def _after_import(self, binding, **kwargs):
         """Hook called at the end of the import"""
+
         return
 
     def run(self, external_id, force=False, data=None, **kwargs):
@@ -292,12 +293,98 @@ class DelayedBatchImporter(AbstractComponent):
         job_options = job_options or {}
 
         model_parts = model.split(".")
-        model_name = " ".join(
-            part.title() for part in model_parts[1:]
-        )  # Join title-cased parts
-        job_name = f"Import record of Clickup {model_name} {external_id}"
-
-        # Add the job_name to the kwargs
+        model_name = " ".join(part.title() for part in model_parts[1:])
+        job_name = f"Import record of {model_name} {external_id}"
         job_options["description"] = job_name
-        delayable = self.model.with_delay(**job_options or {})
+
+        delayable = self.model.with_company(self.backend_record.company_id).with_delay(
+            **job_options or {}
+        )
         delayable.import_record(self.backend_record, external_id, data=data, **kwargs)
+
+
+class ClickupImportMapperChild(AbstractComponent):
+    """:py:class:`MapChild` for the Imports"""
+
+    _name = "clickup.map.child.import"
+    _inherit = ["base.clickup.connector", "base.map.child.import"]
+
+    def skip_item(self, map_record):
+        record = map_record.source
+        if not record.get("tags", []):
+            return True
+
+    # def skip_item(self, map_record):
+    #     """
+    #     #T-02398
+    #     Inherit Method : To skip the item in which orderId not found in odoo.
+    #     """
+    #     if self.model._name != "zeiss.stock.move.in":
+    #         return super().skip_item(map_record=map_record)
+    #     options = self.zeiss_pick_options or {}
+    #     source = map_record._source or {}
+    #     data = map_record.values(**options)
+    #     if source.get("orderId") and not data.get("rx_in_zo_id"):
+    #         return True
+    #     return super().skip_item(map_record=map_record)
+
+    def get_item_values(self, map_record, to_attr, options):
+        values = map_record.values(**options)
+        binder = self.binder_for()
+        binding = binder.to_internal(map_record.source["id"])
+        if binding:
+            # already exists, keeps the id
+            values["id"] = binding.id
+        return values
+
+    # def get_items(self, items, parent, to_attr, options):
+    #     """
+    #     #T-02398
+    #     Inherit Method : Need options in skip item method.
+    #     """
+    #     self.zeiss_pick_options = options
+    #     return super().get_items(
+    #         items=items, parent=parent, to_attr=to_attr, options=options
+    #     )
+
+    def format_items(self, items_values):
+        # if we already have an ID (found in get_item_values())
+        # we change the command to update the existing record
+
+        items = []
+        for item in items_values[:]:
+            if item.get("id"):
+                binding_id = item.pop("id")
+                # update the record
+                items.append((1, binding_id, item))
+            else:
+                # create the record
+                items.append((0, 0, item))
+        return items
+
+    # def format_items(self, items_values):
+    #     """
+    #     Format the values of the items mapped from the child Mappers.
+
+    #     It can be overridden for instance to add the Odoo
+    #     relationships commands ``(6, 0, [IDs])``, ...
+
+    #     As instance, it can be modified to handle update of existing
+    #     items: check if an 'id' has been defined by
+    #     :py:meth:`get_item_values` then use the ``(1, ID, {values}``)
+    #     command
+
+    #     :param items_values: list of values for the items to create
+    #     :type items_values: list
+
+    #     """
+    #     final_vals = []
+    #     for item in items_values:
+    #         external_id = item["external_id"]
+    #         binder = self.binder_for(model=self.model)
+    #         binding = binder.to_internal(external_id)
+    #         if binding:
+    #             final_vals.append((1, binding.id, item))  # update
+    #         else:
+    #             final_vals.append((0, 0, item))  # create
+    #     return final_vals

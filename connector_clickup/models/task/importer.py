@@ -12,33 +12,33 @@ class ProjectTaskImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.tasks"
 
-    def _is_uptodate(self, binding):
-        """
-        Return True if the import should be skipped because
-        it is already up-to-date in OpenERP
-        """
-        # if the last synchronization date is greater than the last
-        # update in clickup, we skip the import.
-        # Important: at the beginning of the exporters flows, we have to
-        # check if the clickup_date is more recent than the sync_date
-        # and if so, schedule a new import. If we don't do that, we'll
-        # miss changes done in clickup
-        super()._is_uptodate(binding)
-        assert self.clickup_record
-        last_update_date = self.backend_adapter._last_update_date
-        update_date = self.clickup_record.get(last_update_date, "")
-        timestamp = int(update_date) / 1000
-        if (
-            not update_date
-            or not binding
-            or (binding and not hasattr(binding, "updated_at"))
-        ):
-            return  # no update date on clickup, always import it.
-        sync_date = binding.updated_at
-        if not sync_date:
-            return
-        clickup_date = datetime.fromtimestamp(timestamp)
-        return clickup_date <= sync_date
+    # def _is_uptodate(self, binding):
+    #     """
+    #     Return True if the import should be skipped because
+    #     it is already up-to-date in OpenERP
+    #     """
+    #     # if the last synchronization date is greater than the last
+    #     # update in clickup, we skip the import.
+    #     # Important: at the beginning of the exporters flows, we have to
+    #     # check if the clickup_date is more recent than the sync_date
+    #     # and if so, schedule a new import. If we don't do that, we'll
+    #     # miss changes done in clickup
+    #     super()._is_uptodate(binding)
+    #     assert self.clickup_record
+    #     last_update_date = self.backend_adapter._last_update_date
+    #     update_date = self.clickup_record.get(last_update_date, "")
+    #     timestamp = int(update_date) / 1000
+    #     if (
+    #         not update_date
+    #         or not binding
+    #         or (binding and not hasattr(binding, "updated_at"))
+    #     ):
+    #         return  # no update date on clickup, always import it.
+    #     sync_date = binding.updated_at
+    #     if not sync_date:
+    #         return
+    #     clickup_date = datetime.fromtimestamp(timestamp)
+    #     return clickup_date <= sync_date
 
     # def _before_import(self):
     #     """
@@ -91,6 +91,15 @@ class ProjectTaskImportMapper(Component):
     _name = "clickup.project.task.import.mapper"
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.tasks"
+    _map_child_fallback = "clickup.map.child.import"
+
+    children = [
+        (
+            "tags",
+            "tag_ids",
+            "clickup.project.tasks",
+        ),
+    ]
 
     @only_create
     @mapping
@@ -142,11 +151,11 @@ class ProjectTaskImportMapper(Component):
         return {"backend_id": backend_id}
 
     @mapping
-    def folder_id(self, record):
+    def project_info(self, record):
         """Mapped the backend id"""
-        uri = self.backend_record.uri
+        project_id = record.get("list").get("id")
 
-        return {"folder_id": uri}
+        return {"project_info": project_id}
 
     @mapping
     def date_deadline(self, record):
@@ -181,6 +190,25 @@ class ProjectTaskImportMapper(Component):
         else:
             return {}
 
+    def finalize(self, map_record, values):
+        tags_record = map_record.source
+        tags = []
+
+        for tag in tags_record.get("tags", []):
+            tags.append(tag.get("name"))
+
+        if tags:
+            values["tag_ids"] = [(6, 0, [tag]) for tag in tags]
+
+        return super().finalize(map_record, values)
+
+    # children = [
+    #     (
+    #         "avis",
+    #         "zeiss_move_in_ids",
+    #         "zeiss.stock.move.in",
+    #     ),
+    # ]
     # @mapping
     # def tag_ids(self, record):
     #     """Map the backend id"""
@@ -196,39 +224,3 @@ class ProjectTaskImportMapper(Component):
     #             if tag:
     #                 commands.append((4, tag.id))
     #     return {"tag_ids": commands}
-
-
-class ProjectTaskTagsImportMapperChild(Component):
-    """:py:class:`MapChild` for the Imports"""
-
-    _name = "project.task.tags.map.child.import"
-    _inherit = "clickup.map.child.import"
-    _apply_on = "clickup.project.tasks"
-
-    def skip_item(self, map_record):
-        record = map_record.source
-        if not record["attributes"]["quantity"]:
-            return True
-
-    def get_item_values(self, map_record, to_attr, options):
-        values = map_record.values(**options)
-        binder = self.binder_for()
-        binding = binder.to_internal(map_record.source["id"])
-        if binding:
-            # already exists, keeps the id
-            values["id"] = binding.id
-        return values
-
-    def format_items(self, items_values):
-        # if we already have an ID (found in get_item_values())
-        # we change the command to update the existing record
-        items = []
-        for item in items_values[:]:
-            if item.get("id"):
-                binding_id = item.pop("id")
-                # update the record
-                items.append((1, binding_id, item))
-            else:
-                # create the record
-                items.append((0, 0, item))
-        return items

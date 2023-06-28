@@ -30,20 +30,13 @@ class ProjectTaskDelayedBatchExporter(Component):
         domain = expression.OR(
             [
                 [("clickup_bind_ids", "=", False)],
-                [("folder_id", "=", self.backend_record.uri)],
+                [("clickup_backend_id", "=", self.backend_record.id)],
             ]
         )
 
         records = self.env["project.task"].search(domain)
         for record in records:
-            self._export_record(record)
-
-    def _export_record(self, record, job_options=None, **kwargs):
-        """Delay the export of the records"""
-        job_options = job_options or {}
-        if "priority" not in job_options:
-            job_options["priority"] = 5
-        return super()._export_record(record, job_options, **kwargs)
+            self._export_record(record, model=self._apply_on)
 
 
 class ProjectTaskImportMapper(Component):
