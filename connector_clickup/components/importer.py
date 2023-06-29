@@ -286,7 +286,13 @@ class DelayedBatchImporter(AbstractComponent):
     _inherit = "clickup.batch.importer"
 
     def _import_record(
-        self, external_id, job_options=None, data=None, model=None, **kwargs
+        self,
+        external_id,
+        job_options=None,
+        data=None,
+        model=None,
+        force=False,
+        **kwargs,
     ):
         """Delay the import of the records"""
 
@@ -300,7 +306,9 @@ class DelayedBatchImporter(AbstractComponent):
         delayable = self.model.with_company(self.backend_record.company_id).with_delay(
             **job_options or {}
         )
-        delayable.import_record(self.backend_record, external_id, data=data, **kwargs)
+        delayable.import_record(
+            self.backend_record, external_id, force=force, data=data, **kwargs
+        )
 
 
 class ClickupImportMapperChild(AbstractComponent):

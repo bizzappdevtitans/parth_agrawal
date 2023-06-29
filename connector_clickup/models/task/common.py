@@ -83,7 +83,7 @@ class TaskAdapter(Component):
     #     ),
     # ]
 
-    def search(self, filters=None):
+    def search(self, filters=None, from_date=None, to_date=None):
         """
         Returns the information of a record
         :rtype: dict
@@ -111,6 +111,12 @@ class TaskAdapter(Component):
                 continue
 
             list_id = external_id
+
+            if from_date is not None:
+                filters["date_updated_gt"] = from_date
+
+            if to_date is not None:
+                filters["date_updated_lt"] = to_date
 
             resource_path = "/list/{}/task".format(list_id)
             self._clickup_model = resource_path

@@ -90,9 +90,12 @@ class ProjectProject(models.Model):
     def export_project_to_clickup(self):
         """Export newly created project from odoo to clickup website"""
         self.ensure_one()
-        if not self.clickup_backend_id:
+
+        if not self.clickup_backend_id and not self.company_id.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         try:
+            self.clickup_backend_id = self.company_id.clickup_backend_id
+            # self.clickup_backend_id == self.company_id.clickup_backend_id
             self.env["clickup.project.project"].export_record(
                 backend=self.sudo().clickup_backend_id, record=self
             )
@@ -196,6 +199,7 @@ class ProjectAdapter(Component):
         space_id = self.backend_record.uri
         resource_path = "/space/{}/list".format(space_id)
         folder = data.get("folder")
+
         # project = self.env["project.project"].search([("folder", "=", folder)])
 
         if folder:

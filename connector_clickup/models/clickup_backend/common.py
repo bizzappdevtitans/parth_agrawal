@@ -33,11 +33,13 @@ class ClickupBackend(models.Model):
         default="api_key",
         help="Select Authentication Type",
     )
-    datetime_filter_project = fields.Datetime()
-    datetime_filter_task = fields.Datetime()
+
+    datetime_filter_task = fields.Datetime(
+        help="""This will get all the tasks which is created
+         or updated after your provided date and time"""
+    )
     limit = fields.Integer(default=100)
-    force_update_projects = fields.Boolean()
-    force_update_stages = fields.Boolean()
+
     force_update_tasks = fields.Boolean()
     company_id = fields.Many2one(comodel_name="res.company", string="Company")
     # Live
@@ -70,6 +72,7 @@ class ClickupBackend(models.Model):
         if not filters:
             filters = {}
         import_start_time = datetime.now()
+        import_start_time_new = int(import_start_time.timestamp() * 1000)
         job_options = {}
         if priority or priority == 0:
             job_options["priority"] = priority
@@ -77,7 +80,9 @@ class ClickupBackend(models.Model):
             if from_date_field:
                 from_date = backend[from_date_field]
                 if from_date:
-                    from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    from_date = int(from_date.timestamp() * 1000)
+
+                    filters = {"from_date": from_date, "to_date": import_start_time_new}
 
             filters["limit"] = backend.limit
             filters["with_count"] = "true"
@@ -110,18 +115,11 @@ class ClickupBackend(models.Model):
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.project",
-                from_date_field="datetime_filter_project",
+                from_date_field=None,
                 priority=5,
                 with_delay=with_delay,
-                force_update_field="force_update_projects",
+                force_update_field=None,
             )
-
-    # def import_projects(self, with_delay=True):
-    #     force = True
-    #     for backend in self.sudo():
-    #         self.env["clickup.project.project"].with_company(
-    #             backend.sudo().company_id
-    #         ).with_delay(priority=5).import_batch(backend=backend, force=force)
 
     def import_tasks(self, with_delay=True):
         for backend in self:
@@ -130,6 +128,7 @@ class ClickupBackend(models.Model):
                 from_date_field="datetime_filter_task",
                 priority=10,
                 with_delay=with_delay,
+                force_update_field="force_update_tasks",
             )
 
     def import_stages(self, with_delay=True):
@@ -139,26 +138,64 @@ class ClickupBackend(models.Model):
                 from_date_field=None,
                 priority=7,
                 with_delay=with_delay,
+                force_update_field=None,
             )
+
+    # @contextmanager
+    # def work_on(self, model_name, **kwargs):
+    #     """Add the work on for clickup."""
+
+    #     self.ensure_one()
+    #     location = self.uri
+    #     token = self.api_key
+    #     if self.test_mode:
+    #         location = self.test_location
+    #         token = self.test_token
+
+    #     clickup_location = ClickupLocation(location=location, token=token)
+
+    #     # clickup have different endpoint/credentials for token
+    #     clickup_location_token = ClickupTokenLocation(location=location)
+    #     with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
+    #         _super = super()
+    #         # from the components we'll be able to do: self.work.clickup_api
+    #         with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
+    #             yield work
 
     @contextmanager
     def work_on(self, model_name, **kwargs):
-        """Add the work on for clickup."""
-
+        """Add the work on for akeneo."""
         self.ensure_one()
         location = self.uri
+        client_id = self.client_id
+        client_secret = self.client_secret
         token = self.api_key
+        username = self.username
+        password = self.password
         if self.test_mode:
-            location = self.test_location
-            token = self.test_token
+            location = kwargs.get("location", self.location)
+            client_id = self.client_id
+            client_secret = self.client_secret
+            token = self.token
+            username = self.username
+            password = self.password
 
-        clickup_location = ClickupLocation(location=location, token=token)
+        clickup_location = ClickupLocation(
+            location=location,
+            token=token,
+        )
 
-        # clickup have different endpoint/credentials for token
-        clickup_location_token = ClickupTokenLocation(location=location)
+        # akeneo have different endpoint/credentials for token
+        clickup_location_token = ClickupTokenLocation(
+            location=location,
+            client_id=client_id,
+            client_secret=client_secret,
+            username=username,
+            password=password,
+        )
         with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
             _super = super()
-            # from the components we'll be able to do: self.work.clickup_api
+            # from the components we'll be able to do: self.work.akeneo_api
             with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
                 yield work
 

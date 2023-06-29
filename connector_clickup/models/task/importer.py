@@ -12,33 +12,33 @@ class ProjectTaskImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.tasks"
 
-    # def _is_uptodate(self, binding):
-    #     """
-    #     Return True if the import should be skipped because
-    #     it is already up-to-date in OpenERP
-    #     """
-    #     # if the last synchronization date is greater than the last
-    #     # update in clickup, we skip the import.
-    #     # Important: at the beginning of the exporters flows, we have to
-    #     # check if the clickup_date is more recent than the sync_date
-    #     # and if so, schedule a new import. If we don't do that, we'll
-    #     # miss changes done in clickup
-    #     super()._is_uptodate(binding)
-    #     assert self.clickup_record
-    #     last_update_date = self.backend_adapter._last_update_date
-    #     update_date = self.clickup_record.get(last_update_date, "")
-    #     timestamp = int(update_date) / 1000
-    #     if (
-    #         not update_date
-    #         or not binding
-    #         or (binding and not hasattr(binding, "updated_at"))
-    #     ):
-    #         return  # no update date on clickup, always import it.
-    #     sync_date = binding.updated_at
-    #     if not sync_date:
-    #         return
-    #     clickup_date = datetime.fromtimestamp(timestamp)
-    #     return clickup_date <= sync_date
+    def _is_uptodate(self, binding):
+        """
+        Return True if the import should be skipped because
+        it is already up-to-date in OpenERP
+        """
+        # if the last synchronization date is greater than the last
+        # update in clickup, we skip the import.
+        # Important: at the beginning of the exporters flows, we have to
+        # check if the clickup_date is more recent than the sync_date
+        # and if so, schedule a new import. If we don't do that, we'll
+        # miss changes done in clickup
+        super()._is_uptodate(binding)
+        assert self.clickup_record
+        last_update_date = self.backend_adapter._last_update_date
+        update_date = self.clickup_record.get(last_update_date, "")
+        timestamp = int(update_date) / 1000
+        if (
+            not update_date
+            or not binding
+            or (binding and not hasattr(binding, "updated_at"))
+        ):
+            return  # no update date on clickup, always import it.
+        sync_date = binding.updated_at
+        if not sync_date:
+            return
+        clickup_date = datetime.fromtimestamp(timestamp)
+        return clickup_date <= sync_date
 
     # def _before_import(self):
     #     """
@@ -74,8 +74,11 @@ class ProjectTaskBatchImporter(Component):
 
     def run(self, filters=None, force=False):
         """Run the synchronization"""
-
-        records = self.backend_adapter.search(filters)
+        from_date = filters.pop("from_date", None)
+        to_date = filters.pop("to_date", None)
+        records = self.backend_adapter.search(
+            filters, from_date=from_date, to_date=to_date
+        )
 
         for record in records:
             tasks = record.get("tasks", [])
@@ -91,15 +94,15 @@ class ProjectTaskImportMapper(Component):
     _name = "clickup.project.task.import.mapper"
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.tasks"
-    _map_child_fallback = "clickup.map.child.import"
+    # _map_child_fallback = "clickup.map.child.import"
 
-    children = [
-        (
-            "tags",
-            "tag_ids",
-            "clickup.project.tasks",
-        ),
-    ]
+    # children = [
+    #     (
+    #         "tags",
+    #         "tag_ids",
+    #         "clickup.project.tasks",
+    #     ),
+    # ]
 
     @only_create
     @mapping
@@ -190,17 +193,17 @@ class ProjectTaskImportMapper(Component):
         else:
             return {}
 
-    def finalize(self, map_record, values):
-        tags_record = map_record.source
-        tags = []
+    # def finalize(self, map_record, values):
+    #     tags_record = map_record.source
+    #     tags = []
 
-        for tag in tags_record.get("tags", []):
-            tags.append(tag.get("name"))
+    #     for tag in tags_record.get("tags", []):
+    #         tags.append(tag.get("name"))
 
-        if tags:
-            values["tag_ids"] = [(6, 0, [tag]) for tag in tags]
+    #     if tags:
+    #         values["tag_ids"] = [(6, 0, [tag]) for tag in tags]
 
-        return super().finalize(map_record, values)
+    #     return super().finalize(map_record, values)
 
     # children = [
     #     (
