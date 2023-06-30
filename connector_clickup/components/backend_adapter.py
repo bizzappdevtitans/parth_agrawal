@@ -536,6 +536,7 @@ class ClickupTokenClient:
     #         raise requests.HTTPError(url, res.status_code, res._content, headers, __name__)
     #     res.raise_for_status()
     #     return res.json()
+
     def __init__(self, location, client_id, client_secret, username, password):
         self._location = location
         self._client_id = client_id
