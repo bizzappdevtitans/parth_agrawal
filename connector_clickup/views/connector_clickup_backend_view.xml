@@ -74,6 +74,7 @@
                         <field
                             attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                             name="client_secret"
+                            password="True"
                         />
                         <field
                             attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
@@ -82,6 +83,7 @@
                         <field
                             attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                             name="password"
+                            password="True"
                         />
 
                         <!-- {'invisible':['|',('filed_name_1','=',False),('fieled_name_2','=',False)]} -->

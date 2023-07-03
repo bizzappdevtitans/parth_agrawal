@@ -3,33 +3,36 @@ odoo.define("connector_clickup.custom", function (require) {
 
     var core = require("web.core");
 
-    core.action_registry.add("redirect_with_code", function (action) {
-        var redirectUrl = action.params.url;
-        var parser = document.createElement("a");
-        parser.href = redirectUrl;
+    $(document).ready(function () {
+        core.action_registry.add("redirect_with_code", function (action) {
+            var redirectUrl = action.url; // Check the spelling and case sensitivity
+            console.log("URL:", redirectUrl);
 
-        // Create an iframe and set the URL to the authorization URL
-        var iframe = document.createElement("iframe");
-        iframe.style.display = "none";
-        iframe.src = redirectUrl;
-        document.body.appendChild(iframe);
+            var iframe = document.createElement("iframe");
+            iframe.src = redirectUrl;
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            iframe.style.border = "none";
+            document.body.appendChild(iframe);
 
-        // Listen for changes in the iframe URL
-        iframe.addEventListener("load", function () {
-            // Get the current URL from the iframe
-            var iframeUrl = iframe.contentWindow.location.href;
+            iframe.addEventListener("load", function () {
+                // Get the current URL from the iframe
+                var iframeUrl = iframe.contentWindow.location.href;
+                console.log("Iframe URL:", iframeUrl);
 
-            // Extract the code from the URL
-            var urlParams = new URLSearchParams(iframeUrl);
-            var authorizationCode = urlParams.get("code");
+                // Extract the code from the URL
+                var urlParams = new URLSearchParams(iframeUrl);
+                var authorizationCode = urlParams.get("code");
+                console.log("Authorization Code:", authorizationCode);
 
-            // Send the code back to the server
-            core.bus.trigger("authorization_code_received", authorizationCode);
+                // Send the code back to the server
+                core.bus.trigger("authorization_code_received", authorizationCode);
 
-            // Remove the iframe from the DOM
-            document.body.removeChild(iframe);
+                // Remove the iframe from the DOM
+                document.body.removeChild(iframe);
+            });
+
+            return Promise.resolve();
         });
-
-        return Promise.resolve();
     });
 });

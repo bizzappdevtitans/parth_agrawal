@@ -12,13 +12,6 @@ class ProjectProjectImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.project"
 
-    # def _after_import(self, binding, **kwargs):
-    #     """Hook called at the end of the import"""
-    #     item = binding.odoo_id
-    #     backend_id = self.env["clickup.backend"]
-    #     item["company_id"] = backend_id.company_id
-    #     return super()._after_import(binding, **kwargs)
-
 
 class ProjectProjectBatchImporter(Component):
     """Delay import of the records"""
@@ -26,100 +19,6 @@ class ProjectProjectBatchImporter(Component):
     _name = "clickup.project.project.batch.importer"
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.project"
-
-    # def run(self, filters=None, force=False):
-    #     """Run the synchronization"""
-
-    #     records = self.backend_adapter.search(filters)
-    #     print("\n\nFull Payload =", records, "\n\n")
-
-    #     folder_results = records.get("folder_results", {})
-    #     print("\n\ninside folder project Payload =", folder_results, "\n\n")
-
-    #     list_results = records.get("list_results", {})
-    #     print("\n\noutside project Payload =", list_results, "\n\n")
-
-    #     # data = []
-    #     # for rec in folder_results["folders"]:
-    #     #     for item in rec["lists"]:
-    #     #         item.get("id")
-    #     #         data.append(item)
-
-    #     # for rec in list_results["lists"]:
-    #     #     rec.get("id")
-    #     #     data.append(rec)
-
-    #     # count = len(data)
-
-    #     # print("\n\ncount=", count)
-
-    #     if folder_results:
-    #         data = []
-    #         for rec in folder_results["folders"]:
-    #             for item in rec["lists"]:
-    #                 item.get("id")
-    #                 data.append(item)
-    #         count = len(data)
-    #         print("\n\ncount=", count)
-
-    #         for rec in folder_results["folders"]:
-    #             for item in rec["lists"]:
-    #                 external_id = item.get(self.backend_adapter._clickup_ext_id_key)
-    #                 self._import_record(
-    #                     external_id, data=item, force=force, model=self._apply_on
-    #                 )
-    #                 if filters:
-    #                     self.process_next_batch(filters, force=False, count=count)
-
-    #     if list_results:
-    #         for item in list_results["lists"]:
-    #             external_id = item.get(self.backend_adapter._clickup_ext_id_key)
-    #             self._import_record(
-    #                 external_id, data=item, force=force, model=self._apply_on
-    #             )
-    #         # self.process_next_batch(filters, force=False, count=count)
-
-    #     # particular_result = records.get("particular_result", {})
-    #     # print("\n\ninside particular project Payload =", particular_result, "\n\n")
-
-    #     # if particular_result:
-    #     #     for item in particular_result:
-    #     #         external_id = item.get(self.backend_adapter._clickup_ext_id_key)
-    #     #         self._import_record(
-    #     #             external_id, data=item, force=force, model=self._apply_on
-    #     #         )
-
-    # def run(self, filters=None, force=False):
-    #     """Run the synchronization"""
-
-    #     records = self.backend_adapter.search(filters)
-    #     print("\n\nFull Payload =", records, "\n\n")
-
-    #     folder_results = records.get("folder_results", {})
-    #     print("\n\ninside folder project Payload =", folder_results, "\n\n")
-
-    #     list_results = records.get("list_results", {})
-    #     print("\n\noutside project Payload =", list_results, "\n\n")
-
-    #     data = []
-    #     if folder_results:
-    #         for rec in folder_results["folders"]:
-    #             for item in rec["lists"]:
-    #                 data.append(item)
-    #     if list_results:
-    #         for rec in list_results["lists"]:
-    #             data.append(rec)
-
-    #     print("combined data=", data)
-
-    #     count = len(data)
-    #     print("count ==", count)
-    #     for rec in data:
-    #         external_id = rec.get(self.backend_adapter._clickup_ext_id_key)
-    #         self._import_record(
-    #             external_id, data=rec, force=force, model=self._apply_on
-    #         )
-    #     self.process_next_batch(filters, force=force, count=count)
 
     def run(self, filters=None, force=False):
         """Run the synchronization"""

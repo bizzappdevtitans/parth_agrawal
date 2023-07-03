@@ -40,30 +40,6 @@ class ProjectTaskImporter(Component):
         clickup_date = datetime.fromtimestamp(timestamp)
         return clickup_date <= sync_date
 
-    # def _before_import(self):
-    #     """
-    #     Hook called before the import, when we have the clickup
-    #     data
-    #     """
-    #     res = super(ProjectTaskImporter, self)._before_import()
-
-    #     tags_payload = self.clickup_record
-    #     # print("\n\nTag Payload\n\n", tags_payload)
-
-    #     data = []
-    #     for record in tags_payload.get("tags"):
-    #         res = record.get("name")
-    #         data.append(res)
-    #     # print("data ==", data)
-
-    #     for record in data:
-    #         Tag = self.env["project.tags"].search([("name", "=", record)])
-    #         if Tag:
-    #             continue
-    #         else:
-    #             Tag.create({"name": record})
-    #     return res
-
 
 class ProjectTaskBatchImporter(Component):
     """Delay import of the records"""
@@ -94,7 +70,6 @@ class ProjectTaskImportMapper(Component):
     _name = "clickup.project.task.import.mapper"
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.tasks"
-    # _map_child_fallback = "clickup.map.child.import"
 
     # children = [
     #     (
@@ -117,20 +92,37 @@ class ProjectTaskImportMapper(Component):
         return {"odoo_id": task.id}
 
     @mapping
-    def name(self, record):
+    def project_id(self, record):
         project_id = record.get("list").get("id")
 
         project = self.env["project.project"].search([("external_id", "=", project_id)])
 
+        return {"project_id": project.id}
+        # binder = self.binder_for(model="clickup.project.project")
+
+        # project = binder.to_internal(project_id, unwrap=True)
+        # if not project:
+        #     raise MappingError(_("Project not found for ID: %s") % project_id)
+
+        # return {"odoo_id": project.id}
+
+    @mapping
+    def stage_id(self, record):
         stage_id = record.get("status").get("status")
+
         stage = self.env["project.task.type"].search([("name", "=", stage_id)], limit=1)
-        if project and stage:
+
+        return {"stage_id": stage.id}
+
+    @mapping
+    def name(self, record):
+        project_id = self.project_id(record)
+        stage_id = self.stage_id(record)
+        if project_id and stage_id:
             name = record.get("name")
-            return {"name": name, "project_id": project.id, "stage_id": stage.id}
-        else:
-            _logger.warning(
-                "Project or Stage not found for external ID: %s", project_id
-            )
+            return {
+                "name": name,
+            }
 
     @mapping
     def description(self, record):
@@ -193,37 +185,27 @@ class ProjectTaskImportMapper(Component):
         else:
             return {}
 
-    # def finalize(self, map_record, values):
-    #     tags_record = map_record.source
-    #     tags = []
 
-    #     for tag in tags_record.get("tags", []):
-    #         tags.append(tag.get("name"))
+# class ClickupProjectTaskTagsImportMapper(Component):
+#     _name = "clickup.project.task.import.child.mapper"
+#     _inherit = "clickup.map.child.import"
+#     _apply_on = "clickup.project.tasks"
 
-    #     if tags:
-    #         values["tag_ids"] = [(6, 0, [tag]) for tag in tags]
+#     @mapping
+#     def tag_ids(self, record):
+#         print("\n\ninside tag ids\n\n")
+#         tags = record.get("tags")
 
-    #     return super().finalize(map_record, values)
+#         tag_model = self.env["project.tags"]
+#         tag_ids = []
+#         for tag in tags:
+#             tag_name = tag.get("name")
+#             domain = [("name", "=", tag_name)]
+#             existing_tag = tag_model.search(domain, limit=1)
+#             if existing_tag:
+#                 tag_ids.append(existing_tag.id)
+#             else:
+#                 new_tag = tag_model.create({"name": tag_name})
+#                 tag_ids.append(new_tag.id)
 
-    # children = [
-    #     (
-    #         "avis",
-    #         "zeiss_move_in_ids",
-    #         "zeiss.stock.move.in",
-    #     ),
-    # ]
-    # @mapping
-    # def tag_ids(self, record):
-    #     """Map the backend id"""
-    #     commands = []
-    #     Tag = self.env["project.tags"]
-    #     tags_data = record.get("tags")
-    #     if not tags_data:
-    #         return {"tag_ids": [(6, 0, [])]}
-    #     for data in tags_data:
-    #         tag_name = data.get("name")
-    #         if tag_name:
-    #             tag = Tag.search([("name", "=", tag_name)])
-    #             if tag:
-    #                 commands.append((4, tag.id))
-    #     return {"tag_ids": commands}
+#         return {"tag_ids": [(6, 0, tag_ids)]}

@@ -76,12 +76,9 @@ class TaskAdapter(Component):
     _apply_on = "clickup.project.tasks"
     _clickup_model = "/task"
     _clickup_ext_id_key = "id"
-    # _model_dependencies = [
-    #     (
-    #         "clickup.project.task.type",
-    #         "family",
-    #     ),
-    # ]
+    _model_dependencies = [
+        ("clickup.project.project", "project_id"),
+    ]
 
     def search(self, filters=None, from_date=None, to_date=None):
         """
@@ -100,13 +97,47 @@ class TaskAdapter(Component):
         #     backend_record = self.backend_record
         #     folder_id = backend_record.uri if backend_record.uri else None
 
-        project_model = self.env["project.project"]
+        data = []
+        folder_ids = []
+        list_ids = []
 
-        projects = project_model.search([])
+        space_ids = self.backend_record.uri.split(",")
+
+        for space_id in space_ids:
+            folder_resource_path = "/space/{}/folder".format(space_id)
+
+            self._clickup_model = folder_resource_path
+            folder_project_payload = self._call(folder_resource_path, arguments=filters)
+
+            list_resource_path = "/space/{}/list".format(space_id)
+
+            self._clickup_model = list_resource_path
+            space_project_payload = self._call(list_resource_path, arguments=filters)
+
+            if folder_project_payload:
+                for record in folder_project_payload.get("folders", []):
+                    items = record.get("id")
+                    folder_ids.append(items)
+
+            for folder_id in folder_ids:
+                folder_path = "/folder/{}/list".format(folder_id)
+
+                self._clickup_model = folder_path
+                folder_payload = self._call(folder_path, arguments=filters)
+
+                data.append(folder_payload)
+
+            if space_project_payload:
+                data.append(space_project_payload)
+
+            for rec in data:
+                for data in rec.get("lists", []):
+                    external_id = data.get("id")
+                    list_ids.append(external_id)
+
         result = []
-
-        for project_record in projects:
-            external_id = project_record.external_id
+        for project_record in list_ids:
+            external_id = project_record
             if not external_id:
                 continue
 

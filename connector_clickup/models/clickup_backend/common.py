@@ -2,9 +2,9 @@ import logging
 import threading
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from urllib.parse import parse_qs, urlencode, urlparse
+from urllib.parse import urlencode
 
-from odoo import _, fields, http, models
+from odoo import fields, http, models
 
 from odoo.addons.component.core import Component
 
@@ -99,7 +99,8 @@ class ClickupBackend(models.Model):
 
             model_parts = model.split(".")
             model_name = " ".join(part.title() for part in model_parts[1:])
-            job_options["description"] = f"Prepare Batch To Import {model_name}"
+            model_name = " ".join(dict.fromkeys(model_name.split()))
+            job_options["description"] = f"Import Batch of Clickup {model_name}"
 
             self.env[model].with_company(backend.company_id).with_delay(
                 **job_options or {}
@@ -253,9 +254,12 @@ class ClickupBackend(models.Model):
             force = False
             if force_update_field:
                 force = backend[force_update_field]
+
             model_parts = model.split(".")
             model_name = " ".join(part.title() for part in model_parts[1:])
-            job_options["description"] = f"Prepare Batch To Export {model_name}"
+            model_name = " ".join(dict.fromkeys(model_name.split()))
+            job_options["description"] = f"Export Batch of Clickup {model_name}"
+
             clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay
@@ -395,18 +399,18 @@ class ClickupBackend(models.Model):
         """Generate token for Clickup."""
         self.ensure_one()
         authorization_url = self.get_authorization_url()
-        return {
+        params = {
             "type": "ir.actions.client",
             "tag": "redirect_with_code",
-            "params": {
-                "url": authorization_url,
-            },
+            "url": authorization_url,
         }
+        return params
 
     def get_authorization_url(self):
         redirect_uri = (
             http.request.env["ir.config_parameter"].sudo().get_param("web.base.url")
         )
+        # redirect_uri = "https://app.clickup.com"
         params = {
             "client_id": self.client_id,
             "response_type": "code",
@@ -414,23 +418,24 @@ class ClickupBackend(models.Model):
             "redirect_uri": redirect_uri,
         }
         authorization_url = "https://app.clickup.com/api?" + urlencode(params)
+
         return authorization_url
 
-    @http.route("/web", type="http", auth="public", methods=["GET"])
-    def handle_callback(self, **kwargs):
-        authorization_code = self.extract_authorization_code(
-            http.request.httprequest.url
-        )
+    # @http.route("/callback", type="http", auth="public", methods=["GET"])
+    # def handle_callback(self, **kwargs):
+    #     authorization_code = self.extract_authorization_code(
+    #         http.request.httprequest.url
+    #     )
 
-        self.exchange_authorization_code(authorization_code)
-        # Redirect to a success page or perform any additional actions
-        return _("Authorization code exchange successful")
+    #     self.exchange_authorization_code(authorization_code)
+    #     # Redirect to a success page or perform any additional actions
+    #     return _("Authorization code exchange successful")
 
-    def extract_authorization_code(self, url):
-        parsed_url = urlparse(url)
-        query_params = parse_qs(parsed_url.query)
-        authorization_code = query_params.get("code", [""])[0]
-        return authorization_code
+    # def extract_authorization_code(self, url):
+    #     parsed_url = urlparse(url)
+    #     query_params = parse_qs(parsed_url.query)
+    #     authorization_code = query_params.get("code", [""])[0]
+    #     return authorization_code
 
     # def exchange_authorization_code(self, authorization_code):
     #     token_endpoint = "https://api.clickup.com/api/v2/oauth/token"
@@ -442,8 +447,6 @@ class ClickupBackend(models.Model):
     #     response = requests.post(token_endpoint, data=data)
     #     if response.status_code == 200:
     #         response.json().get("access_token")
-
-    # Do whatever you want with the access_token
 
 
 class ClickupBackendAdapter(Component):

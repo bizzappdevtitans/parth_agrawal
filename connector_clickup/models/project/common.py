@@ -113,34 +113,6 @@ class ProjectAdapter(Component):
     _odoo_ext_id_key = "external_id"
     _clickup_ext_id_key = "id"
 
-    # def search_read(self, filters=None):
-    #     """
-    #     Returns the information of a record
-
-    #     :rtype: dict
-    #     """
-    #     data = []
-
-    #     space_id = self.backend_record.uri
-
-    #     folder_resource_path = "/space/{}/folder".format(space_id)
-    #     self._clickup_model = folder_resource_path
-    #     folder_project_payload = self._call(folder_resource_path, arguments=filters)
-
-    #     list_resource_path = "/space/{}/list".format(space_id)
-    #     self._clickup_model = list_resource_path
-    #     space_project_payload = self._call(list_resource_path, arguments=filters)
-
-    #     if folder_project_payload:
-    #         for rec in folder_project_payload["folders"]:
-    #             for item in rec["lists"]:
-    #                 data.append(item)
-    #     if space_project_payload:
-    #         for rec in space_project_payload["lists"]:
-    #             data.append(rec)
-
-    #     return data
-
     def search_read(self, filters=None):
         """
         Returns the information of a record

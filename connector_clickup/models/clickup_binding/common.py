@@ -29,7 +29,6 @@ class ClickupBinding(models.AbstractModel):
 
     @api.model
     def export_batch(self, backend, filters=None):
-        """Prepare to export the records modified on Odoo"""
         if filters is None:
             filters = {}
         with backend.work_on(self._name) as work:
@@ -37,8 +36,6 @@ class ClickupBinding(models.AbstractModel):
             return exporter.run(filters=filters)
 
     def export_record(self, backend, record, fields=None):
-        """Export a record on ClickUp"""
-
         record.ensure_one()
         with backend.work_on(self._name) as work:
             exporter = work.component(usage="record.exporter")
