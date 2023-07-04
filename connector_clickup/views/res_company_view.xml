@@ -31,6 +31,7 @@
                 <xpath expr="//notebook//page[@name='general_info']" position="inside">
                     <group string="clickUp">
                         <group>
+
                             <field name="clickup_backend_id" widget="selection" />
                         </group>
                     </group>

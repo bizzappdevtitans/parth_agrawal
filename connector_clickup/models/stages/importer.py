@@ -15,22 +15,6 @@ class ProjectTaskTypeImporter(Component):
     _inherit = "clickup.importer"
     _apply_on = "clickup.project.task.type"
 
-    # def _before_import(self):
-    #     """
-    #     Hook called before the import, when we have the clickup
-    #     data
-    #     """
-    #     res = super()._before_import()
-
-    #     status_payload = self.clickup_record
-
-    #     status = status_payload.get("status")
-
-    #     check = self.env["project.task.type"].search([])
-    #     if status in check:
-
-    #     return res
-
 
 class ProjectTaskTypeBatchImporter(Component):
     """Delay import of the records"""
@@ -38,38 +22,6 @@ class ProjectTaskTypeBatchImporter(Component):
     _name = "clickup.project.task.type.batch.importer"
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.task.type"
-
-    # 1 def run(self, filters=None, force=False):
-    #     """Run the synchronization"""
-
-    #     records = self.backend_adapter.search(filters)
-
-    #     for record in records["folders"]:
-    #         for item in record["lists"]:
-    #             for data in item["statuses"]:
-    #                 external_id = data.get(self.backend_adapter._clickup_ext_id_key)
-
-    #                 self._import_record(
-    #                     external_id, data=data, force=force, model=self._apply_on
-    #                 )
-
-    # 2 def run(self, filters=None, force=False):
-    #     """Run the synchronization"""
-
-    #     records = self.backend_adapter.search_read(filters)
-    #     print("\n\nFull records=\n\n", records)
-
-    #     for item in records.get("folders"):
-    #         print("\n\nFolder=\n\n", item)
-    #         for data in item.get("lists", []):
-    #             print("\n\nlist=\n\n", data)
-    #             for status in data.get("statuses", []):
-    #                 print("\n\nstatus=\n\n", status)
-    #                 external_id = status.get(self.backend_adapter._clickup_ext_id_key)
-
-    #                 self._import_record(
-    #                     external_id, data=status, force=force, model=self._apply_on
-    #                 )
 
     def run(self, filters=None, force=False):
         """Run the synchronization"""

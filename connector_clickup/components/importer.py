@@ -80,6 +80,7 @@ class ClickupImporter(AbstractComponent):
                     binding_model._name,
                     external_id,
                 )
+        return
 
     def _import_dependencies(self):
         """
@@ -89,10 +90,12 @@ class ClickupImporter(AbstractComponent):
         """
         if not hasattr(self.backend_adapter, "_model_dependencies"):
             return
+
+        record = self.clickup_record
         for dependency in self.backend_adapter._model_dependencies:
-            record = self.clickup_record
             model, key = dependency
-            external_id = record.get(key)
+            external_id = record.get("list").get(key)
+
             self._import_dependency(external_id=external_id, binding_model=model)
 
     def _map_data(self):
@@ -184,7 +187,7 @@ class ClickupImporter(AbstractComponent):
             try:
                 self.clickup_record = self._get_clickup_data()
             except IDMissingInBackend:
-                return _("Record does no longer exist in akeneo")
+                return _("Record does no longer exist in clickup")
 
         skip = self._must_skip()  # pylint: disable=assignment-from-none
         if skip:

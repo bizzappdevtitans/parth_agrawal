@@ -77,7 +77,7 @@ class TaskAdapter(Component):
     _clickup_model = "/task"
     _clickup_ext_id_key = "id"
     _model_dependencies = [
-        ("clickup.project.project", "project_id"),
+        ("clickup.project.project", "id"),
     ]
 
     def search(self, filters=None, from_date=None, to_date=None):
@@ -136,24 +136,17 @@ class TaskAdapter(Component):
                     list_ids.append(external_id)
 
         result = []
-        for project_record in list_ids:
-            external_id = project_record
-            if not external_id:
-                continue
-
-            list_id = external_id
-
+        for external_id in list_ids:
             if from_date is not None:
                 filters["date_updated_gt"] = from_date
 
             if to_date is not None:
                 filters["date_updated_lt"] = to_date
 
-            resource_path = "/list/{}/task".format(list_id)
+            resource_path = "/list/{}/task".format(external_id)
             self._clickup_model = resource_path
-
-            super_result = super().search(filters)
-            result.append(super_result)
+            task_payload = self._call(resource_path, arguments=filters)
+            result.append(task_payload)
 
         return result
 
