@@ -4,7 +4,6 @@ from odoo import _
 
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import IDMissingInBackend
-from odoo.addons.queue_job.exception import NothingToDoJob
 
 _logger = logging.getLogger(__name__)
 
@@ -64,23 +63,6 @@ class ClickupImporter(AbstractComponent):
                        it does not yet exist.
         :type always: boolean
         """
-        if not external_id:
-            return
-        binder = self.binder_for(binding_model)
-        if always or not binder.to_internal(external_id):
-            if importer is None:
-                importer = self.component(
-                    usage="record.importer", model_name=binding_model
-                )
-            try:
-                importer.run(external_id)
-            except NothingToDoJob:
-                _logger.info(
-                    "Dependency import of %s(%s) has been ignored.",
-                    binding_model._name,
-                    external_id,
-                )
-        return
 
     def _import_dependencies(self):
         """
@@ -88,15 +70,6 @@ class ClickupImporter(AbstractComponent):
         Import of dependencies can be done manually or by calling
         :meth:`_import_dependency` for each dependency.
         """
-        if not hasattr(self.backend_adapter, "_model_dependencies"):
-            return
-
-        record = self.clickup_record
-        for dependency in self.backend_adapter._model_dependencies:
-            model, key = dependency
-            external_id = record.get("list").get(key)
-
-            self._import_dependency(external_id=external_id, binding_model=model)
 
     def _map_data(self):
         """
@@ -208,6 +181,9 @@ class ClickupImporter(AbstractComponent):
 
         map_record = self._map_data()
 
+        # project_model = self.env["clickup.project.project"].search(
+        #     [("external_id", "=", self.external_id)]
+        # )
         if binding:
             record = self._update_data(map_record)
             self._update(binding, record)
@@ -248,7 +224,7 @@ class BatchImporter(AbstractComponent):
     #         )
 
     # def get_data_items(self, result, only_ids=False):
-    #     """Split the ids and next page information from result of Akeneo"""
+    #     """Split the ids and next page information from result of Clickup"""
     #     next_url = result.get("lists", [])
     #     print("next_url", next_url)
     #     items = result.get("_embedded", {}).get("items", [])

@@ -49,6 +49,7 @@ class ClickupBackend(models.Model):
 
     force_update_tasks = fields.Boolean()
     company_id = fields.Many2one(comodel_name="res.company", string="Company")
+
     # Live
     api_key = fields.Char(help="Enter API Key")
     uri = fields.Char(help="Enter End Point Location Of Space Id")
@@ -61,6 +62,10 @@ class ClickupBackend(models.Model):
     test_mode = fields.Boolean(default=True)
     test_token = fields.Char()
     test_location = fields.Char()
+
+    # def _compute_company_id(self):
+    #     for record in self:
+    #         record.company_id = self.env.company.id
 
     def toggle_test_mode(self):
         for record in self:
@@ -149,30 +154,9 @@ class ClickupBackend(models.Model):
                 force_update_field=None,
             )
 
-    # @contextmanager
-    # def work_on(self, model_name, **kwargs):
-    #     """Add the work on for clickup."""
-
-    #     self.ensure_one()
-    #     location = self.uri
-    #     token = self.api_key
-    #     if self.test_mode:
-    #         location = self.test_location
-    #         token = self.test_token
-
-    #     clickup_location = ClickupLocation(location=location, token=token)
-
-    #     # clickup have different endpoint/credentials for token
-    #     clickup_location_token = ClickupTokenLocation(location=location)
-    #     with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
-    #         _super = super()
-    #         # from the components we'll be able to do: self.work.clickup_api
-    #         with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
-    #             yield work
-
     @contextmanager
     def work_on(self, model_name, **kwargs):
-        """Add the work on for akeneo."""
+        """Add the work on for clickup."""
         self.ensure_one()
         location = self.uri
         client_id = self.client_id
@@ -193,7 +177,7 @@ class ClickupBackend(models.Model):
             token=token,
         )
 
-        # akeneo have different endpoint/credentials for token
+        # Clickup have different endpoint/credentials for token
         clickup_location_token = ClickupTokenLocation(
             location=location,
             client_id=client_id,
@@ -203,7 +187,7 @@ class ClickupBackend(models.Model):
         )
         with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
             _super = super()
-            # from the components we'll be able to do: self.work.akeneo_api
+            # from the components we'll be able to do: self.work.clickup_api
             with _super.work_on(model_name, clickup_api=clickup_api, **kwargs) as work:
                 yield work
 
@@ -329,7 +313,7 @@ class ClickupBackend(models.Model):
             )
 
     # def generate_token(self):
-    #     """Generate token for akeneo."""
+    #     """Generate token for clickup."""
     #     with self.work_on(self._name) as work:
     #         backend_adapter = work.component(usage="backend.adapter")
     #         token_dict = backend_adapter.get_token()
@@ -384,16 +368,6 @@ class ClickupBackend(models.Model):
             ("company_id", "=", False),
         ]
         return domain
-
-    # def generate_token(self):
-    #     """Generate token for Clickup."""
-    #     self.ensure_one()
-    #     authorization_url = self.get_authorization_url()
-    #     return {
-    #         "type": "ir.actions.act_url",
-    #         "url": authorization_url,
-    #         "target": "new",
-    #     }
 
     def generate_token(self):
         """Generate token for Clickup."""

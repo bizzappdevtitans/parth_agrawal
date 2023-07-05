@@ -95,7 +95,6 @@ class ProjectProject(models.Model):
             raise UserError(_("Please add backend!!!"))
         try:
             self.clickup_backend_id = self.company_id.clickup_backend_id
-            # self.clickup_backend_id == self.company_id.clickup_backend_id
             self.env["clickup.project.project"].export_record(
                 backend=self.sudo().clickup_backend_id, record=self
             )
@@ -103,6 +102,18 @@ class ProjectProject(models.Model):
             raise UserError from None(
                 _("Choose different folder id as this folder is hidden")
             )
+
+    # def _default_clickup_backend_id(self):
+    #     company = self.env.company
+    #     if company:
+    #         return company.clickup_backend_id
+    #     else:
+    #         return self.env["clickup.backend"].search([], limit=1)
+
+    # def get_default_backend(self):
+    #     """return the default backend needs to set on record if not specified"""
+    #     company_id = self.company_id or self.env.company
+    #     return company_id.clickup_backend_id
 
 
 class ProjectAdapter(Component):
@@ -113,10 +124,9 @@ class ProjectAdapter(Component):
     _odoo_ext_id_key = "external_id"
     _clickup_ext_id_key = "id"
 
-    def search_read(self, filters=None):
+    def search(self, filters=None):
         """
         Returns the information of a record
-
         :rtype: dict
         """
         data = []
@@ -159,14 +169,6 @@ class ProjectAdapter(Component):
 
         :rtype: dict
         """
-        # if self.backend_record.test_mode is True:
-        #     backend_record = self.backend_record
-        #     folder_id = (
-        #         backend_record.test_location if backend_record.test_location else None
-        #     )
-        # else:
-        #     backend_record = self.backend_record
-        #     folder_id = backend_record.uri if backend_record.uri else None
 
         space_id = self.backend_record.uri
         resource_path = "/space/{}/list".format(space_id)
@@ -183,17 +185,7 @@ class ProjectAdapter(Component):
 
     def write(self, external_id, data):
         """Update records on the external system"""
-        # if self.backend_record.test_mode is True:
-        #     backend_record = self.backend_record
-        #     folder_id = (
-        #         backend_record.test_location if backend_record.test_location else None
-        #     )
-        # else:
-        #     backend_record = self.backend_record
-        #     folder_id = backend_record.uri if backend_record.uri else None
 
-        # resource_path = "/folder/{}/list".format(folder_id)
-        # self._clickup_model = resource_path
         if external_id:
             resource_path = "/list/{}".format(external_id)
             self._clickup_model = resource_path

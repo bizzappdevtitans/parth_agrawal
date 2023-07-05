@@ -23,7 +23,7 @@ class ProjectProjectBatchImporter(Component):
     def run(self, filters=None, force=False):
         """Run the synchronization"""
 
-        records = self.backend_adapter.search_read(filters)
+        records = self.backend_adapter.search(filters)
 
         for rec in records:
             for data in rec.get("lists", []):
@@ -105,7 +105,7 @@ class ProjectProjectImportMapper(Component):
         data_end = date.fromtimestamp(timestamp) + timedelta(days=1)
         return {"date": data_end}
 
-    # @mapping
-    # def company_id(self, record):
-    #     """Mapped the backend id"""
-    #     return {"company_id": self.backend_record.company_id}
+    @mapping
+    def company_id(self, record):
+        company_id = self.backend_record.company_id.id
+        return {"company_id": company_id}

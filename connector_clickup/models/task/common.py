@@ -77,7 +77,7 @@ class TaskAdapter(Component):
     _clickup_model = "/task"
     _clickup_ext_id_key = "id"
     _model_dependencies = [
-        ("clickup.project.project", "id"),
+        ("clickup.project.project", "list"),
     ]
 
     def search(self, filters=None, from_date=None, to_date=None):
@@ -85,17 +85,6 @@ class TaskAdapter(Component):
         Returns the information of a record
         :rtype: dict
         """
-
-        # if self.backend_record.test_mode is True:
-        #     print("test_mode")
-        #     backend_record = self.backend_record
-        #     folder_id = (
-        #         backend_record.test_location if backend_record.test_location else None
-        #     )
-        # else:
-        #     print("production")
-        #     backend_record = self.backend_record
-        #     folder_id = backend_record.uri if backend_record.uri else None
 
         data = []
         folder_ids = []

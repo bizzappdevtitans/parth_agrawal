@@ -43,31 +43,6 @@ class TaskTypeAdapter(Component):
     _clickup_model = "/space/{}/folder"
     _clickup_ext_id_key = "id"
 
-    # def search(self, filters=None):
-    #     """
-    #     Returns the information of a record
-
-    #     :rtype: dict
-    #     """
-    #     # if self.backend_record.test_mode is True:
-    #     #     print("comming inside")
-    #     #     backend_record = self.backend_record
-    #     #     folder_id = (
-    #     #         backend_record.test_location if backend_record.test_location else None
-    #     #     )
-    #     #     print("\n\n folder id", folder_id)
-    #     # else:
-    #     #     print("production")
-    #     #     backend_record = self.backend_record
-    #     #     folder_id = backend_record.uri if backend_record.uri else None
-    #     space_id = self.backend_record.uri
-    #     resource_path = "/space/{}/folder".format(space_id)
-
-    #     # records = self.search(filters)
-    #     # print("payload inside search", records)
-    #     self._clickup_model = resource_path
-    #     return super(TaskTypeAdapter, self).search(filters)
-
     def search_read(self, filters=None):
         """
         Returns the information of a record
