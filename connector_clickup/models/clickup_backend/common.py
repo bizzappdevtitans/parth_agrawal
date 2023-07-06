@@ -45,7 +45,6 @@ class ClickupBackend(models.Model):
         help="""This will get all the tasks which is created
          or updated after your provided date and time"""
     )
-    limit = fields.Integer(default=100)
 
     force_update_tasks = fields.Boolean()
     company_id = fields.Many2one(comodel_name="res.company", string="Company")
@@ -57,7 +56,7 @@ class ClickupBackend(models.Model):
     client_secret = fields.Char()
     username = fields.Char()
     password = fields.Char()
-
+    team_id = fields.Char()
     # Test
     test_mode = fields.Boolean(default=True)
     test_token = fields.Char()
@@ -96,7 +95,6 @@ class ClickupBackend(models.Model):
 
                     filters = {"from_date": from_date, "to_date": import_start_time_new}
 
-            filters["limit"] = backend.limit
             filters["with_count"] = "true"
             force = False
             if force_update_field:
@@ -165,10 +163,10 @@ class ClickupBackend(models.Model):
         username = self.username
         password = self.password
         if self.test_mode:
-            location = kwargs.get("location", self.location)
+            location = self.test_location
             client_id = self.client_id
             client_secret = self.client_secret
-            token = self.token
+            token = self.test_token
             username = self.username
             password = self.password
 
@@ -233,7 +231,6 @@ class ClickupBackend(models.Model):
                 else:
                     from_date = to_iso_datetime(from_date)
 
-            filters["limit"] = backend.limit
             filters["with_count"] = "true"
             force = False
             if force_update_field:

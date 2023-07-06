@@ -1,9 +1,10 @@
 import logging
 
+from odoo import _
+
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-
-# from ..exception import MappingError
+from odoo.addons.connector.exception import MappingError
 
 # from odoo.addons import queue_job
 
@@ -45,13 +46,16 @@ class ProjectTaskTypeImportMapper(Component):
     @mapping
     def odoo_id(self, record):
         """Getting product based on the SKU."""
+        stage = self._get_binding_values(record, model=self._apply_on, value="id")
 
-        binder = self.binder_for(model="clickup.project.task.type")
-        stage = binder.to_internal(record.get("id"), unwrap=True)
+        name = record.get("status")
+        stage_name = self.env["project.task.type"].search([("name", "=", name)])
+        if stage_name:
+            return {"odoo_id": stage_name.id}
 
-        if not stage:
-            return {}
-        return {"odoo_id": stage.id}
+        else:
+            return {"odoo_id": stage.id}
+        return {}
 
     @mapping
     def name(self, record):
@@ -60,16 +64,8 @@ class ProjectTaskTypeImportMapper(Component):
         stage_name = self.env["project.task.type"].search([("name", "=", name)])
         if not stage_name:
             return {"name": name}
-        else:
-            queue_job = self.env["queue.job"].search(
-                [("job_function_id", "=", "<clickup.project.task.type>.import_record")]
-            )
-            queue_job.write(
-                {
-                    "state": "done",
-                    "result": "Stage already exist in project.task.type model",
-                }
-            )
+        if stage_name:
+            raise MappingError(_("'%s' Stage already exist") % stage_name.name)
 
     def external_id(self, record):
         """#T-02383 Mapped external id"""

@@ -39,23 +39,44 @@ class ProjectProjectImportMapper(Component):
     _apply_on = "clickup.project.project"
     _mapper_ext_key = "identifier"
 
+    # @only_create
+    # @mapping
+    # def odoo_id(self, record):
+    #     """Getting product based on the SKU."""
+    #     print("\n\nodoo_id")
+    #     binder = self.binder_for(model="clickup.project.project")
+    #     project = binder.to_internal(record.get("id"), unwrap=True)
+
+    #     if not project:
+    #         return {}
+
+    #     existing_project = self.env["clickup.project.project"].search(
+    #         [("odoo_id", "=", project.id)], limit=1
+    #     )
+    #     if existing_project:
+    #         return {}
+    #     return {"odoo_id": project.id}
+
     @only_create
     @mapping
     def odoo_id(self, record):
-        """Getting product based on the SKU."""
-
-        binder = self.binder_for(model="clickup.project.project")
-        project = binder.to_internal(record.get("id"), unwrap=True)
-
-        if not project:
-            return {}
-        return {"odoo_id": project.id}
+        project_id = record.get("id")
+        existing_project = self.env["project.project"].search(
+            [("external_id", "=", project_id)]
+        )
+        if existing_project:
+            return {"odoo_id": existing_project.id}
+        else:
+            project = self._get_binding_values(record, model=self._apply_on, value="id")
+            return {"odoo_id": project.id}
 
     @mapping
     def name(self, record):
-        name = record.get("name")
+        # name = self._get_binding_values(record, model=self._apply_on, value="name")
+        # if not name:
+        #     return {"name": name.name}
 
-        return {"name": name}
+        return {"name": record.get("name")}
 
     @mapping
     def description(self, record):
@@ -109,3 +130,8 @@ class ProjectProjectImportMapper(Component):
     def company_id(self, record):
         company_id = self.backend_record.company_id.id
         return {"company_id": company_id}
+
+    @mapping
+    def team_id(self, record):
+        team_id = self.backend_record.team_id
+        return {"team_id": team_id}

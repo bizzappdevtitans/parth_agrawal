@@ -4,6 +4,7 @@ from odoo import _
 
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import IDMissingInBackend
+from odoo.addons.queue_job.exception import NothingToDoJob
 
 _logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class ClickupImporter(AbstractComponent):
     def _get_clickup_data(self):
         """Return the raw clickup data for ``self.external_id``"""
         data = self.backend_adapter.read(self.external_id)
+
         if not data.get(self.backend_adapter._clickup_ext_id_key):
             data[self.backend_adapter._clickup_ext_id_key] = self.external_id
         return data
@@ -64,12 +66,38 @@ class ClickupImporter(AbstractComponent):
         :type always: boolean
         """
 
+        if not external_id:
+            return
+
+        binder = self.binder_for(binding_model)
+        if not binder.to_internal(external_id):
+            if importer is None:
+                importer = self.component(
+                    usage="record.importer", model_name=binding_model
+                )
+            try:
+                importer.run(external_id)
+            except NothingToDoJob:
+                _logger.info(
+                    "Dependency import of %s(%s) has been ignored.",
+                    binding_model._name,
+                    external_id,
+                )
+
     def _import_dependencies(self):
         """
          #T-02383 Import the dependencies for the record
         Import of dependencies can be done manually or by calling
         :meth:`_import_dependency` for each dependency.
         """
+        if not hasattr(self.backend_adapter, "_model_dependencies"):
+            return
+
+        for dependency in self.backend_adapter._model_dependencies:
+            model, key = dependency
+            external_id = self.clickup_record.get(key)
+
+            self._import_dependency(external_id=external_id, binding_model=model)
 
     def _map_data(self):
         """
@@ -165,7 +193,9 @@ class ClickupImporter(AbstractComponent):
         skip = self._must_skip()  # pylint: disable=assignment-from-none
         if skip:
             return skip
+        # import pdb
 
+        # pdb.set_trace()
         binding = self._get_binding()
         if not force and self._is_uptodate(binding):
             return _("Already up-to-date.")
@@ -213,37 +243,6 @@ class BatchImporter(AbstractComponent):
         Method to implement in sub-classes.
         """
         raise NotImplementedError
-
-    # def process_next_batch(self, filters=None, force=False, count=0):
-    #     """#T-02072 Method to trigger for next batch import"""
-    #     filters["offset"] += filters["limit"]
-
-    #     if filters["offset"] < count:
-    #         self.env[self.model._name].with_delay().import_batch(
-    #             self.backend_record, filters=filters, force=force
-    #         )
-
-    # def get_data_items(self, result, only_ids=False):
-    #     """Split the ids and next page information from result of Clickup"""
-    #     next_url = result.get("lists", [])
-    #     print("next_url", next_url)
-    #     items = result.get("_embedded", {}).get("items", [])
-    #     if only_ids:
-    #         key = self.backend_adapter._akeneo_ext_id_key
-    #         items = [item[key] for item in items]
-    #     return items, next_url
-
-    # def process_next_page(self, filters=None, job_options=None, **kwargs):
-    #     """Method to trigger batch import for Next page"""
-    #     if not filters:
-    #         filters = {}
-    #     job_options = job_options or {}
-    #     model = self.env[self.model._name]
-    #     if not kwargs.get("no_delay"):
-    #         model = model.with_delay(**job_options or {})
-    #     model.import_batch(
-    #         self.backend_record, filters=filters, job_options=job_options, **kwargs
-    #     )
 
 
 class DirectBatchImporter(AbstractComponent):

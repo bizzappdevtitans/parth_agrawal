@@ -41,6 +41,7 @@
                         <field name="clickup_bind_ids" />
                         <field name="external_id" />
                         <field name="folder_id" string="Folder Id" />
+
                         <field name="clickup_backend_id" />
 
                     </group>

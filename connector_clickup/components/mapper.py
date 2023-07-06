@@ -6,6 +6,11 @@ class ClickupImportMapper(AbstractComponent):
     _inherit = ["base.clickup.connector", "base.import.mapper"]
     _usage = "import.mapper"
 
+    def _get_binding_values(self, record, model=None, value=None):
+        binder = self.binder_for(model)
+        binding = binder.to_internal(record.get(value), unwrap=True)
+        return binding
+
 
 class ClickupExportMapper(AbstractComponent):
     _name = "clickup.export.mapper"

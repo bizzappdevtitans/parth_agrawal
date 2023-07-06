@@ -6,7 +6,6 @@ from odoo import _
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
 from odoo.addons.connector.exception import MappingError
-from odoo.addons.queue_job.exception import NothingToDoJob
 
 _logger = logging.getLogger(__name__)
 
@@ -44,57 +43,13 @@ class ProjectTaskImporter(Component):
         clickup_date = datetime.fromtimestamp(timestamp)
         return clickup_date <= sync_date
 
-    def _import_dependency(
-        self, external_id, binding_model, importer=None, always=False
-    ):
-        """
-        Import a dependency.
-
-        The importer class is a class or subclass of
-        :class:`ClickupImporter`. A specific class can be defined.
-
-        :param external_id: id of the related binding to import
-        :param binding_model: name of the binding model for the relation
-        :type binding_model: str | unicode
-        :param importer_component: component to use for import
-                                   By default: 'importer'
-        :type importer_component: Component
-        :param always: if True, the record is updated even if it already
-                       exists, note that it is still skipped if it has
-                       not been modified on clickup since the last
-                       update. When False, it will import it only when
-                       it does not yet exist.
-        :type always: boolean
-        """
-
-        if not external_id:
-            return
-        project_model = self.env["clickup.project.project"].search(
-            [("external_id", "=", external_id)]
-        )
-        if project_model:
-            return
-        binder = self.binder_for(binding_model)
-        if not binder.to_internal(external_id):
-            if importer is None:
-                importer = self.component(
-                    usage="record.importer", model_name=binding_model
-                )
-            try:
-                importer.run(external_id)
-            except NothingToDoJob:
-                _logger.info(
-                    "Dependency import of %s(%s) has been ignored.",
-                    binding_model._name,
-                    external_id,
-                )
-
     def _import_dependencies(self):
         """
          #T-02383 Import the dependencies for the record
         Import of dependencies can be done manually or by calling
         :meth:`_import_dependency` for each dependency.
         """
+
         if not hasattr(self.backend_adapter, "_model_dependencies"):
             return
 
@@ -102,9 +57,7 @@ class ProjectTaskImporter(Component):
             model, key = dependency
             external_id = self.clickup_record.get(key).get("id")
 
-            self._import_dependency(
-                external_id=external_id, binding_model="clickup.project.project"
-            )
+            self._import_dependency(external_id=external_id, binding_model=model)
 
 
 class ProjectTaskBatchImporter(Component):
@@ -136,7 +89,7 @@ class ProjectTaskImportMapper(Component):
     _name = "clickup.project.task.import.mapper"
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.tasks"
-
+    _map_child_fallback = "clickup.map.child.import"
     # children = [
     #     (
     #         "tags",
@@ -149,9 +102,7 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def odoo_id(self, record):
         """Getting product based on the SKU."""
-
-        binder = self.binder_for(model="clickup.project.tasks")
-        task = binder.to_internal(record.get("id"), unwrap=True)
+        task = self._get_binding_values(record, model=self._apply_on, value="id")
 
         if not task:
             return {}
@@ -160,18 +111,17 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def project_id(self, record):
         project = record.get("list").get("id")
-        company_id = self.backend_record.company_id
-        project_id = self.env["project.project"].search(
-            [
-                ("external_id", "=", project),
-                ("company_id", "=", company_id.id),
-            ],
-        )
+        # project_id = self.env["project.project"].search(
+        #     [
+        #         ("external_id", "=", project),
+        #     ],
+        # )
+        binder = self.binder_for(model="clickup.project.project")
+        project = binder.to_internal(project, unwrap=True)
+        if not project:
+            raise MappingError(_("Project not found for ID: %s") % project)
 
-        if not project_id:
-            raise MappingError(_("Project not found for ID: %s") % project_id)
-
-        return {"project_id": project_id.id}
+        return {"project_id": project.id}
 
     # binder = self.binder_for(model="clickup.project.project")
 
@@ -256,6 +206,55 @@ class ProjectTaskImportMapper(Component):
             return {"updated_at": date_updated}
         else:
             return {}
+
+    @mapping
+    def company_id(self, record):
+        company_id = self.backend_record.company_id.id
+        return {"company_id": company_id}
+
+    # @mapping
+    # def tag_ids(self, record):
+    #     print("\n\ninside tag ids\n\n")
+    #     tags = record.get("tags")
+
+    #     tag_model = self.env["project.tags"]
+    #     tag_ids = []
+
+    #     # Remove all existing tags
+    #     self.tag_ids = [(5, 0, 0)]
+
+    #     for tag in tags:
+    #         tag_name = tag.get("name")
+    #         domain = [("name", "=", tag_name)]
+    #         existing_tag = tag_model.search(domain, limit=1)
+
+    #         if existing_tag:
+    #             tag_ids.append((4, existing_tag.id, 0))
+    #         else:
+    #             tag_ids.append((0, 0, {"name": tag_name}))
+
+    #     return {"tag_ids": tag_ids}
+
+    def finalize(self, map_record, values):
+        record = map_record.source
+
+        tags = record.get("tags")
+        tag_ids = []
+
+        if tags:
+            for tag_name in tags:
+                tag_name = tag_name.get("name")
+                if tag_name:
+                    existing_label = self.env["project.tags"].search(
+                        [("name", "=", tag_name)]
+                    )
+                    if existing_label:
+                        tag_ids.append(existing_label.id)
+                    else:
+                        new_label = self.env["project.tags"].create({"name": tag_name})
+                        tag_ids.append(new_label.id)
+        values["tag_ids"] = [(6, 0, tag_ids)]
+        return values
 
 
 # class ClickupProjectTaskTagsImportMapper(Component):

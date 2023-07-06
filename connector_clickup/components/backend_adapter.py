@@ -310,7 +310,6 @@ class ClickupCRUDAdapter(AbstractComponent):
         """Method to get token from remote system"""
 
         return self._call(
-            # resource_path="token",
             resource_path="token",
             arguments=arguments,
             http_method=http_method,
@@ -352,7 +351,6 @@ class GenericAdapter(AbstractComponent):
     _last_update_date = "date_updated"
     _clickup_model = None
     _clickup_ext_id_key = "uuid"
-    # _model_dependencies = []
 
     def search(self, filters=None):
         """
@@ -381,9 +379,12 @@ class GenericAdapter(AbstractComponent):
         :rtype: dict
         """
         resource_path = self._clickup_model
+
         if external_id:
             resource_path = "{}/{}".format(resource_path, external_id)
+
         result = self._call(resource_path)
+
         return result
 
     def create(self, data):

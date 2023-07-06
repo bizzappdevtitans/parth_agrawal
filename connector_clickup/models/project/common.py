@@ -35,6 +35,7 @@ class ProjectProject(models.Model):
         store=True,
     )
 
+    team_id = fields.Char(readonly=True)
     folder_id = fields.Char(readonly=True)
 
     export_to_folder = fields.Boolean()
@@ -52,7 +53,7 @@ class ProjectProject(models.Model):
         """Open co-responding project in clickup's website"""
         result = {
             "type": "ir.actions.act_url",
-            "url": f"https://app.clickup.com/{self.folder_id}/v/l/li/{self.external_id}",
+            "url": f"https://app.clickup.com/{self.team_id}/v/l/li/{self.external_id}",
             "target": "new",
         }
 
@@ -103,18 +104,6 @@ class ProjectProject(models.Model):
                 _("Choose different folder id as this folder is hidden")
             )
 
-    # def _default_clickup_backend_id(self):
-    #     company = self.env.company
-    #     if company:
-    #         return company.clickup_backend_id
-    #     else:
-    #         return self.env["clickup.backend"].search([], limit=1)
-
-    # def get_default_backend(self):
-    #     """return the default backend needs to set on record if not specified"""
-    #     company_id = self.company_id or self.env.company
-    #     return company_id.clickup_backend_id
-
 
 class ProjectAdapter(Component):
     _name = "clickup.project.project.adapter"
@@ -132,7 +121,18 @@ class ProjectAdapter(Component):
         data = []
         folder_ids = []
 
-        space_ids = self.backend_record.uri.split(",")
+        if self.backend_record.test_mode is True:
+            backend_record = self.backend_record
+            space_ids = (
+                backend_record.test_location.split(",")
+                if backend_record.test_location
+                else None
+            )
+        else:
+            backend_record = self.backend_record
+            space_ids = backend_record.uri.split(",") if backend_record.uri else None
+
+        # space_ids = self.backend_record.uri.split(",")
 
         for space_id in space_ids:
             folder_resource_path = "/space/{}/folder".format(space_id)
@@ -170,11 +170,17 @@ class ProjectAdapter(Component):
         :rtype: dict
         """
 
-        space_id = self.backend_record.uri
+        if self.backend_record.test_mode is True:
+            backend_record = self.backend_record
+            space_id = (
+                backend_record.test_location if backend_record.test_location else None
+            )
+        else:
+            backend_record = self.backend_record
+            space_id = backend_record.uri if backend_record.uri else None
+
         resource_path = "/space/{}/list".format(space_id)
         folder = data.get("folder")
-
-        # project = self.env["project.project"].search([("folder", "=", folder)])
 
         if folder:
             resource_path = "/folder/{}/list".format(folder)

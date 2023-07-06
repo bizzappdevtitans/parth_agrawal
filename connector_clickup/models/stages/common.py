@@ -51,7 +51,16 @@ class TaskTypeAdapter(Component):
         """
         data = []
 
-        space_id = self.backend_record.uri
+        if self.backend_record.test_mode is True:
+            backend_record = self.backend_record
+            space_id = (
+                backend_record.test_location if backend_record.test_location else None
+            )
+        else:
+            backend_record = self.backend_record
+            space_id = backend_record.uri if backend_record.uri else None
+
+        # space_id = self.backend_record.uri
 
         folder_resource_path = "/space/{}/folder".format(space_id)
         self._clickup_model = folder_resource_path

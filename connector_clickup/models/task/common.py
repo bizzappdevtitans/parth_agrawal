@@ -90,7 +90,16 @@ class TaskAdapter(Component):
         folder_ids = []
         list_ids = []
 
-        space_ids = self.backend_record.uri.split(",")
+        if self.backend_record.test_mode is True:
+            backend_record = self.backend_record
+            space_ids = (
+                backend_record.test_location.split(",")
+                if backend_record.test_location
+                else None
+            )
+        else:
+            backend_record = self.backend_record
+            space_ids = backend_record.uri.split(",") if backend_record.uri else None
 
         for space_id in space_ids:
             folder_resource_path = "/space/{}/folder".format(space_id)

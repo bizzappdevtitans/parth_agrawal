@@ -162,7 +162,7 @@
                                 <field name="company_id" />
 
                                 <field name="datetime_filter_task" />
-                                <field name="limit" />
+                                <field name="team_id" />
                             </group>
                             </group>
                         </page>
