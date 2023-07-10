@@ -45,7 +45,7 @@ class ProjectTaskTypeImportMapper(Component):
     @only_create
     @mapping
     def odoo_id(self, record):
-        """Getting product based on the SKU."""
+        """Creating odoo id"""
         stage = self._get_binding_values(record, model=self._apply_on, value="id")
 
         name = record.get("status")
@@ -59,6 +59,7 @@ class ProjectTaskTypeImportMapper(Component):
 
     @mapping
     def name(self, record):
+        """Map name"""
         name = record.get("status")
 
         stage_name = self.env["project.task.type"].search([("name", "=", name)])
@@ -68,14 +69,14 @@ class ProjectTaskTypeImportMapper(Component):
             raise MappingError(_("'%s' Stage already exist") % stage_name.name)
 
     def external_id(self, record):
-        """#T-02383 Mapped external id"""
+        """Map external id"""
         external_id = record.get("id")
 
         return {"external_id": external_id}
 
     @mapping
     def backend_id(self, record):
-        """Mapped the backend id"""
+        """Map the backend id"""
 
         backend_id = self.backend_record.id
 

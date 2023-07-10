@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- Clickup backend model form view  -->
     <record id="view_clickup_backend_form" model="ir.ui.view">
         <field name="name">clickup.backend.form</field>
         <field name="model">clickup.backend</field>
@@ -176,6 +177,8 @@
             </form>
         </field>
     </record>
+
+    <!-- Clickup backend model tree view -->
     <record id="view_clickup_backend_tree" model="ir.ui.view">
         <field name="name">clickup.backend.tree</field>
         <field name="model">clickup.backend</field>
@@ -186,12 +189,16 @@
             </tree>
         </field>
     </record>
+
+    <!-- Clickup backend model action -->
     <record id="action_clickup_backend" model="ir.actions.act_window">
         <field name="name">Clickup Backend</field>
         <field name="res_model">clickup.backend</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_clickup_backend_tree" />
     </record>
+
+    <!-- menu button -->
     <menuitem
         id="menu_clickup_root"
         name="Clickup"

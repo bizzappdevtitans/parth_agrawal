@@ -7,6 +7,7 @@ class ClickupImportMapper(AbstractComponent):
     _usage = "import.mapper"
 
     def _get_binding_values(self, record, model=None, value=None):
+        """Create binding"""
         binder = self.binder_for(model)
         binding = binder.to_internal(record.get(value), unwrap=True)
         return binding

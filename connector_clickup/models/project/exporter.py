@@ -46,10 +46,12 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def name(self, record):
+        """Mapped name"""
         return {"name": record.name}
 
     @mapping
     def content(self, record):
+        """Mapped description"""
         content = record.description
         if not content:
             return {}
@@ -60,8 +62,10 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def folder_id(self, record):
+        """Mapped folder id"""
         return {"folder_id": record.folder_id}
 
     @mapping
     def folder(self, record):
+        """Mapped folder info"""
         return {"folder": record.folder_info}

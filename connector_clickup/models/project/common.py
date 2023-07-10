@@ -43,6 +43,7 @@ class ProjectProject(models.Model):
     folder_info = fields.Selection(selection="_get_folder_options", readonly=False)
 
     def _get_folder_options(self):
+        """Get available folders list to export project to particular folder"""
         folder_model = self.env["project.project"]
         folder_records = folder_model.search([])
 

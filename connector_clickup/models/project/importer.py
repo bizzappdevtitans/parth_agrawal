@@ -72,42 +72,40 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def name(self, record):
-        # name = self._get_binding_values(record, model=self._apply_on, value="name")
-        # if not name:
-        #     return {"name": name.name}
-
+        """Map name"""
         return {"name": record.get("name")}
 
     @mapping
     def description(self, record):
+        """Map description"""
         description = record.get("content")
 
         return {"description": description}
 
     @mapping
     def external_id(self, record):
-        """#T-02383 Mapped external id"""
+        """#Map external id"""
         external_id = record.get("id")
 
         return {"external_id": external_id}
 
     @mapping
     def backend_id(self, record):
-        """Mapped the backend id"""
+        """Map the backend id"""
         backend_id = self.backend_record.id
 
         return {"backend_id": backend_id}
 
     @mapping
     def folder_id(self, record):
-        """Mapped the backend id"""
+        """Map the folder id"""
         folder_id = record.get("folder").get("id")
 
         return {"folder_id": folder_id}
 
     @mapping
     def date_start(self, record):
-        """Mapped the backend id"""
+        """Map the date start"""
         data_start = record.get("start_date")
         if not data_start:
             return {}
@@ -118,7 +116,7 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def date_end(self, record):
-        """Mapped the backend id"""
+        """Map the date end"""
         data_end = record.get("due_date")
         if not data_end:
             return {}
@@ -128,10 +126,12 @@ class ProjectProjectImportMapper(Component):
 
     @mapping
     def company_id(self, record):
+        """Map company id"""
         company_id = self.backend_record.company_id.id
         return {"company_id": company_id}
 
     @mapping
     def team_id(self, record):
+        """Map team id"""
         team_id = self.backend_record.team_id
         return {"team_id": team_id}

@@ -53,6 +53,7 @@ class ProjectTask(models.Model):
         }
 
     def update_import_task(self):
+        """Update task from Clickup website to odoo"""
         self.ensure_one()
         if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
@@ -62,6 +63,7 @@ class ProjectTask(models.Model):
         )
 
     def update_export_task(self):
+        """Update task from odoo to Clickup website"""
         self.ensure_one()
         if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))

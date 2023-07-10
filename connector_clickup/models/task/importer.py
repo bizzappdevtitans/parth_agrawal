@@ -98,7 +98,7 @@ class ProjectTaskImportMapper(Component):
     @only_create
     @mapping
     def odoo_id(self, record):
-        """Getting product based on the SKU."""
+        """Creating odoo id"""
         task = self._get_binding_values(record, model=self._apply_on, value="id")
 
         if not task:
@@ -107,6 +107,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def project_id(self, record):
+        """Map project id"""
         project = record.get("list").get("id")
         # project_id = self.env["project.project"].search(
         #     [
@@ -122,6 +123,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def stage_id(self, record):
+        """Map stage id"""
         stage_id = record.get("status").get("status")
 
         stage = self.env["project.task.type"].search([("name", "=", stage_id)], limit=1)
@@ -130,6 +132,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def name(self, record):
+        """Map name"""
         name = record.get("name")
         return {
             "name": name,
@@ -137,13 +140,14 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def description(self, record):
+        """Map description"""
         description = record.get("text_content")
 
         return {"description": description}
 
     @mapping
     def external_id(self, record):
-        """#T-02383 Mapped external id"""
+        """Map external id"""
 
         external_id = record.get("id")
 
@@ -151,21 +155,21 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def backend_id(self, record):
-        """Mapped the backend id"""
+        """Map backend id"""
         backend_id = self.backend_record.id
 
         return {"backend_id": backend_id}
 
     @mapping
     def project_info(self, record):
-        """Mapped the backend id"""
+        """Map project info"""
         project_id = record.get("list").get("id")
 
         return {"project_info": project_id}
 
     @mapping
     def date_deadline(self, record):
-        """Mapped the backend id"""
+        """Map date deadline"""
         due_data = record.get("due_date")
 
         if due_data:
@@ -175,7 +179,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def created_at(self, record):
-        """Mapped the backend id"""
+        """Map created at"""
         created_at = record.get("date_created")
         if created_at:
             timestamp = int(created_at) / 1000
@@ -186,8 +190,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def updated_at(self, record):
-        """Mapped the backend id"""
-
+        """Map updated at"""
         updated_at = record.get("date_updated")
         if updated_at:
             timestamp = int(updated_at) / 1000
@@ -198,6 +201,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def company_id(self, record):
+        """Map company id"""
         company_id = self.backend_record.company_id.id
         return {"company_id": company_id}
 
@@ -225,6 +229,7 @@ class ProjectTaskImportMapper(Component):
     #     return {"tag_ids": tag_ids}
 
     def finalize(self, map_record, values):
+        """Tags mapping through child mapper"""
         record = map_record.source
 
         tags = record.get("tags")

@@ -47,12 +47,14 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def name(self, record):
+        """Mapped name"""
         name = record.name
 
         return {"name": name}
 
     @mapping
     def description(self, record):
+        """Mapped description"""
         content = record.description
         if content:
             soup = BeautifulSoup(content, "html.parser")
@@ -62,12 +64,14 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def project_id(self, record):
+        """Mapped project_id"""
         content = record.project_id.external_id
 
         return {"project_id": content}
 
     @mapping
     def due_date(self, record):
+        """Mapped due date"""
         data = record.date_deadline
 
         if data:
@@ -79,6 +83,7 @@ class ProjectTaskImportMapper(Component):
 
     @mapping
     def status(self, record):
+        """Mapped stage"""
         data = record.stage_id.name
 
         if data:
