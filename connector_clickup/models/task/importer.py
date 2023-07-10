@@ -1,11 +1,8 @@
 import logging
 from datetime import date, datetime, timedelta
 
-from odoo import _
-
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-from odoo.addons.connector.exception import MappingError
 
 _logger = logging.getLogger(__name__)
 
@@ -119,17 +116,9 @@ class ProjectTaskImportMapper(Component):
         binder = self.binder_for(model="clickup.project.project")
         project = binder.to_internal(project, unwrap=True)
         if not project:
-            raise MappingError(_("Project not found for ID: %s") % project)
+            return {}
 
         return {"project_id": project.id}
-
-    # binder = self.binder_for(model="clickup.project.project")
-
-    # project = binder.to_internal(project_id, unwrap=True)
-    # if not project:
-    #     raise MappingError(_("Project not found for ID: %s") % project_id)
-
-    # return {"odoo_id": project.id}
 
     @mapping
     def stage_id(self, record):

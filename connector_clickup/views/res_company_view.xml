@@ -32,7 +32,7 @@
                     <group string="clickUp">
                         <group>
 
-                            <field name="clickup_backend_id" widget="selection" />
+                            <field name="clickup_backend_id" />
                         </group>
                     </group>
                 </xpath>

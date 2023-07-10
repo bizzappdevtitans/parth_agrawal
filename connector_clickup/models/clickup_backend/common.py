@@ -62,9 +62,24 @@ class ClickupBackend(models.Model):
     test_token = fields.Char()
     test_location = fields.Char()
 
+    def redirect_action(self):
+        html_file_path = "/connector_clickup/static/src/README.html"
+
+        return {
+            "type": "ir.actions.act_url",
+            "url": html_file_path,
+            "target": "new",
+        }
+
     # def _compute_company_id(self):
     #     for record in self:
     #         record.company_id = self.env.company.id
+
+    # @api.onchange("company_id")
+    # def _onchange_company_id(self):
+    #     print("inside onchange method")
+    #     if self.company_id:
+    #         self.company_id.update({"clickup_backend_id": self.id})
 
     def toggle_test_mode(self):
         for record in self:

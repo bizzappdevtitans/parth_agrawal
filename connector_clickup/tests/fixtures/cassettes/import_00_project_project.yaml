@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://api.clickup.com/api/v2/list/900200890774
+  response:
+    body:
+      string: '{"id":"900200890774","name":"AGAIN","deleted":false,"orderindex":0,"content":"{{([])([])}}","priority":null,"assignee":null,"due_date":null,"start_date":null,"folder":{"id":"90020435594","name":"Inside
+        Outer Space","hidden":false,"access":true},"space":{"id":"90020155368","name":"outer
+        space","access":true},"inbound_address":"a.t.900200890774.u-67222607.e8c939a4-5cb2-4906-9bda-40d5aaca803b@tasks.clickup.com","archived":false,"override_statuses":false,"statuses":[{"id":"p90020155368_40s86Lwa","status":"filler","orderindex":0,"color":"#d3d3d3","type":"open"},{"id":"p90020155368_4addBLTL","status":"bingo","orderindex":1,"color":"#1bbc9c","type":"custom"},{"id":"p90020155368_Ljxh0dqK","status":"complete","orderindex":2,"color":"#6bc950","type":"closed"}],"permission_level":"create"}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Cache-control:
+      - no-cache
+      - no-store
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en-US
+      Content-Security-Policy:
+      - frame-ancestors 'self'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 07 Jul 2023 11:28:53 GMT
+      Expect-CT:
+      - max-age=0
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-DNS-Prefetch-Control:
+      - 'off'
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-RateLimit-Limit:
+      - '100'
+      X-RateLimit-Remaining:
+      - '99'
+      X-RateLimit-Reset:
+      - '1688729394'
+      X-XSS-Protection:
+      - '0'
+      content-length:
+      - '789'
+      x-datadog-trace-id:
+      - '6069049528739128974'
+    status:
+      code: 200
+      message: OK
+version: 1

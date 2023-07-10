@@ -40,7 +40,7 @@ class TaskTypeAdapter(Component):
     _name = "clickup.project.task.type.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.project.task.type"
-    _clickup_model = "/space/{}/folder"
+    _clickup_model = "/folder"
     _clickup_ext_id_key = "id"
 
     def search_read(self, filters=None):

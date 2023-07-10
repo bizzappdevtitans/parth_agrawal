@@ -1,0 +1,194 @@
+<h1 id="connector-clickup"><strong>Connector Clickup</strong></h1>
+<h2 id="description"><strong>Description</strong></h2>
+<ul>
+  <li>
+    The Connector Clickup module allows you to integrate ClickUp, a project management
+    tool, with your application. This module provides various functionalities to import
+    and export projects and tasks between your application and ClickUp's remote website.
+    By using the Connector Clickup module, you can efficiently manage project data and
+    synchronize it with ClickUp.
+  </li>
+</ul>
+<h2 id="author"><strong>Author</strong></h2>
+<ul>
+  <li>This module is developed by BizzAppDev Systems Pvt. Ltd.</li>
+</ul>
+<h2 id="configuration"><strong>Configuration</strong></h2>
+<p>
+  <strong
+    >To set up the Connector Clickup module, you need to provide the following
+    information:</strong
+  >
+</p>
+<ul>
+  <li>
+    API Key: An API token obtained from ClickUp to authenticate your application's
+    access to ClickUp's API.
+  </li>
+  <li>
+    Location/URI: The unique identifier known as the space id is required from where you
+    want to import or export projects and tasks.
+  </li>
+</ul>
+<h2 id="features-highlights"><strong>Features &amp; Highlights</strong></h2>
+<p>
+  <strong>The Connector Clickup module offers the following functionalities:</strong>
+</p>
+<p><strong>Import Projects and Tasks:</strong></p>
+<ul>
+  <li>
+    Import projects and their corresponding tasks from ClickUp into your application.
+  </li>
+  <li>Use the provided API token and Space ID to specify the source in ClickUp.</li>
+  <li>
+    Retrieve project data such as project name, description, start and end dates and
+    other relevant information.
+  </li>
+  <li>
+    Retrieve task data such as task name, description, deadline, tags and other relevant
+    information.
+  </li>
+  <li>Map imported projects to the corresponding entities in your application.</li>
+  <li>
+    If the last task update time is same as the time stored in project.task level then
+    it will save extra processing time in queue job to import that task.
+  </li>
+</ul>
+<p><strong>Export Projects and Tasks:</strong></p>
+<ul>
+  <li>
+    Export projects and their tasks from your application to ClickUp's remote website.
+  </li>
+  <li>
+    We can set space ID in project level to specify the destination in ClickUp else it
+    will be exported in default backend's space id.
+  </li>
+  <li>
+    Transfer project data, including project name, description, task details, and any
+    associated metadata.
+  </li>
+  <li>
+    Ensure synchronization between your application and ClickUp by exporting changes
+    made in your application.
+  </li>
+</ul>
+<p><strong>Batch Processing:</strong></p>
+<ul>
+  <li>
+    Through One click we can get all projects available to that space and same applies
+    to stages and tasks.
+  </li>
+  <li>
+    Perform bulk imports or exports by utilizing queue jobs with user friendly
+    description.
+  </li>
+  <li>Use related button in queue job to redirect to project, stage or task record.</li>
+  <li>
+    Queue jobs enable you to process multiple projects or tasks simultaneously,
+    improving efficiency.
+  </li>
+  <li>
+    Track the status of queued operations and handle any errors or mapping issues.
+  </li>
+</ul>
+<p><strong>Task-Level Operations:</strong></p>
+<ul>
+  <li>
+    Import Changes in individual tasks from ClickUp website by clicking the "Update To
+    Clickup" button in the task form view.
+  </li>
+  <li>
+    Export Changes from individual tasks To ClickUp Website by clicking the "Update To
+    Clickup" button in the task form view.
+  </li>
+  <li>
+    Particular task can be open in clickup website by clicking "Open Task In Clickup"
+    button in task form view.
+  </li>
+</ul>
+<p><strong>Project-Level Operations:</strong></p>
+<ul>
+  <li>
+    Update a project and its tasks From ClickUp Website by clicking the "Update From
+    Clickup" button in the project form view.
+  </li>
+  <li>
+    Update a project and its tasks to Clickup Wbsite by clicking the "Update To Clickup"
+    button in project form view.
+  </li>
+  <li>
+    Export a particular project and its tasks to ClickUp by clicking the "Export To
+    Clickup" button in the project form view.
+  </li>
+  <li>
+    By clicking on boolean field and selecting the folder id in project form view we can
+    export project to that particular folder in clickup website.
+  </li>
+  <li>
+    Retrieve project-specific information and manage synchronization between your
+    application and ClickUp.
+  </li>
+  <li>
+    Particular project can be open in clickup website by clicking "Open Project In
+    Clickup" button in Project form view.
+  </li>
+</ul>
+<p><strong>Multi-Company Functionality:</strong></p>
+<ul>
+  <li>
+    We can select any particular company and then can import project and tasks for that
+    company specifically.
+  </li>
+</ul>
+<p><strong>Automation:</strong></p>
+<ul>
+  <li>
+    Using the scheduled action we can import the project,stage,task or export the
+    project,task of all the clickup backend record automatically.
+  </li>
+</ul>
+<p><strong>Access Rights:</strong></p>
+<ul>
+  <li>As a connector manager you can access all the features and functionality.</li>
+  <li>
+    As a user only that access rights are available which are provided by Odoo itself.
+  </li>
+</ul>
+<h2 id="current-behaviourfuture-scope">
+  <strong>Current Behaviour/Future Scope</strong>
+</h2>
+<ul>
+  <li>
+    Currently only That stages can be imported that is implemented for folder level or
+    whole space level in clickup website.
+  </li>
+  <li>
+    Currently we need to provide the team id in backend that helps to open particular
+    project at clickup website.
+  </li>
+  <li>
+    Currently if we dont choose folder to export particular project,by default it will
+    be exported in to the space.
+  </li>
+  <li>
+    Currently We need to first create stage in clickup website, import that stage in
+    order to use that stage in tasks.
+  </li>
+  <li>
+    Currently If the Stage already exist in project.task.type model the queue job will
+    raise mapping error for that particular record.
+  </li>
+  <li>
+    Currently If the stages are not imported before importing the tasks it can cause
+    queue job fail as the stages not found for tasks.
+  </li>
+  <li>
+    Currently importing tasks directly can import it's projects first but the
+    performance of it is unstable.
+  </li>
+  <li>Implementation of Oauth 2.0.</li>
+</ul>
+<h2 id="changelog"><strong>Changelog</strong></h2>
+<ul>
+  <li>No changelog information is available for this module at the moment.</li>
+</ul>
