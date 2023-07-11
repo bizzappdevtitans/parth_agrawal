@@ -2,17 +2,6 @@ from .common import ClickupTestCase, recorder
 
 
 class TestImportProject(ClickupTestCase):
-    @classmethod
-    def setUpClass(cls):
-        """Setup test class for connector trello to remove queue job."""
-        super().setUpClass()
-        cls.env = cls.env(
-            context=dict(
-                cls.env.context,
-                test_queue_job_no_delay=True,  # no jobs
-            )
-        )
-
     def setUp(self):
         """Setup configuration for Project."""
         super().setUp()

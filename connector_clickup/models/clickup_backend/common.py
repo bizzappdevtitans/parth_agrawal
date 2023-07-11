@@ -2,6 +2,7 @@ import logging
 import threading
 from contextlib import contextmanager
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
 
 from odoo import fields, models
 
@@ -37,7 +38,8 @@ class ClickupBackend(models.Model):
         [("api_key", "API Key"), ("Oauth", "Oauth Authentication")],
         required=True,
         default="api_key",
-        help="Select Authentication Type",
+        help="""This will allow current backend to perform import export
+        through selected authentication type""",
     )
 
     datetime_filter_task = fields.Datetime(
@@ -47,19 +49,24 @@ class ClickupBackend(models.Model):
 
     force_update_tasks = fields.Boolean()
     company_id = fields.Many2one(comodel_name="res.company", string="Company")
-
+    auth_code = fields.Char()
+    team_id = fields.Char()
+    redirect_url = fields.Char(
+        help="""Enter that redirect url which is already set
+        in clickup website's Clickup API app"""
+    )
     # Live
     api_key = fields.Char(help="Enter API Key")
     uri = fields.Char(help="Enter End Point Location Of Space Id")
     client_id = fields.Char()
     client_secret = fields.Char()
-    username = fields.Char()
-    password = fields.Char()
-    team_id = fields.Char()
+
     # Test
     test_mode = fields.Boolean(default=True)
     test_token = fields.Char()
     test_location = fields.Char()
+    client_id_test = fields.Char()
+    client_secret_test = fields.Char()
 
     def redirect_action(self):
         html_file_path = "/connector_clickup/static/src/README.html"
@@ -69,16 +76,6 @@ class ClickupBackend(models.Model):
             "url": html_file_path,
             "target": "new",
         }
-
-    # def _compute_company_id(self):
-    #     for record in self:
-    #         record.company_id = self.env.company.id
-
-    # @api.onchange("company_id")
-    # def _onchange_company_id(self):
-    #     print("inside onchange method")
-    #     if self.company_id:
-    #         self.company_id.update({"clickup_backend_id": self.id})
 
     def toggle_test_mode(self):
         for record in self:
@@ -98,6 +95,7 @@ class ClickupBackend(models.Model):
             filters = {}
         import_start_time = datetime.now()
         import_start_time_new = int(import_start_time.timestamp() * 1000)
+        filters.update({"to_date": import_start_time_new})
         job_options = {}
         if priority or priority == 0:
             job_options["priority"] = priority
@@ -106,10 +104,10 @@ class ClickupBackend(models.Model):
                 from_date = backend[from_date_field]
                 if from_date:
                     from_date = int(from_date.timestamp() * 1000)
+                    filters.update({"from_date": from_date})
 
-                    filters = {"from_date": from_date, "to_date": import_start_time_new}
+                # filters = {"from_date": from_date, "to_date": import_start_time_new}
 
-            filters["with_count"] = "true"
             force = False
             if force_update_field:
                 force = backend[force_update_field]
@@ -149,7 +147,7 @@ class ClickupBackend(models.Model):
         """Import Clickup tasks button action"""
         for backend in self:
             backend._import_from_date(
-                model="clickup.project.tasks",
+                model="clickup.project.task",
                 from_date_field="datetime_filter_task",
                 priority=10,
                 with_delay=with_delay,
@@ -175,15 +173,15 @@ class ClickupBackend(models.Model):
         client_id = self.client_id
         client_secret = self.client_secret
         token = self.api_key
-        username = self.username
-        password = self.password
+
+        auth_code = self.auth_code
         if self.test_mode:
             location = self.test_location
-            client_id = self.client_id
-            client_secret = self.client_secret
+            client_id = self.client_id_test
+            client_secret = self.client_secret_test
             token = self.test_token
-            username = self.username
-            password = self.password
+
+            auth_code = self.auth_code
 
         clickup_location = ClickupLocation(
             location=location,
@@ -195,8 +193,7 @@ class ClickupBackend(models.Model):
             location=location,
             client_id=client_id,
             client_secret=client_secret,
-            username=username,
-            password=password,
+            auth_code=auth_code,
         )
         with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
             _super = super()
@@ -215,7 +212,7 @@ class ClickupBackend(models.Model):
     def export_tasks(self, with_delay=True, from_sync=False):
         for backend in self.sudo():
             backend._export_from_date(
-                model="clickup.project.tasks",
+                model="clickup.project.task",
                 from_date_field=None if not from_sync else False,
                 with_delay=with_delay,
             )
@@ -246,11 +243,6 @@ class ClickupBackend(models.Model):
                 else:
                     from_date = to_iso_datetime(from_date)
 
-            filters["with_count"] = "true"
-            force = False
-            if force_update_field:
-                force = backend[force_update_field]
-
             model_parts = model.split(".")
             model_name = " ".join(part.title() for part in model_parts[1:])
             model_name = " ".join(dict.fromkeys(model_name.split()))
@@ -266,8 +258,7 @@ class ClickupBackend(models.Model):
                 backend,
                 filters=filters,
             )
-            if force:
-                backend[force_update_field] = False
+
         next_time = import_start_time - timedelta(seconds=IMPORT_DELTA_BUFFER)
         if from_date_field:
             self.write({from_date_field: next_time})
@@ -278,9 +269,9 @@ class ClickupBackend(models.Model):
         with_delay=True,
     ):
         """Scheduled action method of import"""
-        data = self.env["clickup.backend"].search([])
+        backends = self.env["clickup.backend"].search([])
 
-        for backend in data:
+        for backend in backends:
             clickup_model = backend.env["clickup.project.project"].with_delay()
             clickup_model.import_batch(
                 backend,
@@ -288,7 +279,7 @@ class ClickupBackend(models.Model):
                 force=True,
                 **{"no_delay": not with_delay},
             )
-        for backend in data:
+        for backend in backends:
             clickup_model = backend.env["clickup.project.task.type"].with_delay()
             clickup_model.import_batch(
                 backend,
@@ -296,8 +287,8 @@ class ClickupBackend(models.Model):
                 force=True,
                 **{"no_delay": not with_delay},
             )
-        for backend in data:
-            clickup_model = backend.env["clickup.project.tasks"].with_delay()
+        for backend in backends:
+            clickup_model = backend.env["clickup.project.task"].with_delay()
             clickup_model.import_batch(
                 backend,
                 filters=filters,
@@ -311,16 +302,16 @@ class ClickupBackend(models.Model):
         with_delay=True,
     ):
         """Scheduled action method of export"""
-        data = self.env["clickup.backend"].search([])
+        backends = self.env["clickup.backend"].search([])
 
-        for backend in data:
+        for backend in backends:
             clickup_model = backend.env["clickup.project.project"].with_delay()
             clickup_model.export_batch(
                 backend,
                 filters=filters,
             )
-        for backend in data:
-            clickup_model = backend.env["clickup.project.tasks"].with_delay()
+        for backend in backends:
+            clickup_model = backend.env["clickup.project.task"].with_delay()
             clickup_model.export_batch(
                 backend,
                 filters=filters,
@@ -346,16 +337,37 @@ class ClickupBackend(models.Model):
         ]
         return domain
 
-    # def generate_token(self):
-    #     """Generate token for Clickup."""
-    #     self.ensure_one()
-    #     authorization_url = self.get_authorization_url()
-    #     params = {
-    #         "type": "ir.actions.client",
-    #         "tag": "redirect_with_code",
-    #         "url": authorization_url,
-    #     }
-    #     return params
+    def get_authorization_url(self):
+        # redirect_uri = (
+        #     http.request.env["ir.config_parameter"].sudo().get_param("web.base.url")
+        # )
+        redirect_url = self.redirect_url + "/api"
+
+        if self.test_mode:
+            client_id = self.client_id_test
+        else:
+            client_id = self.client_id
+
+        params = {
+            "client_id": client_id,
+            "response_type": "code",
+            "scope": "read",
+            "redirect_uri": redirect_url,
+        }
+        authorization_url = "https://app.clickup.com/api?" + urlencode(params)
+
+        return authorization_url
+
+    def generate_auth_code(self):
+        """Generate token for Clickup."""
+        self.ensure_one()
+        authorization_url = self.get_authorization_url()
+
+        return {
+            "type": "ir.actions.act_url",
+            "url": authorization_url,
+            "target": "new",
+        }
 
 
 class ClickupBackendAdapter(Component):

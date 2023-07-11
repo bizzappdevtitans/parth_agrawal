@@ -9,15 +9,6 @@
     "author": "Bizzappdev",
     "license": "LGPL-3",
     "website": "https://bizzappdev.com",
-    "images": [],
-    "qweb": [
-        "static/src/xml/custom.xml",
-    ],
-    "assets": {
-        "web.assets_backend": [
-            "connector_clickup/static/src/js/custom.js",
-        ],
-    },
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
@@ -28,6 +19,4 @@
         "views/res_company_view.xml",
         "views/res_config_settings_view.xml",
     ],
-    "installable": True,
-    "application": False,
 }

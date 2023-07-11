@@ -46,16 +46,11 @@ class ProjectTaskTypeImportMapper(Component):
     @mapping
     def odoo_id(self, record):
         """Creating odoo id"""
-        stage = self._get_binding_values(record, model=self._apply_on, value="id")
+        stage = self.get_binding(record, model=self._apply_on, value="id")
 
-        name = record.get("status")
-        stage_name = self.env["project.task.type"].search([("name", "=", name)])
-        if stage_name:
-            return {"odoo_id": stage_name.id}
-
-        else:
-            return {"odoo_id": stage.id}
-        return {}
+        if not stage:
+            return {}
+        return {"odoo_id": stage.id}
 
     @mapping
     def name(self, record):
@@ -70,14 +65,11 @@ class ProjectTaskTypeImportMapper(Component):
 
     def external_id(self, record):
         """Map external id"""
-        external_id = record.get("id")
 
-        return {"external_id": external_id}
+        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):
         """Map the backend id"""
 
-        backend_id = self.backend_record.id
-
-        return {"backend_id": backend_id}
+        return {"backend_id": self.backend_record.id}

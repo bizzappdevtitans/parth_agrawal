@@ -1,8 +1,8 @@
-import base64
 import logging
 import socket
 import urllib
 from datetime import datetime
+from urllib.parse import parse_qs, urlparse
 
 import requests
 from simplejson.errors import JSONDecodeError
@@ -22,14 +22,12 @@ class ClickupTokenLocation:
         location,
         client_id,
         client_secret,
-        username,
-        password,
+        auth_code,
     ):
         self._location = "https://api.clickup.com/api/v2/oauth/token"
         self.client_id = client_id
         self.client_secret = client_secret
-        self.username = username
-        self.password = password
+        self.auth_code = auth_code
 
     @property
     def location(self):
@@ -54,32 +52,27 @@ class ClickupLocation:
 class ClickupTokenClient:
     """Main class responsible to sends request/get response (For Token)"""
 
-    def __init__(self, location, client_id, client_secret, username, password):
+    def __init__(self, location, client_id, client_secret, auth_code):
         self._location = location
         self._client_id = client_id
         self._client_secret = client_secret
-        self._username = username
-        self._password = password
+        self._auth_code = auth_code
 
-    def get_header(self):
-        """Configure the header of the Clickup"""
-        code = "{}:{}".format(self._client_id, self._client_secret)
-        auth = base64.b64encode(code.encode()).decode()
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": "Basic %s" % auth,
-        }
+    def extract_code_from_url(self, url):
+        """Extract the authorization code from the given URL"""
+        parsed_url = urlparse(url)
+        query_params = parse_qs(parsed_url.query)
+        code = query_params.get("code", [""])[0]
 
-        return headers
+        return code
 
-    def get_data(self, code):
+    def get_data(self):
         """Get the token grant credentials"""
+        code = self.extract_code_from_url(url=self._auth_code)
         data = {
             "client_id": self._client_id,
             "client_secret": self._client_secret,
             "code": code,
-            "grant_type": "authorization_code",
-            "redirect_uri": "https://app.clickup.com/callback",
         }
         return data
 
@@ -87,162 +80,24 @@ class ClickupTokenClient:
         """Call method for the Token API execution with all headers and parameters."""
         url = self._location
 
-        if resource_path:
-            authorization_url = """https://app.clickup.com/api?
-            response_type=code&client_id={}&scope=read&
-            redirect_uri=https://app.clickup.com/callback""".format(
-                self._client_id
-            )
-            self.get_authorization_code(authorization_url)
-
         if http_method is None:
             http_method = "post"
         function = getattr(requests, http_method)
-        headers = self.get_header()
+        headers = self.get_data()
 
         kwargs = {"headers": headers}
-        if http_method == "get":
-            kwargs["params"] = arguments
 
-        elif arguments is not None:
+        if http_method == "post":
             kwargs["json"] = arguments
-        res = function(url, **kwargs)
+
+        res = function(url, headers)
         if res.status_code == 400 and res.content:
             raise requests.HTTPError(
                 url, res.status_code, res.content, headers, __name__
             )
         res.raise_for_status()
+
         return res.json()
-
-
-# class ClickupTokenClient(object):
-#     def __init__(
-#         self,
-#         client_id,
-#         client_secret,
-#         redirect_uri,
-#         scopes,
-#         web_endpoint=None,
-#         api_endpoint=None,
-#         username=None,
-#         password=None,
-#     ):
-#         self.scopes = "read"
-#         self.username = username
-#         self.password = password
-#         self.client_secret = client_secret
-#         self.client_id = client_id
-
-#         self.redirect_uri = "https://app.clickup.com"
-#         web_endpoint = "https://app.clickup.com/api?"
-#         self.web_endpoint = web_endpoint
-
-#         api_endpoint = "https://api.clickup.com/api/v2/oauth/token"
-
-#         self.api_endpoint = api_endpoint
-#         self.access_token = None
-#         self.access_token_expiry = None
-#         self.refresh_token = None
-#         self.refresh_token_expiry = None
-
-#     def credential_list(self):
-#         return []
-
-#     def get_user_access_scope(self, scopes):
-#         """Method to get the scopes."""
-#         scope = scopes.split("scope=")
-#         # if not len(scope):
-#         #     logging.error("Unidentified value of scope")
-#         return scope[-1]
-
-#     def get_application_scopes(self):
-#         # TODO : Have to support application scope in future
-#         return []
-
-#     def get_authorization_code(self, signin_url):
-#         try:
-#             browser = webdriver.Chrome()
-#             browser.get(signin_url)
-#             time.sleep(10)
-#             form_userid = browser.find_element("name", "userid")
-#             form_userid.send_keys(self.username)
-#             browser.find_element("name", "signin-continue-btn").click()
-#             time.sleep(5)
-#             form_pw = browser.find_element("name", "pass")
-#             time.sleep(10)
-#             form_pw.send_keys(self.password)
-#             time.sleep(5)
-#             browser.find_element("name", "sgnBt").click()
-#             time.sleep(5)
-#             url = browser.current_url
-#             browser.quit()
-#             if "code=" in url:
-#                 code = re.findall("code(.*?)&", url)[0]
-#                 logging.info("Code Obtained: %s", code)
-#             else:
-#                 logging.error("Unable to obtain code via sign in URL")
-
-#             decoded_code = urllib.parse.unquote(code)
-#             if not isinstance(decoded_code, str):
-#                 decoded_code = decoded_code.decode("utf8")
-#             return decoded_code
-#         except Exception as exc:
-#             raise exc()
-
-#     def get_user_authorization_url(self):
-#         if not self.client_id or not self.redirect_uri or not self.scopes:
-#             logging.error("Required parameter are missing for the authorization url!")
-#         param = {
-#             "client_id": self.client_id,
-#             "redirect_uri": self.redirect_uri,
-#             "response_type": "code",
-#             "prompt": "login",
-#             "scope": self.scopes,
-#         }
-
-#         query = urllib.parse.urlencode(param)
-#         return "{}?{}".format(self.web_endpoint, query)
-
-#     def _generate_request_headers(self, **kwargs):
-#         client_id = self.client_id or ""
-#         client_secret = self.client_secret or ""
-#         b64_encoded_credential = "{}:{}".format(client_id, client_secret)
-#         authorization_code = base64.b64encode(b64_encoded_credential.encode()).decode()
-#         headers = {
-#             "Content-Type": "application/x-www-form-urlencoded",
-#             "Authorization": "Basic {}".format(authorization_code),
-#         }
-
-#         return headers
-
-#     def _generate_application_request_body(self, **kwargs):
-#         body = {
-#             "grant_type": "client_credentials",
-#             "redirect_uri": self.redirect_uri,
-#             "scope": self.scopes,
-#         }
-
-#         return body
-
-#     def _generate_oauth_request_body(self, code, **kwargs):
-#         body = {
-#             "grant_type": "authorization_code",
-#             "redirect_uri": self.redirect_uri,
-#             "code": code,
-#         }
-#         return body
-
-#     def _generate_refresh_request_body(self, **kwargs):
-#         if self.refresh_token is None:
-#             logging.error(
-#                 "credential object does not contain refresh_token and/or scopes"
-#             )
-#         body = {
-#             "grant_type": "refresh_token",
-#             "refresh_token": self.refresh_token,
-#             "scope": self.scopes,
-#         }
-#         return body
 
 
 class ClickupClient:
@@ -282,9 +137,6 @@ class ClickupClient:
             default_headers.update(headers)
         kwargs = {"headers": default_headers}
 
-        # if arguments and arguments.get("next_url"):
-        #     url = arguments.pop("next_url")
-
         if http_method == "get":
             kwargs["params"] = arguments
         elif isinstance(arguments, str):
@@ -315,7 +167,6 @@ class ClickupClient:
 class ClickupAPI:
     def __init__(self, location, location_token):
         self.location = location
-        # self._token = token
         self._api = None
         self._api_token = None
         self._location_token = location_token
@@ -340,8 +191,7 @@ class ClickupAPI:
                 self._location_token.location,
                 self._location_token.client_id,
                 self._location_token.client_secret,
-                self._location_token.username,
-                self._location_token.password,
+                self._location_token.auth_code,
             )
             self._api_token = clickup_token_client
         return self._api_token
@@ -436,6 +286,22 @@ class ClickupCRUDAdapter(AbstractComponent):
         and returns a list of ids"""
         raise NotImplementedError
 
+    def read(self, external_id, attributes=None):
+        """Returns the information of a record"""
+        raise NotImplementedError
+
+    def create(self, data):
+        """Create a record on the external system"""
+        raise NotImplementedError
+
+    def write(self, external_id, data):
+        """Update records on the external system"""
+        raise NotImplementedError
+
+    def delete(self, external_id):
+        """Delete a record on the external system"""
+        raise NotImplementedError
+
     def get_token(self, arguments=None, http_method=None):
         """Method to get token from remote system"""
 
@@ -445,17 +311,6 @@ class ClickupCRUDAdapter(AbstractComponent):
             http_method=http_method,
             is_token=True,
         )
-
-    # def _call(self, resource_path, arguments=None, http_method=None, storeview=None):
-    #     try:
-    #         clickup_api = getattr(self.work, "clickup_api")  # noqa: B009
-    #     except AttributeError:
-    #         raise AttributeError(
-    #             "You must provide a clickup_api attribute with a "
-    #             "ClickUpAPI instance to be able to use the "
-    #             "Backend Adapter."
-    #         )
-    #     return clickup_api.call(resource_path, arguments, http_method=http_method)
 
     def _call(self, resource_path, arguments=None, http_method=None, is_token=False):
         try:

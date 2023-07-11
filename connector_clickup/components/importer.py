@@ -193,9 +193,7 @@ class ClickupImporter(AbstractComponent):
         skip = self._must_skip()  # pylint: disable=assignment-from-none
         if skip:
             return skip
-        # import pdb
 
-        # pdb.set_trace()
         binding = self._get_binding()
         if not force and self._is_uptodate(binding):
             return _("Already up-to-date.")

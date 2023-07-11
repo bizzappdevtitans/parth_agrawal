@@ -5,7 +5,7 @@ from odoo.addons.component.core import Component
 
 
 class ClickupProjectTasks(models.Model):
-    _name = "clickup.project.tasks"
+    _name = "clickup.project.task"
     _inherits = {"project.task": "odoo_id"}
     _inherit = ["clickup.binding"]
     _description = "Clickup project.tasks binding model"
@@ -23,7 +23,7 @@ class ProjectTask(models.Model):
     _description = "Inherited project.task model"
 
     clickup_bind_ids = fields.One2many(
-        "clickup.project.tasks",
+        "clickup.project.task",
         "odoo_id",
         string="Clickup Backend ID",
         readonly=True,
@@ -57,7 +57,7 @@ class ProjectTask(models.Model):
         self.ensure_one()
         if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
-        self.env["clickup.project.tasks"].import_record(
+        self.env["clickup.project.task"].import_record(
             backend=self.sudo().clickup_backend_id,
             external_id=self.external_id,
         )
@@ -67,7 +67,7 @@ class ProjectTask(models.Model):
         self.ensure_one()
         if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
-        self.env["clickup.project.tasks"].export_record(
+        self.env["clickup.project.task"].export_record(
             backend=self.sudo().clickup_backend_id, record=self
         )
 
@@ -75,12 +75,9 @@ class ProjectTask(models.Model):
 class TaskAdapter(Component):
     _name = "clickup.project.task.adapter"
     _inherit = "clickup.adapter"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
     _clickup_model = "/task"
     _clickup_ext_id_key = "id"
-    # _model_dependencies = [
-    #     ("clickup.project.project", "list"),
-    # ]
 
     def search(self, filters=None, from_date=None, to_date=None):
         """
@@ -92,7 +89,7 @@ class TaskAdapter(Component):
         folder_ids = []
         list_ids = []
 
-        if self.backend_record.test_mode is True:
+        if self.backend_record.test_mode:
             backend_record = self.backend_record
             space_ids = (
                 backend_record.test_location.split(",")

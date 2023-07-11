@@ -18,10 +18,23 @@
 
 **To set up the Connector Clickup module, you need to provide the following information:**
 
+**Production Mode**
 
 * API Key: An API token obtained from ClickUp to authenticate your application's access to ClickUp's API.
 * Location/URI: The unique identifier known as the space id is required from where you want to import or export projects and tasks.
 
+**Test Mode**
+
+* Test Token: Same as production mode here we also need to provide the token in Test Token field.
+* Test Location: We need to provide the space id in test location field if the test mode is enabled.
+
+**Oauth 2.0:**
+
+* To use Oauth 2.0 in clickup backend user can select authentication type as OAuth authentication in Test or Production mode.
+* User needs to Enter credentials like client_id, client_secret and redirect url.
+* Then after user needs to click on the button called Generate Oauth Code that will redirect user to authentication page.
+* After successfully authentication the user will be redirect to new url, User needs to copy that Url and paste it in Auth Code field that is avaiable at clickup backend level.
+* Now User need to just click on Generate Token button which will set the new access_token in API Key field at clickup backend level.
 
 **Features & Highlights**
 *************************
@@ -81,6 +94,7 @@
 * As a connector manager you can access all the features and functionality.
 * As a user only that access rights are available which are provided by Odoo itself.
 
+
 **Current Behaviour/Future Scope**
 **********************************
 
@@ -91,7 +105,7 @@
 * Currently If the Stage already exist in project.task.type model the queue job will raise mapping error for that particular record.
 * Currently If the stages are not imported before importing the tasks it can cause queue job fail as the stages not found for tasks.
 * Currently importing tasks directly can import it's projects first but the performance of it is unstable.
-* Implementation of Oauth 2.0.
+* Currently the redirect uri which is set in connector clickup module must also be saved in Clickup Website's Clickup API app.
 
 **Changelog**
 *************

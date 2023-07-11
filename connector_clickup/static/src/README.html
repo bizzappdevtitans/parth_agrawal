@@ -20,6 +20,7 @@
     information:</strong
   >
 </p>
+<p><strong>Production Mode</strong></p>
 <ul>
   <li>
     API Key: An API token obtained from ClickUp to authenticate your application's
@@ -28,6 +29,40 @@
   <li>
     Location/URI: The unique identifier known as the space id is required from where you
     want to import or export projects and tasks.
+  </li>
+</ul>
+<p><strong>Test Mode</strong></p>
+<ul>
+  <li>
+    Test Token: Same as production mode here we also need to provide the token in Test
+    Token field.
+  </li>
+  <li>
+    Test Location: We need to provide the space id in test location field if the test
+    mode is enabled.
+  </li>
+</ul>
+<p><strong>Oauth 2.0:</strong></p>
+<ul>
+  <li>
+    To use Oauth 2.0 in clickup backend user can select authentication type as OAuth
+    authentication in Test or Production mode.
+  </li>
+  <li>
+    User needs to Enter credentials like client_id, client_secret and redirect url.
+  </li>
+  <li>
+    Then after user needs to click on the button called Generate Oauth Code that will
+    redirect user to authentication page.
+  </li>
+  <li>
+    After successfully authentication the user will be redirect to new url, User needs
+    to copy that Url and paste it in Auth Code field that is avaiable at clickup backend
+    level.
+  </li>
+  <li>
+    Now User need to just click on Generate Token button which will set the new
+    access_token in API Key field at clickup backend level.
   </li>
 </ul>
 <h2 id="features-highlights"><strong>Features &amp; Highlights</strong></h2>
@@ -186,7 +221,10 @@
     Currently importing tasks directly can import it's projects first but the
     performance of it is unstable.
   </li>
-  <li>Implementation of Oauth 2.0.</li>
+  <li>
+    Currently the redirect uri which is set in connector clickup module must also be
+    saved in Clickup Website's Clickup API app.
+  </li>
 </ul>
 <h2 id="changelog"><strong>Changelog</strong></h2>
 <ul>

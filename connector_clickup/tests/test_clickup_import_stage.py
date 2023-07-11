@@ -6,16 +6,6 @@ _logger = logging.getLogger(__name__)
 
 
 class TestImportStage(ClickupTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.env = cls.env(
-            context=dict(
-                cls.env.context,
-                test_queue_job_no_delay=True,  # no jobs
-            )
-        )
-
     def setUp(self):
         super().setUp()
 

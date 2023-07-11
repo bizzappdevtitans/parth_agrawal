@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class ProjectTaskExporter(Component):
     _name = "clickup.project.task.exporter"
     _inherit = "clickup.exporter"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
 
 
 class ProjectTaskDelayedBatchExporter(Component):
@@ -22,7 +22,7 @@ class ProjectTaskDelayedBatchExporter(Component):
 
     _name = "clickup.project.task.batch.exporter"
     _inherit = "clickup.delayed.batch.exporter"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
 
     def run(self, filters=None):
         """Run the synchronization"""
@@ -42,7 +42,7 @@ class ProjectTaskDelayedBatchExporter(Component):
 class ProjectTaskImportMapper(Component):
     _name = "clickup.project.task.export.mapper"
     _inherit = "clickup.export.mapper"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
     _mapper_ext_key = "identifier"
 
     @mapping
@@ -65,9 +65,8 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def project_id(self, record):
         """Mapped project_id"""
-        content = record.project_id.external_id
 
-        return {"project_id": content}
+        return {"project_id": record.project_id.external_id}
 
     @mapping
     def due_date(self, record):
@@ -84,7 +83,5 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def status(self, record):
         """Mapped stage"""
-        data = record.stage_id.name
 
-        if data:
-            return {"status": data}
+        return {"status": record.stage_id.name}

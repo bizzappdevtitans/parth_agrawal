@@ -6,6 +6,6 @@ class ClickupModelBinder(Component):
     _inherit = ["base.binder", "base.clickup.connector"]
     _apply_on = [
         "clickup.project.project",
-        "clickup.project.tasks",
+        "clickup.project.task",
         "clickup.project.task.type",
     ]

@@ -8,10 +8,20 @@
             <form string="Clickup Backend">
                 <header>
                     <button
+                        attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                        class="oe_highlight"
+                        name="generate_auth_code"
+                        string="Generate Oauth Code"
+                        type="object"
+                        help="After providing the client id,client secret and redirect url click this button to generate the Auth code."
+                    />
+                    <button
+                        attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                         class="oe_highlight"
                         name="generate_token"
                         string="Generate Token"
                         type="object"
+                        help="After providing the url in Auth Code field click to get the Access Token"
                     />
                 </header>
                 <sheet>
@@ -46,47 +56,66 @@
                         title="Production"
                     />
                     <group>
-                        <field
-                            name="name"
-                            placeholder="Ex:-Test 1"
-                            style="font-size:13pt;"
-                        />
-                        <field name="auth_type" />
-                        <field
-                            attrs="{'invisible': [('test_mode', '=', True)]}"
-                            name="api_key"
-                        />
-                        <field
-                            attrs="{'invisible': [('test_mode', '=', True)]}"
-                            name="uri"
-                        />
-                        <field
-                            attrs="{'invisible': [('test_mode', '=', False)]}"
-                            name="test_token"
-                        />
-                        <field
-                            attrs="{'invisible': [('test_mode', '=', False)]}"
-                            name="test_location"
-                        />
-                        <field
-                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
-                            name="client_id"
-                        />
-                        <field
-                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
-                            name="client_secret"
-                            password="True"
-                        />
-                        <field
-                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
-                            name="username"
-                        />
-                        <field
-                            attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
-                            name="password"
-                            password="True"
-                        />
-                        <!-- {'invisible':['|',('filed_name_1','=',False),('fieled_name_2','=',False)]} -->
+                        <group>
+                            <field
+                                name="name"
+                                placeholder="Ex:-Test 1"
+                                style="font-size:13pt;"
+                            />
+                            <field name="auth_type" />
+                        </group>
+                        <group attrs="{'invisible': [('test_mode', '=', True)]}">
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="redirect_url"
+                            />
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="client_id"
+                            />
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="client_secret"
+                                password="True"
+                            />
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="auth_code"
+                            />
+                        </group>
+                        <group attrs="{'invisible': [('test_mode', '=', True)]}">
+                            <field
+                                name="api_key"
+                                attrs="{'readonly': [('auth_type', '=', 'Oauth')]}"
+                            />
+                            <field name="uri" />
+                        </group>
+                        <group attrs="{'invisible': [('test_mode', '=', False)]}">
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="redirect_url"
+                            />
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="client_id_test"
+                            />
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="client_secret_test"
+                                password="True"
+                            />
+                            <field
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
+                                name="auth_code"
+                            />
+                        </group>
+                         <group attrs="{'invisible': [('test_mode', '=', False)]}">
+                            <field
+                                name="test_token"
+                                attrs="{'readonly': [('auth_type', '=', 'Oauth')]}"
+                            />
+                            <field name="test_location" />
+                        </group>
                     </group>
                     <notebook>
                         <page string="Basic Information">
@@ -177,7 +206,6 @@
             </form>
         </field>
     </record>
-
     <!-- Clickup backend model tree view -->
     <record id="view_clickup_backend_tree" model="ir.ui.view">
         <field name="name">clickup.backend.tree</field>
@@ -189,7 +217,6 @@
             </tree>
         </field>
     </record>
-
     <!-- Clickup backend model action -->
     <record id="action_clickup_backend" model="ir.actions.act_window">
         <field name="name">Clickup Backend</field>
@@ -197,7 +224,6 @@
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_clickup_backend_tree" />
     </record>
-
     <!-- menu button -->
     <menuitem
         id="menu_clickup_root"

@@ -71,7 +71,7 @@ class ProjectProject(models.Model):
         )
 
         for task in self.tasks:
-            self.env["clickup.project.tasks"].import_record(
+            self.env["clickup.project.task"].import_record(
                 backend=self.sudo().clickup_backend_id, external_id=task.external_id
             )
 
@@ -85,7 +85,7 @@ class ProjectProject(models.Model):
         )
 
         for task in self.tasks:
-            self.env["clickup.project.tasks"].export_record(
+            self.env["clickup.project.task"].export_record(
                 backend=self.sudo().clickup_backend_id, record=task
             )
 
@@ -100,10 +100,8 @@ class ProjectProject(models.Model):
             self.env["clickup.project.project"].export_record(
                 backend=self.sudo().clickup_backend_id, record=self
             )
-        except Exception:
-            raise UserError from None(
-                _("Choose different folder id as this folder is hidden")
-            )
+        except Exception as err:
+            raise UserError from err()
 
 
 class ProjectAdapter(Component):
@@ -122,7 +120,7 @@ class ProjectAdapter(Component):
         data = []
         folder_ids = []
 
-        if self.backend_record.test_mode is True:
+        if self.backend_record.test_mode:
             backend_record = self.backend_record
             space_ids = (
                 backend_record.test_location.split(",")
@@ -132,8 +130,6 @@ class ProjectAdapter(Component):
         else:
             backend_record = self.backend_record
             space_ids = backend_record.uri.split(",") if backend_record.uri else None
-
-        # space_ids = self.backend_record.uri.split(",")
 
         for space_id in space_ids:
             folder_resource_path = "/space/{}/folder".format(space_id)

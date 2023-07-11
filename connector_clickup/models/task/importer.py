@@ -1,8 +1,11 @@
 import logging
 from datetime import date, datetime, timedelta
 
+from odoo import _
+
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
+from odoo.addons.connector.exception import MappingError
 
 _logger = logging.getLogger(__name__)
 
@@ -10,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class ProjectTaskImporter(Component):
     _name = "clickup.project.task.importer"
     _inherit = "clickup.importer"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
 
     def _is_uptodate(self, binding):
         """
@@ -40,29 +43,13 @@ class ProjectTaskImporter(Component):
         clickup_date = datetime.fromtimestamp(timestamp)
         return clickup_date <= sync_date
 
-    def _import_dependencies(self):
-        """
-         #T-02383 Import the dependencies for the record
-        Import of dependencies can be done manually or by calling
-        :meth:`_import_dependency` for each dependency.
-        """
-
-        if not hasattr(self.backend_adapter, "_model_dependencies"):
-            return
-
-        for dependency in self.backend_adapter._model_dependencies:
-            model, key = dependency
-            external_id = self.clickup_record.get(key).get("id")
-
-            self._import_dependency(external_id=external_id, binding_model=model)
-
 
 class ProjectTaskBatchImporter(Component):
     """Delay import of the records"""
 
     _name = "clickup.project.task.batch.importer"
     _inherit = "clickup.delayed.batch.importer"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
 
     def run(self, filters=None, force=False):
         """Run the synchronization"""
@@ -85,21 +72,14 @@ class ProjectTaskBatchImporter(Component):
 class ProjectTaskImportMapper(Component):
     _name = "clickup.project.task.import.mapper"
     _inherit = "clickup.import.mapper"
-    _apply_on = "clickup.project.tasks"
+    _apply_on = "clickup.project.task"
     _map_child_fallback = "clickup.map.child.import"
-    # children = [
-    #     (
-    #         "tags",
-    #         "tag_ids",
-    #         "clickup.project.tasks",
-    #     ),
-    # ]
 
     @only_create
     @mapping
     def odoo_id(self, record):
         """Creating odoo id"""
-        task = self._get_binding_values(record, model=self._apply_on, value="id")
+        task = self.get_binding(record, model=self._apply_on, value="id")
 
         if not task:
             return {}
@@ -108,17 +88,16 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def project_id(self, record):
         """Map project id"""
-        project = record.get("list").get("id")
-        # project_id = self.env["project.project"].search(
-        #     [
-        #         ("external_id", "=", project),
-        #     ],
-        # )
-        binder = self.binder_for(model="clickup.project.project")
-        project = binder.to_internal(project, unwrap=True)
-        if not project:
-            return {}
+        project_id = record.get("list").get("id")
 
+        project = self.env["project.project"].search(
+            [
+                ("external_id", "=", project_id),
+            ],
+            limit=1,
+        )
+        if not project:
+            raise MappingError(_("Project not exist"))
         return {"project_id": project.id}
 
     @mapping
@@ -127,7 +106,8 @@ class ProjectTaskImportMapper(Component):
         stage_id = record.get("status").get("status")
 
         stage = self.env["project.task.type"].search([("name", "=", stage_id)], limit=1)
-
+        if not stage:
+            raise MappingError(_("Stage not exist"))
         return {"stage_id": stage.id}
 
     @mapping
@@ -141,31 +121,26 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def description(self, record):
         """Map description"""
-        description = record.get("text_content")
 
-        return {"description": description}
+        return {"description": record.get("text_content")}
 
     @mapping
     def external_id(self, record):
         """Map external id"""
 
-        external_id = record.get("id")
-
-        return {"external_id": external_id}
+        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):
         """Map backend id"""
-        backend_id = self.backend_record.id
 
-        return {"backend_id": backend_id}
+        return {"backend_id": self.backend_record.id}
 
     @mapping
     def project_info(self, record):
         """Map project info"""
-        project_id = record.get("list").get("id")
 
-        return {"project_info": project_id}
+        return {"project_info": record.get("list").get("id")}
 
     @mapping
     def date_deadline(self, record):
@@ -202,8 +177,8 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def company_id(self, record):
         """Map company id"""
-        company_id = self.backend_record.company_id.id
-        return {"company_id": company_id}
+
+        return {"company_id": self.backend_record.company_id.id}
 
     # @mapping
     # def tag_ids(self, record):
@@ -254,7 +229,7 @@ class ProjectTaskImportMapper(Component):
 # class ClickupProjectTaskTagsImportMapper(Component):
 #     _name = "clickup.project.task.import.child.mapper"
 #     _inherit = "clickup.map.child.import"
-#     _apply_on = "clickup.project.tasks"
+#     _apply_on = "clickup.project.task"
 
 #     @mapping
 #     def tag_ids(self, record):
