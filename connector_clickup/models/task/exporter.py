@@ -24,7 +24,11 @@ class ProjectTaskDelayedBatchExporter(Component):
     _inherit = "clickup.delayed.batch.exporter"
     _apply_on = "clickup.project.task"
 
-    def run(self, filters=None):
+    def run(
+        self,
+        filters=None,
+        job_options=None,
+    ):
         """Run the synchronization"""
         filters = filters or {}
         domain = expression.OR(
@@ -36,7 +40,7 @@ class ProjectTaskDelayedBatchExporter(Component):
 
         records = self.env["project.task"].search(domain)
         for record in records:
-            self._export_record(record, model=self._apply_on)
+            self._export_record(record, job_options=job_options)
 
 
 class ProjectTaskImportMapper(Component):
@@ -66,7 +70,7 @@ class ProjectTaskImportMapper(Component):
     def project_id(self, record):
         """Mapped project_id"""
 
-        return {"project_id": record.project_id.external_id}
+        return {"project_id": record.project_id.clickup_bind_ids.external_id}
 
     @mapping
     def due_date(self, record):

@@ -34,7 +34,8 @@ class ClickupTestCase(TransactionComponentCase):
             {
                 "test_location": self.url_test,
                 "name": "Test Connector Clickup",
-                "test_token": "pk_67222607_9TATNL43QDZ5M0KWHNLQPF41L3EFNQLM",
+                "test_token": """67222607_393707bcb12bcf9ea0ec8d7f3
+                947852b97d1cae9df5f2d30869972b8d11a5d6c""",
                 "test_mode": True,
                 "company_id": company.id,
             }

@@ -48,7 +48,7 @@ class ProjectTask(models.Model):
         """This method open the particular task on clickup's website"""
         return {
             "type": "ir.actions.act_url",
-            "url": f"https://app.clickup.com/t/{self.external_id}",
+            "url": f"https://app.clickup.com/t/{self.clickup_bind_ids.external_id}",
             "target": "new",
         }
 
@@ -59,7 +59,7 @@ class ProjectTask(models.Model):
             raise UserError(_("Please add backend!!!"))
         self.env["clickup.project.task"].import_record(
             backend=self.sudo().clickup_backend_id,
-            external_id=self.external_id,
+            external_id=self.clickup_bind_ids.external_id,
         )
 
     def update_export_task(self):
@@ -86,44 +86,37 @@ class TaskAdapter(Component):
         """
 
         data = []
-        folder_ids = []
         list_ids = []
 
         if self.backend_record.test_mode:
-            backend_record = self.backend_record
             space_ids = (
-                backend_record.test_location.split(",")
-                if backend_record.test_location
-                else None
+                self.backend_record.test_location.split(",")
+                if self.backend_record.test_location
+                else []
             )
         else:
-            backend_record = self.backend_record
-            space_ids = backend_record.uri.split(",") if backend_record.uri else None
+            space_ids = (
+                self.backend_record.uri.split(",") if self.backend_record.uri else []
+            )
 
+        folder_ids = []
         for space_id in space_ids:
-            folder_resource_path = "/space/{}/folder".format(space_id)
+            self._clickup_model = "/space/{}/folder".format(space_id)
 
-            self._clickup_model = folder_resource_path
-            folder_project_payload = self._call(folder_resource_path, arguments=filters)
-
-            list_resource_path = "/space/{}/list".format(space_id)
-
-            self._clickup_model = list_resource_path
-            space_project_payload = self._call(list_resource_path, arguments=filters)
-
+            folder_project_payload = self._call(self._clickup_model, arguments=filters)
             if folder_project_payload:
                 for record in folder_project_payload.get("folders", []):
                     items = record.get("id")
                     folder_ids.append(items)
 
             for folder_id in folder_ids:
-                folder_path = "/folder/{}/list".format(folder_id)
-
-                self._clickup_model = folder_path
-                folder_payload = self._call(folder_path, arguments=filters)
+                self._clickup_model = "/folder/{}/list".format(folder_id)
+                folder_payload = self._call(self._clickup_model, arguments=filters)
 
                 data.append(folder_payload)
 
+            self._clickup_model = "/space/{}/list".format(space_id)
+            space_project_payload = self._call(self._clickup_model, arguments=filters)
             if space_project_payload:
                 data.append(space_project_payload)
 
@@ -140,9 +133,8 @@ class TaskAdapter(Component):
             if to_date is not None:
                 filters["date_updated_lt"] = to_date
 
-            resource_path = "/list/{}/task".format(external_id)
-            self._clickup_model = resource_path
-            task_payload = self._call(resource_path, arguments=filters)
+            self._clickup_model = "/list/{}/task".format(external_id)
+            task_payload = self._call(self._clickup_model, arguments=filters)
             result.append(task_payload)
 
         return result

@@ -20,7 +20,7 @@ class ProjectProjectBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.project"
 
-    def run(self, filters=None, force=False):
+    def run(self, filters=None, force=False, job_options=None):
         """Run the synchronization"""
 
         records = self.backend_adapter.search(filters)
@@ -29,7 +29,7 @@ class ProjectProjectBatchImporter(Component):
             for data in rec.get("lists", []):
                 external_id = data.get(self.backend_adapter._clickup_ext_id_key)
                 self._import_record(
-                    external_id, data=data, force=force, model=self._apply_on
+                    external_id, data=data, force=force, job_options=job_options
                 )
 
 
@@ -58,11 +58,6 @@ class ProjectProjectImportMapper(Component):
     def description(self, record):
         """Map description"""
         return {"description": record.get("content")}
-
-    @mapping
-    def external_id(self, record):
-        """#Map external id"""
-        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):

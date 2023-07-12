@@ -51,7 +51,7 @@ class ProjectTaskBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.task"
 
-    def run(self, filters=None, force=False):
+    def run(self, filters=None, force=False, job_options=None):
         """Run the synchronization"""
         from_date = filters.pop("from_date", None)
         to_date = filters.pop("to_date", None)
@@ -65,7 +65,7 @@ class ProjectTaskBatchImporter(Component):
                 external_id = task.get(self.backend_adapter._clickup_ext_id_key)
 
                 self._import_record(
-                    external_id, data=task, force=force, model=self._apply_on
+                    external_id, data=task, force=force, job_options=job_options
                 )
 
 
@@ -80,7 +80,6 @@ class ProjectTaskImportMapper(Component):
     def odoo_id(self, record):
         """Creating odoo id"""
         task = self.get_binding(record, model=self._apply_on, value="id")
-
         if not task:
             return {}
         return {"odoo_id": task.id}
@@ -89,8 +88,7 @@ class ProjectTaskImportMapper(Component):
     def project_id(self, record):
         """Map project id"""
         project_id = record.get("list").get("id")
-
-        project = self.env["project.project"].search(
+        project = self.env["clickup.project.project"].search(
             [
                 ("external_id", "=", project_id),
             ],
@@ -104,7 +102,6 @@ class ProjectTaskImportMapper(Component):
     def stage_id(self, record):
         """Map stage id"""
         stage_id = record.get("status").get("status")
-
         stage = self.env["project.task.type"].search([("name", "=", stage_id)], limit=1)
         if not stage:
             raise MappingError(_("Stage not exist"))
@@ -123,12 +120,6 @@ class ProjectTaskImportMapper(Component):
         """Map description"""
 
         return {"description": record.get("text_content")}
-
-    @mapping
-    def external_id(self, record):
-        """Map external id"""
-
-        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):
@@ -180,29 +171,6 @@ class ProjectTaskImportMapper(Component):
 
         return {"company_id": self.backend_record.company_id.id}
 
-    # @mapping
-    # def tag_ids(self, record):
-    #     print("\n\ninside tag ids\n\n")
-    #     tags = record.get("tags")
-
-    #     tag_model = self.env["project.tags"]
-    #     tag_ids = []
-
-    #     # Remove all existing tags
-    #     self.tag_ids = [(5, 0, 0)]
-
-    #     for tag in tags:
-    #         tag_name = tag.get("name")
-    #         domain = [("name", "=", tag_name)]
-    #         existing_tag = tag_model.search(domain, limit=1)
-
-    #         if existing_tag:
-    #             tag_ids.append((4, existing_tag.id, 0))
-    #         else:
-    #             tag_ids.append((0, 0, {"name": tag_name}))
-
-    #     return {"tag_ids": tag_ids}
-
     def finalize(self, map_record, values):
         """Tags mapping through child mapper"""
         record = map_record.source
@@ -224,28 +192,3 @@ class ProjectTaskImportMapper(Component):
                         tag_ids.append(new_label.id)
         values["tag_ids"] = [(6, 0, tag_ids)]
         return values
-
-
-# class ClickupProjectTaskTagsImportMapper(Component):
-#     _name = "clickup.project.task.import.child.mapper"
-#     _inherit = "clickup.map.child.import"
-#     _apply_on = "clickup.project.task"
-
-#     @mapping
-#     def tag_ids(self, record):
-#         print("\n\ninside tag ids\n\n")
-#         tags = record.get("tags")
-
-#         tag_model = self.env["project.tags"]
-#         tag_ids = []
-#         for tag in tags:
-#             tag_name = tag.get("name")
-#             domain = [("name", "=", tag_name)]
-#             existing_tag = tag_model.search(domain, limit=1)
-#             if existing_tag:
-#                 tag_ids.append(existing_tag.id)
-#             else:
-#                 new_tag = tag_model.create({"name": tag_name})
-#                 tag_ids.append(new_tag.id)
-
-#         return {"tag_ids": [(6, 0, tag_ids)]}

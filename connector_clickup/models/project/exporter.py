@@ -23,7 +23,7 @@ class ProjectProjectDelayedBatchExporter(Component):
     _inherit = "clickup.delayed.batch.exporter"
     _apply_on = "clickup.project.project"
 
-    def run(self, filters=None):
+    def run(self, filters=None, job_options=None):
         """Run the synchronization"""
         filters = filters or {}
         domain = expression.OR(
@@ -35,7 +35,7 @@ class ProjectProjectDelayedBatchExporter(Component):
 
         records = self.env["project.project"].search(domain)
         for record in records:
-            self._export_record(record, model=self._apply_on)
+            self._export_record(record, job_options=job_options)
 
 
 class ProjectProjectImportMapper(Component):

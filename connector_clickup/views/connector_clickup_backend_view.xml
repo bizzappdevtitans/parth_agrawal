@@ -106,7 +106,7 @@
                             />
                             <field
                                 attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
-                                name="auth_code"
+                                name="auth_code_test"
                             />
                         </group>
                          <group attrs="{'invisible': [('test_mode', '=', False)]}">

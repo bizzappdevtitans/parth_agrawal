@@ -24,7 +24,7 @@ class ProjectTaskTypeBatchImporter(Component):
     _inherit = "clickup.delayed.batch.importer"
     _apply_on = "clickup.project.task.type"
 
-    def run(self, filters=None, force=False):
+    def run(self, filters=None, force=False, job_options=None):
         """Run the synchronization"""
 
         records = self.backend_adapter.search_read(filters)
@@ -33,7 +33,7 @@ class ProjectTaskTypeBatchImporter(Component):
             for status in rec.get("statuses", []):
                 external_id = status.get(self.backend_adapter._clickup_ext_id_key)
                 self._import_record(
-                    external_id, data=status, force=force, model=self._apply_on
+                    external_id, data=status, force=force, job_options=job_options
                 )
 
 
@@ -62,11 +62,6 @@ class ProjectTaskTypeImportMapper(Component):
             return {"name": name}
         if stage_name:
             raise MappingError(_("'%s' Stage already exist") % stage_name.name)
-
-    def external_id(self, record):
-        """Map external id"""
-
-        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):

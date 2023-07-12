@@ -9,3 +9,10 @@ class BaseClickupConnectorComponent(AbstractComponent):
     _name = "base.clickup.connector"
     _inherit = "base.connector"
     _collection = "clickup.backend"
+
+    def queue_job_description(self):
+        model = self.model._name
+        model_parts = model.split(".")
+        model_name = " ".join(part.title() for part in model_parts[1:])
+        model_name = " ".join(dict.fromkeys(model_name.split()))
+        return model_name

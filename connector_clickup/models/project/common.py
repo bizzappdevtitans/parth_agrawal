@@ -54,7 +54,8 @@ class ProjectProject(models.Model):
         """Open co-responding project in clickup's website"""
         result = {
             "type": "ir.actions.act_url",
-            "url": f"https://app.clickup.com/{self.team_id}/v/l/li/{self.external_id}",
+            "url": f"""https://app.clickup.com/{self.team_id}/v/l/li/
+            {self.clickup_bind_ids.external_id}""",
             "target": "new",
         }
 
@@ -67,12 +68,13 @@ class ProjectProject(models.Model):
             raise UserError(_("Please add backend!!!"))
         self.env["clickup.project.project"].import_record(
             backend=self.sudo().clickup_backend_id,
-            external_id=self.external_id,
+            external_id=self.clickup_bind_ids.external_id,
         )
 
         for task in self.tasks:
             self.env["clickup.project.task"].import_record(
-                backend=self.sudo().clickup_backend_id, external_id=task.external_id
+                backend=self.sudo().clickup_backend_id,
+                external_id=task.clickup_bind_ids.external_id,
             )
 
     def update_export_project(self):
@@ -118,43 +120,34 @@ class ProjectAdapter(Component):
         :rtype: dict
         """
         data = []
-        folder_ids = []
-
         if self.backend_record.test_mode:
-            backend_record = self.backend_record
             space_ids = (
-                backend_record.test_location.split(",")
-                if backend_record.test_location
-                else None
+                self.backend_record.test_location.split(",")
+                if self.backend_record.test_location
+                else []
             )
         else:
-            backend_record = self.backend_record
-            space_ids = backend_record.uri.split(",") if backend_record.uri else None
-
+            space_ids = (
+                self.backend_record.uri.split(",") if self.backend_record.uri else []
+            )
+        folder_ids = []
         for space_id in space_ids:
-            folder_resource_path = "/space/{}/folder".format(space_id)
+            self._clickup_model = "/space/{}/folder".format(space_id)
 
-            self._clickup_model = folder_resource_path
-            folder_project_payload = self._call(folder_resource_path, arguments=filters)
-
-            list_resource_path = "/space/{}/list".format(space_id)
-
-            self._clickup_model = list_resource_path
-            space_project_payload = self._call(list_resource_path, arguments=filters)
-
+            folder_project_payload = self._call(self._clickup_model, arguments=filters)
             if folder_project_payload:
                 for record in folder_project_payload.get("folders", []):
                     items = record.get("id")
                     folder_ids.append(items)
 
             for folder_id in folder_ids:
-                folder_path = "/folder/{}/list".format(folder_id)
-
-                self._clickup_model = folder_path
-                folder_payload = self._call(folder_path, arguments=filters)
+                self._clickup_model = "/folder/{}/list".format(folder_id)
+                folder_payload = self._call(self._clickup_model, arguments=filters)
 
                 data.append(folder_payload)
 
+            self._clickup_model = "/space/{}/list".format(space_id)
+            space_project_payload = self._call(self._clickup_model, arguments=filters)
             if space_project_payload:
                 data.append(space_project_payload)
 
@@ -176,14 +169,13 @@ class ProjectAdapter(Component):
             backend_record = self.backend_record
             space_id = backend_record.uri if backend_record.uri else None
 
-        resource_path = "/space/{}/list".format(space_id)
         folder = data.get("folder")
-
         if folder:
             resource_path = "/folder/{}/list".format(folder)
             self._clickup_model = resource_path
-
-        self._clickup_model = resource_path
+        else:
+            resource_path = "/space/{}/list".format(space_id)
+            self._clickup_model = resource_path
         return super().create(data)
 
     def write(self, external_id, data):

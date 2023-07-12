@@ -209,9 +209,6 @@ class ClickupImporter(AbstractComponent):
 
         map_record = self._map_data()
 
-        # project_model = self.env["clickup.project.project"].search(
-        #     [("external_id", "=", self.external_id)]
-        # )
         if binding:
             record = self._update_data(map_record)
             self._update(binding, record)
@@ -266,7 +263,6 @@ class DelayedBatchImporter(AbstractComponent):
         external_id,
         job_options=None,
         data=None,
-        model=None,
         force=False,
         **kwargs,
     ):
@@ -274,9 +270,7 @@ class DelayedBatchImporter(AbstractComponent):
 
         job_options = job_options or {}
 
-        model_parts = model.split(".")
-        model_name = " ".join(part.title() for part in model_parts[1:])
-        model_name = " ".join(dict.fromkeys(model_name.split()))
+        model_name = self.queue_job_description()
         job_options["description"] = f"Import Record of Clickup {model_name}"
 
         delayable = self.model.with_company(self.backend_record.company_id).with_delay(

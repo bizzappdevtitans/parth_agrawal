@@ -49,29 +49,28 @@ class TaskTypeAdapter(Component):
 
         :rtype: dict
         """
-        data = []
 
         if self.backend_record.test_mode:
             backend_record = self.backend_record
             space_id = (
-                backend_record.test_location if backend_record.test_location else None
+                backend_record.test_location if backend_record.test_location else []
             )
         else:
             backend_record = self.backend_record
-            space_id = backend_record.uri if backend_record.uri else None
+            space_id = backend_record.uri if backend_record.uri else []
 
-        folder_resource_path = "/space/{}/folder".format(space_id)
-        self._clickup_model = folder_resource_path
-        folder_project_payload = self._call(folder_resource_path, arguments=filters)
-
-        list_resource_path = "/space/{}/list".format(space_id)
-        self._clickup_model = list_resource_path
-        space_project_payload = self._call(list_resource_path, arguments=filters)
+        data = []
+        self._clickup_model = "/space/{}/folder".format(space_id)
+        folder_project_payload = self._call(self._clickup_model, arguments=filters)
 
         if folder_project_payload:
             for rec in folder_project_payload["folders"]:
                 for item in rec["lists"]:
                     data.append(item)
+
+        self._clickup_model = "/space/{}/list".format(space_id)
+        space_project_payload = self._call(self._clickup_model, arguments=filters)
+
         if space_project_payload:
             for rec in space_project_payload["lists"]:
                 data.append(rec)
