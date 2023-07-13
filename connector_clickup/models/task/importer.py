@@ -88,15 +88,10 @@ class ProjectTaskImportMapper(Component):
     def project_id(self, record):
         """Map project id"""
         project_id = record.get("list").get("id")
-        project = self.env["clickup.project.project"].search(
-            [
-                ("external_id", "=", project_id),
-            ],
-            limit=1,
-        )
-        if not project:
-            raise MappingError(_("Project not exist"))
-        return {"project_id": project.id}
+        binder = self.binder_for("clickup.project.project")
+        project = binder.to_internal(project_id, unwrap=True)
+        if project:
+            return {"project_id": project.id}
 
     @mapping
     def stage_id(self, record):

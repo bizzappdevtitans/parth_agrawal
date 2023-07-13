@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Inherited project.project model form view -->
+    <record id="inherit_project_project_form_view" model="ir.ui.view">
+        <field name="name">project.project.inherit.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project" />
+        <field name="arch" type="xml">
+            <header>
+                <button
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    class="oe_highlight"
+                    name="update_export_project"
+                    string="Update To ClickUp"
+                    type="object"
+                    groups="connector.group_connector_manager"
+                />
+                <button
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    class="oe_highlight"
+                    name="update_import_project"
+                    string="Update From ClickUp"
+                    type="object"
+                    groups="connector.group_connector_manager"
+                />
+                <button
+                    attrs="{'invisible': [('clickup_bind_ids', '!=', [])]}"
+                    class="oe_highlight"
+                    name="export_project_to_clickup"
+                    string="Export To ClickUp"
+                    type="object"
+                    groups="connector.group_connector_manager"
+                />
+            </header>
+            <xpath expr="//page[@name='settings']" position="after">
+                <page
+                    string="Connector Clickup Project"
+                    groups="connector.group_connector_manager"
+                >
+                    <group>
+
+                        <field name="clickup_bind_ids" />
+
+                        <field name="folder_id" string="Folder Id" />
+
+                        <field name="clickup_backend_id" />
+
+                    </group>
+                        <span style="margin-right: 10px;"><b
+                        >Click To Open Project in ClickUp</b></span>
+                        <button
+                        class="oe_highlight"
+                        name="action_open_project_in_clickup"
+                        string="Open In ClickUp"
+                        type="object"
+                    />
+                </page>
+            </xpath>
+             <xpath expr="//group[@name='extra_settings']" position="after">
+                        <label
+                    for="export_to_folder"
+                    attrs="{'invisible': [('clickup_bind_ids', '!=', [])]}"
+                    groups="connector.group_connector_manager"
+                >Export To Folder</label>
+                        <field
+                    name="export_to_folder"
+                    attrs="{'invisible': [('clickup_bind_ids', '!=', [])]}"
+                    groups="connector.group_connector_manager"
+                />
+                        <label
+                    for="folder_info"
+                    attrs="{'invisible': [('export_to_folder', '!=', True)]}"
+                    groups="connector.group_connector_manager"
+                >Folder Info</label>
+                        <field
+                    name="folder_info"
+                    attrs="{'invisible': [('export_to_folder', '!=', True)]}"
+                    groups="connector.group_connector_manager"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

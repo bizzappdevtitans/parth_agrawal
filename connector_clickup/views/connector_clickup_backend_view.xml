@@ -213,7 +213,7 @@
         <field name="arch" type="xml">
             <tree string="Clickup Backend">
                 <field name="name" />
-                <field name="uri" />
+                <field name="auth_type" />
             </tree>
         </field>
     </record>

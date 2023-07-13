@@ -24,10 +24,7 @@ class ProjectTaskType(models.Model):
         string="Clickup Backend ID",
         readonly=True,
     )
-    external_id = fields.Char(
-        related="clickup_bind_ids.external_id",
-        readonly=True,
-    )
+
     clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",

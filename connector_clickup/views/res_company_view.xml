@@ -1,29 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-   <!--  <data>
-        <record id="inherit_company_form" model="ir.ui.view">
-            <field name="name">res.company.form.clickup</field>
-            <field name="model">res.company</field>
-            <field name="inherit_id" ref="connector.view_partner_connector_form" />
-            <field
-                name="groups_id"
-                eval="[(4, ref('connector_clickup.group_connector_clickup_manager'))]"
-            />
-            <field name="arch" type="xml">
-                <xpath expr="//notebook//page[@name='connector']" position="inside">
-                    <group string="Clickup">
-                        <group>
-                            <field name="clickup_backend_id" />
-                        </group>
-                    </group>
-                </xpath>
-            </field>
-        </record>
-    </data> -->
+
 
     <data>
         <record id="view_company_form_inherit" model="ir.ui.view">
-            <field name="name">res.company.form.clickup</field>
+            <field name="name">res.company.inherit.form</field>
             <field name="model">res.company</field>
             <field name="inherit_id" ref="base.view_company_form" />
 
@@ -31,7 +12,6 @@
                 <xpath expr="//notebook//page[@name='general_info']" position="inside">
                     <group string="clickUp">
                         <group>
-
                             <field name="clickup_backend_id" />
                         </group>
                     </group>

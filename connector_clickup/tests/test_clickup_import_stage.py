@@ -10,8 +10,8 @@ class TestImportStage(ClickupTestCase):
         super().setUp()
 
     @recorder.use_cassette
-    def test_00_import_tasks(self):
-        """Import of a project"""
+    def test_00_import_stage(self):
+        """Import of a task"""
         external_id = "90020424787"
         self.binding = self._import_record(
             filename="import_00_project_task_type",
@@ -22,7 +22,5 @@ class TestImportStage(ClickupTestCase):
         stage_model = self.env["clickup.project.task.type"]
         stage = stage_model.search([("external_id", "=", external_id)])
         self.assertEqual(len(stage), 1)
-        # self.assertEqual(stage.external_id, "p90020155368_40s86Lwa")  # task id
 
         self.assertEqual(stage.odoo_id.name, "filler")  # Name
-        # self.assertEqual(task.odoo_id.description, "")  # Description

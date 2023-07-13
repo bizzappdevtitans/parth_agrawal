@@ -8,6 +8,8 @@ from odoo.exceptions import ValidationError
 from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import RetryableJobError
 
+from .misc import queue_job_description
+
 _logger = logging.getLogger(__name__)
 
 
@@ -324,7 +326,7 @@ class DelayedBatchExporter(AbstractComponent):
 
         job_options = job_options or {}
 
-        model_name = self.queue_job_description()
+        model_name = queue_job_description(self, model=self.model._name)
         job_options["description"] = f"Export Record of Clickup {model_name}"
 
         delayable = self.model.with_delay(**job_options or {})

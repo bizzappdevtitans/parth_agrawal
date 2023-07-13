@@ -23,16 +23,12 @@ class ProjectProject(models.Model):
         "odoo_id",
         readonly=True,
     )
-    external_id = fields.Char(
-        related="clickup_bind_ids.external_id",
-        readonly=True,
-    )
+
     clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
         string="Clickup Backend",
         readonly=False,
-        store=True,
     )
 
     team_id = fields.Char(readonly=True)
@@ -41,6 +37,12 @@ class ProjectProject(models.Model):
     export_to_folder = fields.Boolean()
 
     folder_info = fields.Selection(selection="_get_folder_options", readonly=False)
+
+    # is_clickup_bound = fields.Boolean(compute="_compute_is_clickup_bound", store=True)
+
+    # def _compute_is_clickup_bound(self):
+    #     for project in self:
+    #         project.is_clickup_bound = bool(project.clickup_bind_ids)
 
     def _get_folder_options(self):
         """Get available folders list to export project to particular folder"""
@@ -92,16 +94,28 @@ class ProjectProject(models.Model):
             )
 
     def export_project_to_clickup(self):
-        """Export newly created project from odoo to clickup website"""
+        """Export newly created project and it's tasks from odoo to clickup website"""
         self.ensure_one()
 
         if not self.clickup_backend_id and not self.company_id.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         try:
-            self.clickup_backend_id = self.company_id.clickup_backend_id
-            self.env["clickup.project.project"].export_record(
-                backend=self.sudo().clickup_backend_id, record=self
-            )
+            if self.clickup_backend_id:
+                self.env["clickup.project.project"].export_record(
+                    backend=self.sudo().clickup_backend_id, record=self
+                )
+                for task in self.tasks:
+                    self.env["clickup.project.task"].export_record(
+                        backend=self.sudo().clickup_backend_id, record=task
+                    )
+            else:
+                self.env["clickup.project.project"].export_record(
+                    backend=self.sudo().company_id.clickup_backend_id, record=self
+                )
+                for task in self.tasks:
+                    self.env["clickup.project.task"].export_record(
+                        backend=self.sudo().company_id.clickup_backend_id, record=task
+                    )
         except Exception as err:
             raise UserError from err()
 
@@ -163,11 +177,11 @@ class ProjectAdapter(Component):
         if self.backend_record.test_mode is True:
             backend_record = self.backend_record
             space_id = (
-                backend_record.test_location if backend_record.test_location else None
+                backend_record.test_location if backend_record.test_location else []
             )
         else:
             backend_record = self.backend_record
-            space_id = backend_record.uri if backend_record.uri else None
+            space_id = backend_record.uri if backend_record.uri else []
 
         folder = data.get("folder")
         if folder:

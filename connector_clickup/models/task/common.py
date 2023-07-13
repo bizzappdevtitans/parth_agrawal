@@ -28,10 +28,7 @@ class ProjectTask(models.Model):
         string="Clickup Backend ID",
         readonly=True,
     )
-    external_id = fields.Char(
-        related="clickup_bind_ids.external_id",
-        readonly=True,
-    )
+
     clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
@@ -64,6 +61,27 @@ class ProjectTask(models.Model):
 
     def update_export_task(self):
         """Update task from odoo to Clickup website"""
+        self.ensure_one()
+        if not self.clickup_backend_id:
+            raise UserError(_("Please add backend!!!"))
+        self.env["clickup.project.task"].export_record(
+            backend=self.sudo().clickup_backend_id, record=self
+        )
+
+    def export_task_to_clickup(self):
+        """Export newly created task from odoo to clickup website"""
+
+        self.ensure_one()
+
+        if not self.project_id.clickup_backend_id:
+            raise UserError(_("Please select project that consist backend!!!"))
+        try:
+            self.env["clickup.project.task"].export_record(
+                backend=self.sudo().project_id.clickup_backend_id, record=self
+            )
+        except Exception as err:
+            raise UserError from err()
+
         self.ensure_one()
         if not self.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))

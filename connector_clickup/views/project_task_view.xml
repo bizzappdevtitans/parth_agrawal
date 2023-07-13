@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Inherited project.task model form view-->
+    <record id="inherit_project_task_form_view" model="ir.ui.view">
+        <field name="name">project.task.inherit.form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="arch" type="xml">
+            <header>
+                <button
+                    class="oe_highlight"
+                    name="update_export_task"
+                    string="Update To ClickUp"
+                    type="object"
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    groups="connector.group_connector_manager"
+                />
+                <button
+                    class="oe_highlight"
+                    name="update_import_task"
+                    string="Update From ClickUp"
+                    type="object"
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    groups="connector.group_connector_manager"
+                />
+                <button
+                    class="oe_highlight"
+                    name="export_task_to_clickup"
+                    string="Export To ClickUp"
+                    type="object"
+                    attrs="{'invisible': [('clickup_bind_ids', '!=', [])]}"
+                    groups="connector.group_connector_manager"
+                />
+
+            </header>
+
+            <xpath expr="//page[@name='extra_info']" position="after">
+
+                <page
+                    string="Connector Clickup Task"
+                    groups="connector.group_connector_manager"
+                >
+                    <group>
+                        <field name="clickup_bind_ids" />
+                        <field name="project_info" />
+                        <field name="clickup_backend_id" />
+                        <field name="created_at" />
+                        <field name="updated_at" />
+                    </group>
+                     <span style="margin-right: 10px;"><b
+                        >Click To Open Task in ClickUp</b></span>
+                    <button
+                        class="oe_highlight"
+                        name="action_open_task_in_clickup"
+                        string="Open Task In ClickUp"
+                        type="object"
+                    />
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -7,13 +7,12 @@ from odoo import fields, models
 
 from odoo.addons.component.core import Component
 
-# from ...components.backend_adapter import ClickUpBackendAdapter
 from ...components.backend_adapter import (
     ClickupAPI,
     ClickupLocation,
     ClickupTokenLocation,
 )
-from ...components.misc import to_iso_datetime
+from ...components.misc import queue_job_description, to_iso_datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -109,9 +108,7 @@ class ClickupBackend(models.Model):
             if force_update_field:
                 force = backend[force_update_field]
 
-            model_parts = model.split(".")
-            model_name = " ".join(part.title() for part in model_parts[1:])
-            model_name = " ".join(dict.fromkeys(model_name.split()))
+            model_name = queue_job_description(self, model=model)
             job_options["description"] = f"Import Batch of Clickup {model_name}"
 
             self.env[model].with_company(backend.company_id).with_delay(
@@ -240,9 +237,7 @@ class ClickupBackend(models.Model):
                 else:
                     from_date = to_iso_datetime(from_date)
 
-            model_parts = model.split(".")
-            model_name = " ".join(part.title() for part in model_parts[1:])
-            model_name = " ".join(dict.fromkeys(model_name.split()))
+            model_name = queue_job_description(self, model=model)
             job_options["description"] = f"Export Batch of Clickup {model_name}"
 
             clickup_model = (

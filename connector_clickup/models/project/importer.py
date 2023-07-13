@@ -102,3 +102,13 @@ class ProjectProjectImportMapper(Component):
     def team_id(self, record):
         """Map team id"""
         return {"team_id": self.backend_record.team_id}
+
+    @mapping
+    def color(self, record):
+        """Map color field"""
+        color_hex = record.get("status")
+        if color_hex:
+            color = color_hex.get("color")
+            if color:
+                color_integer = int(color.lstrip("#"), 16)
+                return {"color": color_integer}

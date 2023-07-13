@@ -35,6 +35,7 @@
 * Then after user needs to click on the button called Generate Oauth Code that will redirect user to authentication page.
 * After successfully authentication the user will be redirect to new url, User needs to copy that Url and paste it in Auth Code field that is avaiable at clickup backend level.
 * Now User need to just click on Generate Token button which will set the new access_token in API Key field at clickup backend level.
+* All the credential fields for API key authentication and OAuth 2.0 authentication are available for Production mode and Test Mode.
 
 **Features & Highlights**
 *************************

@@ -120,48 +120,53 @@ class ClickupClient:
             "Content-Type": "application/json",
             "Authorization": self._token,
         }
+
         return headers
 
     def call(self, arguments=None, http_method=None, resource_path=None, headers=None):
         """Call method for the Token API execution with all headers and parameters."""
 
+        if resource_path is None:
+            _logger.exception("Remote System API called without resource path")
+            raise NotImplementedError
         url = self._location + resource_path
-
         if http_method is None:
             http_method = "get"
         function = getattr(requests, http_method)
-
-        default_headers = self.get_header()
-
-        if headers:
-            default_headers.update(headers)
-        kwargs = {"headers": default_headers}
-
+        headers = self.get_header()
+        kwargs = {"headers": headers}
+        if arguments and arguments.get("next_url"):
+            url = arguments.pop("next_url")
         if http_method == "get":
             kwargs["params"] = arguments
-        elif isinstance(arguments, str):
-            kwargs["data"] = arguments
         elif arguments is not None:
             kwargs["json"] = arguments
         res = function(url, **kwargs)
-
-        if res.status_code == 400 and res._content:
+        try:
+            results = res.json()
+        except JSONDecodeError as err:
+            raise InvalidDataError from err(
+                url, res.status_code, res._content, headers, __name__
+            )
+        if res.status_code == 200:
+            if res._content:
+                if results.get("errors"):
+                    raise InvalidDataError(
+                        url,
+                        res.status_code,
+                        results.get("errors"),
+                        __name__,
+                    )
+        elif res.status_code == 400 or res._content:
             raise InvalidDataError(
                 url, res.status_code, res._content, headers, __name__
             )
-
-        if res.status_code == 404 and res.json().get("status") == 404:
+        elif res.status_code == 404 or results.get("status") == 404:
             raise InvalidDataError(
                 url, res.status_code, res._content, headers, __name__
             )
         res.raise_for_status()
-        try:
-            result = res.json()
-
-            return result
-        except JSONDecodeError:
-            _logger.warning("\n Clickup Response Content :%s \n" % (res._content))
-            return res._content
+        return results
 
 
 class ClickupAPI:

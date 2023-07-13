@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Inherited project.task.type model form view-->
+    <record id="inherit_project_task_type_form_view" model="ir.ui.view">
+        <field name="name">project.task.type.inherit.form</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.task_type_edit" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <group
+                    string="Clickup Binding Details"
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    groups="connector.group_connector_manager"
+                >
+
+                    <field invisible="1" name="clickup_bind_ids" />
+                    <field name="clickup_backend_id" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

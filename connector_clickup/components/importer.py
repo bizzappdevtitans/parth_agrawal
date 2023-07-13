@@ -6,6 +6,8 @@ from odoo.addons.component.core import AbstractComponent
 from odoo.addons.connector.exception import IDMissingInBackend
 from odoo.addons.queue_job.exception import NothingToDoJob
 
+from .misc import queue_job_description
+
 _logger = logging.getLogger(__name__)
 
 
@@ -270,7 +272,7 @@ class DelayedBatchImporter(AbstractComponent):
 
         job_options = job_options or {}
 
-        model_name = self.queue_job_description()
+        model_name = queue_job_description(self, model=self.model._name)
         job_options["description"] = f"Import Record of Clickup {model_name}"
 
         delayable = self.model.with_company(self.backend_record.company_id).with_delay(

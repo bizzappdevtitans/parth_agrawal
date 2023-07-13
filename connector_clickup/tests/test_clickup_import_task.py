@@ -11,7 +11,7 @@ class TestImportTask(ClickupTestCase):
         super().setUp()
 
     @recorder.use_cassette
-    def test_00_import_tasks(self):
+    def test_00_import_task(self):
         """Import of a project"""
         external_id = "85zt6b21b"
         self.binding = self._import_record(
@@ -26,4 +26,3 @@ class TestImportTask(ClickupTestCase):
         self.assertEqual(task.external_id, "85zt6b21b")  # task id
 
         self.assertEqual(task.odoo_id.name, "again inside again")  # Name
-        # self.assertEqual(task.odoo_id.description, "")  # Description

@@ -24,3 +24,10 @@ def to_iso_datetime(date):
         return to_remote_datetime(date, date_format)
     except Exception as ex:
         raise ValidationError from ex(_("%s") % (ustr(ex)))
+
+
+def queue_job_description(self, model):
+    model_parts = model.split(".")
+    model_name = " ".join(part.title() for part in model_parts[1:])
+    model_name = " ".join(dict.fromkeys(model_name.split()))
+    return model_name
