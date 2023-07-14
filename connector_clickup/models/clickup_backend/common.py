@@ -26,7 +26,7 @@ class ClickupBackend(models.Model):
     _inherit = "connector.backend"
     _description = "Clickup backend"
 
-    name = fields.Char()
+    name = fields.Char(required=True)
     auth_type = fields.Selection(
         [("api_key", "API Key"), ("Oauth", "Oauth Authentication")],
         required=True,
@@ -48,7 +48,7 @@ class ClickupBackend(models.Model):
     auth_code_test = fields.Char(
         help="""Enter the url that consist auth code to generate access token"""
     )
-    team_id = fields.Char(required=True)
+    team_id = fields.Char()
     redirect_url = fields.Char(
         help="""Enter that redirect url which is already set
         in clickup website's Clickup API app"""
@@ -58,6 +58,12 @@ class ClickupBackend(models.Model):
     uri = fields.Char(help="Enter End Point Location Of Space Id")
     client_id = fields.Char()
     client_secret = fields.Char()
+    url_path = fields.Char(help="Enter the url path")
+    version = fields.Selection(
+        [("v2", "V2")],
+        default="v2",
+        help="""select the version for api url path""",
+    )
 
     # Test
     test_mode = fields.Boolean(default=True)
@@ -65,8 +71,15 @@ class ClickupBackend(models.Model):
     test_location = fields.Char()
     client_id_test = fields.Char()
     client_secret_test = fields.Char()
+    url_path_test = fields.Char(help="Enter the url path")
+    version_test = fields.Selection(
+        [("v2", "V2")],
+        default="v2",
+        help="""select the version for api url path""",
+    )
 
     def redirect_action(self):
+        """Redirect to readme html file"""
         html_file_path = "/connector_clickup/static/src/README.html"
 
         return {
@@ -76,6 +89,7 @@ class ClickupBackend(models.Model):
         }
 
     def toggle_test_mode(self):
+        """Switch between test mode and production mode"""
         for record in self:
             record.test_mode = not record.test_mode
 
@@ -164,20 +178,26 @@ class ClickupBackend(models.Model):
         """Add the work on for clickup."""
         self.ensure_one()
         location = self.uri
+        version = self.version
         client_id = self.client_id
         client_secret = self.client_secret
         token = self.api_key
         auth_code = self.auth_code
+        url_path = self.url_path
         if self.test_mode:
             location = self.test_location
+            version = self.version_test
             client_id = self.client_id_test
             client_secret = self.client_secret_test
             token = self.test_token
             auth_code = self.auth_code_test
+            url_path = self.url_path_test
 
         clickup_location = ClickupLocation(
             location=location,
             token=token,
+            version=version,
+            url_path=url_path,
         )
 
         # Clickup have different endpoint/credentials for token
@@ -186,6 +206,8 @@ class ClickupBackend(models.Model):
             client_id=client_id,
             client_secret=client_secret,
             auth_code=auth_code,
+            url_path=url_path,
+            version=version,
         )
         with ClickupAPI(clickup_location, clickup_location_token) as clickup_api:
             _super = super()
@@ -194,6 +216,7 @@ class ClickupBackend(models.Model):
                 yield work
 
     def export_projects(self, with_delay=True, from_sync=False):
+        """Export Clickup projects button action"""
         for backend in self.sudo():
             backend._export_from_date(
                 model="clickup.project.project",
@@ -203,6 +226,7 @@ class ClickupBackend(models.Model):
             )
 
     def export_tasks(self, with_delay=True, from_sync=False):
+        """Export Clickup tasks button action"""
         for backend in self.sudo():
             backend._export_from_date(
                 model="clickup.project.task",
@@ -263,17 +287,8 @@ class ClickupBackend(models.Model):
     ):
         """Scheduled action method of project import"""
         backends = self.env["clickup.backend"].search([])
-        job_options = {}
         for backend in backends:
-            clickup_model = backend.env["clickup.project.project"].with_delay()
-            job_options["priority"] = 5
-            clickup_model.import_batch(
-                backend,
-                filters=filters,
-                job_options=job_options,
-                force=True,
-                **{"no_delay": not with_delay},
-            )
+            backend.import_projects()
 
     def cron_import_clickup_stage_changes(
         self,
@@ -282,17 +297,9 @@ class ClickupBackend(models.Model):
     ):
         """Scheduled action method of stage import"""
         backends = self.env["clickup.backend"].search([])
-        job_options = {}
+
         for backend in backends:
-            clickup_model = backend.env["clickup.project.task.type"].with_delay()
-            job_options["priority"] = 7
-            clickup_model.import_batch(
-                backend,
-                filters=filters,
-                force=True,
-                job_options=job_options,
-                **{"no_delay": not with_delay},
-            )
+            backend.import_stages()
 
     def cron_import_clickup_task_changes(
         self,
@@ -301,17 +308,8 @@ class ClickupBackend(models.Model):
     ):
         """Scheduled action method of task import"""
         backends = self.env["clickup.backend"].search([])
-        job_options = {}
         for backend in backends:
-            clickup_model = backend.env["clickup.project.task"].with_delay()
-            job_options["priority"] = 10
-            clickup_model.import_batch(
-                backend,
-                filters=filters,
-                force=True,
-                job_options=job_options,
-                **{"no_delay": not with_delay},
-            )
+            backend.import_tasks()
 
     def cron_export_clickup_project_changes(
         self,
@@ -320,15 +318,8 @@ class ClickupBackend(models.Model):
     ):
         """Scheduled action method of project export"""
         backends = self.env["clickup.backend"].search([])
-        job_options = {}
         for backend in backends:
-            clickup_model = backend.env["clickup.project.project"].with_delay()
-            job_options["priority"] = 5
-            clickup_model.export_batch(
-                backend,
-                job_options=job_options,
-                filters=filters,
-            )
+            backend.export_projects()
 
     def cron_export_clickup_task_changes(
         self,
@@ -337,15 +328,16 @@ class ClickupBackend(models.Model):
     ):
         """Scheduled action method of task export"""
         backends = self.env["clickup.backend"].search([])
-        job_options = {}
         for backend in backends:
-            clickup_model = backend.env["clickup.project.task"].with_delay()
-            job_options["priority"] = 10
-            clickup_model.export_batch(
-                backend,
-                job_options=job_options,
-                filters=filters,
-            )
+            backend.export_tasks()
+
+    # folder_info = fields.Selection(selection="_get_team_options", readonly=False)
+
+    # def _get_team_options(self, data):
+    #     """Get available folders list to export project to particular folder"""
+
+    #     unique_folders = list({record.team for record in data})
+    #     return [(folder_id, folder_id) for folder_id in unique_folders]
 
     def generate_token(self):
         """Generate token for clickup."""
@@ -357,6 +349,10 @@ class ClickupBackend(models.Model):
                 self.test_token = token
             else:
                 self.api_key = token
+            # team_id_dict = backend_adapter.get_team()
+            # teams = team_id_dict.get("teams", [])
+            # team = [team.get("id") for team in teams]
+            # self.team_id = "".join(team)
 
     def _get_company_domain(self):
         """Add company related domain for export product # T-02039"""

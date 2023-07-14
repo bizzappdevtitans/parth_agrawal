@@ -20,11 +20,14 @@ class ClickupTokenLocation:
     def __init__(
         self,
         location,
+        url_path,
+        version,
         client_id,
         client_secret,
         auth_code,
     ):
-        self._location = "https://api.clickup.com/api/v2/oauth/token"
+        """Initializes a ClickupTokenLocation object."""
+        self._location = "{}/api/{}/oauth/".format(url_path, version)
         self.client_id = client_id
         self.client_secret = client_secret
         self.auth_code = auth_code
@@ -38,14 +41,17 @@ class ClickupTokenLocation:
 class ClickupLocation:
     """Class holds all the credentials needs for successful remote call"""
 
-    def __init__(self, location, token):
+    def __init__(self, location, token, url_path, version):
+        """Initializes a ClickupLocation object."""
         self._location = location
         self.token = token
+        self.url_path = url_path
+        self.version = version
 
     @property
     def location(self):
         """Main location of the Clickup"""
-        location = "https://api.clickup.com/api/v2"
+        location = "{}/api/{}".format(self.url_path, self.version)
         return location
 
 
@@ -53,6 +59,7 @@ class ClickupTokenClient:
     """Main class responsible to sends request/get response (For Token)"""
 
     def __init__(self, location, client_id, client_secret, auth_code):
+        """Initializes a ClickupTokenClient object."""
         self._location = location
         self._client_id = client_id
         self._client_secret = client_secret
@@ -78,7 +85,8 @@ class ClickupTokenClient:
 
     def call(self, arguments=None, http_method=None, resource_path=None):
         """Call method for the Token API execution with all headers and parameters."""
-        url = self._location
+
+        url = self._location + resource_path
 
         if http_method is None:
             http_method = "post"
@@ -111,6 +119,7 @@ class ClickupClient:
         location,
         token,
     ):
+        """Initializes a ClickupClient object."""
         self._location = location
         self._token = token
 
@@ -144,6 +153,7 @@ class ClickupClient:
         res = function(url, **kwargs)
         try:
             results = res.json()
+
         except JSONDecodeError as err:
             raise InvalidDataError from err(
                 url, res.status_code, res._content, headers, __name__
@@ -171,6 +181,7 @@ class ClickupClient:
 
 class ClickupAPI:
     def __init__(self, location, location_token):
+        """Initializes a ClickupAPI object."""
         self.location = location
         self._api = None
         self._api_token = None
@@ -244,8 +255,7 @@ class ClickupAPI:
                     result,
                     (datetime.now() - start).seconds,
                 )
-            # Un-comment to record requests/responses in ``recorder``
-            # record(method, arguments, result)
+
             return result
         except (socket.gaierror, OSError, socket.timeout) as err:
             raise NetworkRetryableError from err(
@@ -315,6 +325,16 @@ class ClickupCRUDAdapter(AbstractComponent):
             arguments=arguments,
             http_method=http_method,
             is_token=True,
+        )
+
+    def get_team(self, arguments=None, http_method=None):
+        """Method to get token from remote system"""
+
+        return self._call(
+            resource_path="/team",
+            arguments=arguments,
+            http_method="get",
+            is_token=False,
         )
 
     def _call(self, resource_path, arguments=None, http_method=None, is_token=False):

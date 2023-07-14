@@ -38,12 +38,6 @@ class ProjectProject(models.Model):
 
     folder_info = fields.Selection(selection="_get_folder_options", readonly=False)
 
-    # is_clickup_bound = fields.Boolean(compute="_compute_is_clickup_bound", store=True)
-
-    # def _compute_is_clickup_bound(self):
-    #     for project in self:
-    #         project.is_clickup_bound = bool(project.clickup_bind_ids)
-
     def _get_folder_options(self):
         """Get available folders list to export project to particular folder"""
         folder_model = self.env["project.project"]

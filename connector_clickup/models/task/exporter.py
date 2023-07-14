@@ -75,10 +75,10 @@ class ProjectTaskImportMapper(Component):
     @mapping
     def due_date(self, record):
         """Mapped due date"""
-        data = record.date_deadline
+        date_deadline = record.date_deadline
 
-        if data:
-            date_object = datetime.strptime(str(data), "%Y-%m-%d")
+        if date_deadline:
+            date_object = datetime.strptime(str(date_deadline), "%Y-%m-%d")
 
             unix_timestamp = int(date_object.timestamp() * 1000)
 

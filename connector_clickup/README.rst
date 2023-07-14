@@ -18,15 +18,19 @@
 
 **To set up the Connector Clickup module, you need to provide the following information:**
 
-**Production Mode**
+**Production Mode(API Key Authentication)**
 
 * API Key: An API token obtained from ClickUp to authenticate your application's access to ClickUp's API.
 * Location/URI: The unique identifier known as the space id is required from where you want to import or export projects and tasks.
+* Version: Provide the version on which the api will working on.
+* Url Path: The base url which can be change according to the requirements.
 
-**Test Mode**
+**Test Mode(API Key Authentication)**
 
 * Test Token: Same as production mode here we also need to provide the token in Test Token field.
 * Test Location: We need to provide the space id in test location field if the test mode is enabled.
+* Test Version: Take the same value as we store in Version field in production mode.
+* Test Url Path: Store the base url as we store in Url Path in production mode.
 
 **Oauth 2.0:**
 
@@ -34,8 +38,9 @@
 * User needs to Enter credentials like client_id, client_secret and redirect url.
 * Then after user needs to click on the button called Generate Oauth Code that will redirect user to authentication page.
 * After successfully authentication the user will be redirect to new url, User needs to copy that Url and paste it in Auth Code field that is avaiable at clickup backend level.
-* Now User need to just click on Generate Token button which will set the new access_token in API Key field at clickup backend level.
-* All the credential fields for API key authentication and OAuth 2.0 authentication are available for Production mode and Test Mode.
+* Now User need to fill the remaining information like Location/URI, Version.
+* After that just click on Generate Token button which will set the new access_token in API Key field at clickup backend level.
+* Note: All the credential fields for API key authentication and OAuth 2.0 authentication are available for Production mode as well as Test mode.
 
 **Features & Highlights**
 *************************

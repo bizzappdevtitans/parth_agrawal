@@ -6,8 +6,6 @@ from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
 from odoo.addons.connector.exception import MappingError
 
-# from odoo.addons import queue_job
-
 _logger = logging.getLogger(__name__)
 
 

@@ -27,6 +27,7 @@ def to_iso_datetime(date):
 
 
 def queue_job_description(self, model):
+    """Return dynamic queue job description"""
     model_parts = model.split(".")
     model_name = " ".join(part.title() for part in model_parts[1:])
     model_name = " ".join(dict.fromkeys(model_name.split()))

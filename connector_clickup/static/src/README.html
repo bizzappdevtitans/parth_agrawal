@@ -20,7 +20,7 @@
     information:</strong
   >
 </p>
-<p><strong>Production Mode</strong></p>
+<p><strong>Production Mode(API Key Authentication)</strong></p>
 <ul>
   <li>
     API Key: An API token obtained from ClickUp to authenticate your application's
@@ -30,8 +30,10 @@
     Location/URI: The unique identifier known as the space id is required from where you
     want to import or export projects and tasks.
   </li>
+  <li>Version: Provide the version on which the api will working on.</li>
+  <li>Url Path: The base url which can be change according to the requirements.</li>
 </ul>
-<p><strong>Test Mode</strong></p>
+<p><strong>Test Mode(API Key Authentication)</strong></p>
 <ul>
   <li>
     Test Token: Same as production mode here we also need to provide the token in Test
@@ -41,6 +43,10 @@
     Test Location: We need to provide the space id in test location field if the test
     mode is enabled.
   </li>
+  <li>
+    Test Version: Take the same value as we store in Version field in production mode.
+  </li>
+  <li>Test Url Path: Store the base url as we store in Url Path in production mode.</li>
 </ul>
 <p><strong>Oauth 2.0:</strong></p>
 <ul>
@@ -60,13 +66,14 @@
     to copy that Url and paste it in Auth Code field that is avaiable at clickup backend
     level.
   </li>
+  <li>Now User need to fill the remaining information like Location/URI, Version.</li>
   <li>
-    Now User need to just click on Generate Token button which will set the new
-    access_token in API Key field at clickup backend level.
+    After that just click on Generate Token button which will set the new access_token
+    in API Key field at clickup backend level.
   </li>
   <li>
-    All the credential fields for API key authentication and OAuth 2.0 authentication
-    are available for Production mode and Test Mode.
+    Note: All the credential fields for API key authentication and OAuth 2.0
+    authentication are available for Production mode as well as Test mode.
   </li>
 </ul>
 <h2 id="features-highlights"><strong>Features &amp; Highlights</strong></h2>

@@ -43,6 +43,21 @@ class ProjectTaskImporter(Component):
         clickup_date = datetime.fromtimestamp(timestamp)
         return clickup_date <= sync_date
 
+    def _import_dependencies(self):
+        """
+        Import the dependencies for the record
+        Import of dependencies can be done manually or by calling
+        :meth:`_import_dependency` for each dependency.
+        """
+        if not hasattr(self.backend_adapter, "_model_dependencies"):
+            return
+
+        for dependency in self.backend_adapter._model_dependencies:
+            model, key = dependency
+            external_id = self.clickup_record.get(key).get("id")
+
+            self._import_dependency(external_id=external_id, binding_model=model)
+
 
 class ProjectTaskBatchImporter(Component):
     """Delay import of the records"""
