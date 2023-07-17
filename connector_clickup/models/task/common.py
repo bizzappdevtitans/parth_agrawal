@@ -13,6 +13,7 @@ class ClickupProjectTasks(models.Model):
     odoo_id = fields.Many2one(
         "project.task", string="Task", required=True, ondelete="restrict"
     )
+
     created_at = fields.Datetime(readonly=True)
 
     updated_at = fields.Datetime(readonly=True)
@@ -20,7 +21,6 @@ class ClickupProjectTasks(models.Model):
 
 class ProjectTask(models.Model):
     _inherit = "project.task"
-    _description = "Inherited project.task model"
 
     clickup_bind_ids = fields.One2many(
         "clickup.project.task",
@@ -181,4 +181,5 @@ class TaskAdapter(Component):
         if external_id:
             resource_path = "/task/{}".format(external_id)
             self._clickup_model = resource_path
+
             return super().write(external_id, data)

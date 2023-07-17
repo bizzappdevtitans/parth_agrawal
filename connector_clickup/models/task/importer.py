@@ -90,6 +90,14 @@ class ProjectTaskImportMapper(Component):
     _apply_on = "clickup.project.task"
     _map_child_fallback = "clickup.map.child.import"
 
+    children = [
+        (
+            "assignees",
+            "user_ids",
+            "clickup.res.users",
+        )
+    ]
+
     @only_create
     @mapping
     def odoo_id(self, record):
@@ -180,6 +188,36 @@ class ProjectTaskImportMapper(Component):
         """Map company id"""
 
         return {"company_id": self.backend_record.company_id.id}
+
+    # @mapping
+    # def assignee_id(self, record):
+    #     """Map assignee id"""
+    #     assignees = record.get("assignees", [])
+    #     if not assignees:
+    #         return {"user_ids": self.env.user}
+    #     assignee_ids = []
+    #     for assignee in assignees:
+    #         user_name = assignee.get("username")
+    #         email = assignee.get("email")
+    #         login = assignee.get("id")
+    #         user = self.env["res.users"].search(
+    #             [
+    #                 ("login", "=", login),
+    #                 ("email", "=", email),
+    #             ],
+    #             limit=1,
+    #         )
+    #         if not user:
+    #             new_user = self.env["res.users"].create(
+    #                 {
+    #                     "name": user_name,
+    #                     "login": login,
+    #                     "email": email,
+    #                 }
+    #             )
+    #             assignee_ids.append(new_user.id)
+    #         assignee_ids.append(user.id)
+    #     return {"user_ids": assignee_ids}
 
     def finalize(self, map_record, values):
         """Tags mapping through child mapper"""

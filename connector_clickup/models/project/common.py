@@ -16,7 +16,6 @@ class ClickupProjectProject(models.Model):
 
 class ProjectProject(models.Model):
     _inherit = "project.project"
-    _description = "Inherited project.project model"
 
     clickup_bind_ids = fields.One2many(
         "clickup.project.project",
@@ -94,22 +93,13 @@ class ProjectProject(models.Model):
         if not self.clickup_backend_id and not self.company_id.clickup_backend_id:
             raise UserError(_("Please add backend!!!"))
         try:
-            if self.clickup_backend_id:
-                self.env["clickup.project.project"].export_record(
-                    backend=self.sudo().clickup_backend_id, record=self
+            self.env["clickup.project.project"].export_record(
+                backend=self.sudo().company_id.clickup_backend_id, record=self
+            )
+            for task in self.tasks:
+                self.env["clickup.project.task"].export_record(
+                    backend=self.sudo().company_id.clickup_backend_id, record=task
                 )
-                for task in self.tasks:
-                    self.env["clickup.project.task"].export_record(
-                        backend=self.sudo().clickup_backend_id, record=task
-                    )
-            else:
-                self.env["clickup.project.project"].export_record(
-                    backend=self.sudo().company_id.clickup_backend_id, record=self
-                )
-                for task in self.tasks:
-                    self.env["clickup.project.task"].export_record(
-                        backend=self.sudo().company_id.clickup_backend_id, record=task
-                    )
         except Exception as err:
             raise UserError from err()
 

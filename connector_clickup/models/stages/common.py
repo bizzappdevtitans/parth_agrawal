@@ -16,7 +16,6 @@ class ClickupProjectTaskType(models.Model):
 
 class ProjectTaskType(models.Model):
     _inherit = "project.task.type"
-    _description = "Inherited project.task.type model"
 
     clickup_bind_ids = fields.One2many(
         "clickup.project.task.type",

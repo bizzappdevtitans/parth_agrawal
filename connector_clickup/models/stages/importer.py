@@ -40,29 +40,36 @@ class ProjectTaskTypeImportMapper(Component):
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.task.type"
 
+    def _check_stage(self, record):
+        name = record.get("status")
+        stage_name = self.env["project.task.type"].search([("name", "=", name)])
+        return stage_name
+
     @only_create
     @mapping
     def odoo_id(self, record):
         """Creating odoo id"""
-        stage = self.get_binding(record, model=self._apply_on, value="id")
-
-        if not stage:
-            return {}
-        return {"odoo_id": stage.id}
+        stage_name = self._check_stage(record)
+        if not stage_name:
+            stage = self.get_binding(record, model=self._apply_on, value="id")
+            if not stage:
+                return {}
+            return {"odoo_id": stage.id}
+        return {}
 
     @mapping
     def name(self, record):
         """Map name"""
-        name = record.get("status")
-
-        stage_name = self.env["project.task.type"].search([("name", "=", name)])
+        stage_name = self._check_stage(record)
         if not stage_name:
-            return {"name": name}
+            return {"name": record.get("status")}
         if stage_name:
             raise MappingError(_("'%s' Stage already exist") % stage_name.name)
 
     @mapping
     def backend_id(self, record):
         """Map the backend id"""
-
-        return {"backend_id": self.backend_record.id}
+        stage_name = self._check_stage(record)
+        if not stage_name:
+            return {"backend_id": self.backend_record.id}
+        return {}

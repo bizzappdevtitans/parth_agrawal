@@ -3,7 +3,8 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.exceptions import ValidationError
 
 from odoo.addons.component.core import Component
 
@@ -331,16 +332,35 @@ class ClickupBackend(models.Model):
         for backend in backends:
             backend.export_tasks()
 
-    # folder_info = fields.Selection(selection="_get_team_options", readonly=False)
-
-    # def _get_team_options(self, data):
-    #     """Get available folders list to export project to particular folder"""
-
-    #     unique_folders = list({record.team for record in data})
-    #     return [(folder_id, folder_id) for folder_id in unique_folders]
-
     def generate_token(self):
         """Generate token for clickup."""
+        required_fields = [
+            "auth_code",
+            "client_id",
+            "client_secret",
+            "version",
+            "url_path",
+        ]
+
+        missing_fields = []
+
+        if self.test_mode:
+            test_required_fields = [field + "_test" for field in required_fields]
+            missing_fields.extend(
+                [field for field in test_required_fields if not getattr(self, field)]
+            )
+        else:
+            missing_fields.extend(
+                [field for field in required_fields if not getattr(self, field)]
+            )
+
+        if missing_fields:
+            raise ValidationError(
+                _(
+                    "Please fill all the necessary fields: '{}' to generate access token"
+                ).format(", ".join(missing_fields))
+            )
+
         with self.work_on(self._name) as work:
             backend_adapter = work.component(usage="backend.adapter")
             token_dict = backend_adapter.get_token()
@@ -349,10 +369,10 @@ class ClickupBackend(models.Model):
                 self.test_token = token
             else:
                 self.api_key = token
-            # team_id_dict = backend_adapter.get_team()
-            # teams = team_id_dict.get("teams", [])
-            # team = [team.get("id") for team in teams]
-            # self.team_id = "".join(team)
+            team_id_dict = backend_adapter.get_team()
+            teams = team_id_dict.get("teams", [])
+            team = [team.get("id") for team in teams]
+            self.team_id = ",".join(team)
 
     def _get_company_domain(self):
         """Add company related domain for export product # T-02039"""
@@ -385,6 +405,30 @@ class ClickupBackend(models.Model):
     def generate_auth_code(self):
         """Generate token for Clickup."""
         self.ensure_one()
+        required_fields = ["client_id", "client_secret", "redirect_url"]
+        missing_fields = []
+
+        if self.test_mode:
+            test_required_fields = [
+                "client_id_test",
+                "client_secret_test",
+                "redirect_url",
+            ]
+            missing_fields.extend(
+                [field for field in test_required_fields if not getattr(self, field)]
+            )
+        else:
+            missing_fields.extend(
+                [field for field in required_fields if not getattr(self, field)]
+            )
+
+        if missing_fields:
+            raise ValidationError(
+                _(
+                    "Please fill all the necessary fields: '{}' to generate access token"
+                ).format(", ".join(missing_fields))
+            )
+
         authorization_url = self.get_authorization_url()
 
         return {

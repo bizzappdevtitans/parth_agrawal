@@ -105,7 +105,8 @@
 **********************************
 
 * Currently only That stages can be imported that is implemented for folder level or whole space level in clickup website.
-* Currently we need to provide the team id in backend that helps to open particular project at clickup website.
+* Currently we set the team id in backend automatically that helps to open particular project at clickup website,
+  If team ids are more then one it will be stored as comma seperated values.
 * Currently if we dont choose folder to export particular project,by default it will be exported in to the space.
 * Currently We need to first create stage in clickup website, import that stage in order to use that stage in tasks.
 * Currently If the Stage already exist in project.task.type model the queue job will raise mapping error for that particular record.

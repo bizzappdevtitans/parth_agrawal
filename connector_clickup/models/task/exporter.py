@@ -89,3 +89,16 @@ class ProjectTaskImportMapper(Component):
         """Mapped stage"""
 
         return {"status": record.stage_id.name}
+
+    @mapping
+    def tags(self, record):
+        """Mapped tags"""
+        total_tags = []
+        for tags in record.tag_ids:
+            total_tags.append(
+                {
+                    "name": tags.name,
+                }
+            )
+
+        return {"tags": total_tags}
