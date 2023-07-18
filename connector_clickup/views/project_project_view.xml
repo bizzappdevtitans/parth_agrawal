@@ -23,6 +23,14 @@
                     type="object"
                     groups="connector.group_connector_manager"
                 />
+                 <button
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    class="oe_highlight"
+                    name="get_project_chats"
+                    string="Get ClickUp Comments and Attachments"
+                    type="object"
+                    groups="connector.group_connector_manager"
+                />
                 <button
                     attrs="{'invisible': [('clickup_bind_ids', '!=', [])]}"
                     class="oe_highlight"

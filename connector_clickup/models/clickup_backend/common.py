@@ -360,22 +360,29 @@ class ClickupBackend(models.Model):
                     "Please fill all the necessary fields: '{}' to generate access token"
                 ).format(", ".join(missing_fields))
             )
+        else:
+            with self.work_on(self._name) as work:
+                backend_adapter = work.component(usage="backend.adapter")
+                token_dict = backend_adapter.get_token()
+                token = token_dict.get("access_token")
+                if self.test_mode:
+                    self.test_token = token
 
+                else:
+                    self.api_key = token
+            return self.get_team_info()
+
+    def get_team_info(self):
+        """Set team in team id field"""
         with self.work_on(self._name) as work:
             backend_adapter = work.component(usage="backend.adapter")
-            token_dict = backend_adapter.get_token()
-            token = token_dict.get("access_token")
-            if self.test_mode:
-                self.test_token = token
-            else:
-                self.api_key = token
             team_id_dict = backend_adapter.get_team()
             teams = team_id_dict.get("teams", [])
             team = [team.get("id") for team in teams]
             self.team_id = ",".join(team)
 
     def _get_company_domain(self):
-        """Add company related domain for export product # T-02039"""
+        """Add company related domain"""
         domain = [
             "|",
             ("company_id", "=", self.company_id.id),

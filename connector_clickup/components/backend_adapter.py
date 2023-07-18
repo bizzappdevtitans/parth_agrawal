@@ -85,26 +85,20 @@ class ClickupTokenClient:
 
     def call(self, arguments=None, http_method=None, resource_path=None):
         """Call method for the Token API execution with all headers and parameters."""
-
         url = self._location + resource_path
-
         if http_method is None:
             http_method = "post"
         function = getattr(requests, http_method)
         headers = self.get_data()
-
         kwargs = {"headers": headers}
-
         if http_method == "post":
             kwargs["json"] = arguments
-
         res = function(url, headers)
         if res.status_code == 400 and res.content:
             raise requests.HTTPError(
                 url, res.status_code, res.content, headers, __name__
             )
         res.raise_for_status()
-
         return res.json()
 
 
@@ -134,12 +128,10 @@ class ClickupClient:
 
     def call(self, arguments=None, http_method=None, resource_path=None, headers=None):
         """Call method for the Token API execution with all headers and parameters."""
-
         if resource_path is None:
             _logger.exception("Remote System API called without resource path")
             raise NotImplementedError
         url = self._location + resource_path
-
         if http_method is None:
             http_method = "get"
         function = getattr(requests, http_method)
@@ -154,7 +146,6 @@ class ClickupClient:
         res = function(url, **kwargs)
         try:
             results = res.json()
-
         except JSONDecodeError as err:
             raise InvalidDataError from err(
                 url, res.status_code, res._content, headers, __name__
@@ -197,7 +188,6 @@ class ClickupAPI:
                 self.location.token,
             )
             self._api = clickup_client
-
         return self._api
 
     @property
@@ -221,7 +211,6 @@ class ClickupAPI:
             api = self.api_token
         else:
             api = self.api
-
         if not api:
             return api
         return api.call(
@@ -230,7 +219,6 @@ class ClickupAPI:
 
     def call(self, resource_path, arguments, http_method=None, is_token=False):
         """send/get request/response to/from remote system"""
-
         try:
             start = datetime.now()
             try:
@@ -256,7 +244,6 @@ class ClickupAPI:
                     result,
                     (datetime.now() - start).seconds,
                 )
-
             return result
         except (socket.gaierror, OSError, socket.timeout) as err:
             raise NetworkRetryableError from err(
@@ -333,6 +320,16 @@ class ClickupCRUDAdapter(AbstractComponent):
 
         return self._call(
             resource_path="/team",
+            arguments=arguments,
+            http_method="get",
+            is_token=False,
+        )
+
+    def get_chat(self, arguments=None, http_method=None, resource_path=None):
+        """Method to get token from remote system"""
+
+        return self._call(
+            resource_path=resource_path,
             arguments=arguments,
             http_method="get",
             is_token=False,

@@ -26,6 +26,14 @@
                 />
                 <button
                     class="oe_highlight"
+                    name="get_task_chats"
+                    string="Get ClickUp Comments and Attachments"
+                    type="object"
+                    attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
+                    groups="connector.group_connector_manager"
+                />
+                <button
+                    class="oe_highlight"
                     name="export_task_to_clickup"
                     string="Export To ClickUp"
                     type="object"

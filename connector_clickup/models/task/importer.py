@@ -1,5 +1,8 @@
+import base64
 import logging
 from datetime import date, datetime, timedelta
+
+import requests
 
 from odoo import _
 
@@ -90,13 +93,13 @@ class ProjectTaskImportMapper(Component):
     _apply_on = "clickup.project.task"
     _map_child_fallback = "clickup.map.child.import"
 
-    children = [
-        (
-            "assignees",
-            "user_ids",
-            "clickup.res.users",
-        )
-    ]
+    # children = [
+    #     (
+    #         "assignees",
+    #         "user_ids",
+    #         "clickup.res.users",
+    #     )
+    # ]
 
     @only_create
     @mapping
@@ -189,9 +192,47 @@ class ProjectTaskImportMapper(Component):
 
         return {"company_id": self.backend_record.company_id.id}
 
+    @mapping
+    def assignee_id(self, record):
+        """Map assignee id"""
+        assignees = record.get("assignees", [])
+        if not assignees:
+            return {"user_ids": self.env.user}
+        assignee_ids = []
+        for assignee in assignees:
+            user_name = assignee.get("username")
+            email = assignee.get("email")
+            login = assignee.get("id")
+            user = self.env["res.users"].search(
+                [
+                    ("login", "=", login),
+                    ("email", "=", email),
+                ],
+                limit=1,
+            )
+            picture_url = assignee.get("profilePicture")
+            response = requests.get(picture_url, timeout=10)
+            if response.status_code == 200:
+                picture_data = response.content
+                picture_base64 = base64.b64encode(picture_data)
+
+            if user:
+                assignee_ids.append(user.id)
+            if not user:
+                new_user = self.env["res.users"].create(
+                    {
+                        "name": user_name,
+                        "login": login,
+                        "email": email,
+                        "image_1920": picture_base64,
+                    }
+                )
+                assignee_ids.append(new_user.id)
+        return {"user_ids": assignee_ids}
+
     # @mapping
     # def assignee_id(self, record):
-    #     """Map assignee id"""
+    #     """Map assignee id and profile picture"""
     #     assignees = record.get("assignees", [])
     #     if not assignees:
     #         return {"user_ids": self.env.user}
@@ -199,6 +240,7 @@ class ProjectTaskImportMapper(Component):
     #     for assignee in assignees:
     #         user_name = assignee.get("username")
     #         email = assignee.get("email")
+    #         picture_url = assignee.get("profilePicture")
     #         login = assignee.get("id")
     #         user = self.env["res.users"].search(
     #             [
@@ -208,15 +250,21 @@ class ProjectTaskImportMapper(Component):
     #             limit=1,
     #         )
     #         if not user:
-    #             new_user = self.env["res.users"].create(
-    #                 {
-    #                     "name": user_name,
-    #                     "login": login,
-    #                     "email": email,
-    #                 }
-    #             )
-    #             assignee_ids.append(new_user.id)
-    #         assignee_ids.append(user.id)
+    #             response = requests.get(picture_url)
+    #             if response.status_code == 200:
+    #                 picture_data = response.content
+    #                 picture_base64 = base64.b64encode(picture_data)
+    #                 new_user = self.env["res.users"].create(
+    #                     {
+    #                         "name": user_name,
+    #                         "login": login,
+    #                         "email": email,
+    #                         "image_1920": picture_base64,
+    #                     }
+    #                 )
+    #                 assignee_ids.append(new_user.id)
+    #         else:
+    #             assignee_ids.append(user.id)
     #     return {"user_ids": assignee_ids}
 
     def finalize(self, map_record, values):

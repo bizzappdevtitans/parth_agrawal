@@ -65,7 +65,7 @@ class ProjectProject(models.Model):
             backend=self.sudo().clickup_backend_id,
             external_id=self.clickup_bind_ids.external_id,
         )
-
+        self.get_project_chats()
         for task in self.tasks:
             self.env["clickup.project.task"].import_record(
                 backend=self.sudo().clickup_backend_id,
@@ -102,6 +102,90 @@ class ProjectProject(models.Model):
                 )
         except Exception as err:
             raise UserError from err()
+
+    def get_project_chats(self):
+        """Get comments and attachments from clickup to project"""
+        self.ensure_one()
+        with self.clickup_backend_id.work_on("clickup.project.project") as work:
+            backend_adapter = work.component(usage="backend.adapter")
+            chat_dict = backend_adapter.get_chat(
+                resource_path="/list/" + self.clickup_bind_ids.external_id + "/comment"
+            )
+
+            comments = chat_dict.get("comments", [])
+            task_messages = (
+                self.env["mail.message"]
+                .sudo()
+                .search([("res_id", "=", self.id), ("model", "=", "project.project")])
+            )
+            existing_external_ids = task_messages.mapped("external_id")
+
+            for comment_data in comments:
+                comment_id = comment_data.get("id", "")
+                comment_text = comment_data.get("comment_text", "")
+
+                commenter_email = comment_data.get("user", {}).get("email", "")
+
+                if comment_id in existing_external_ids:
+                    self.update_existing_message(
+                        task_messages, comment_id, comment_text
+                    )
+                    continue
+
+                # Attachments
+                attachments = comment_data.get("comment", [])
+                attachment_urls = self.get_attachment_urls(attachments)
+
+                author_id = self.find_author(commenter_email)
+
+                self.create_comment_with_attachments(
+                    task_messages,
+                    comment_id,
+                    self.id,
+                    comment_text,
+                    author_id,
+                    attachment_urls,
+                )
+
+    def update_existing_message(self, messages, external_id, comment_text):
+        existing_message = messages.filtered(lambda msg: msg.external_id == external_id)
+        existing_message.write({"body": comment_text})
+
+    def get_attachment_urls(self, attachments):
+        attachment_urls = []
+        for attachment in attachments:
+            if attachment.get("type") == "attachment":
+                attachment_url = attachment.get("attachment", {}).get("url")
+                if attachment_url:
+                    attachment_urls.append(attachment_url)
+        return attachment_urls
+
+    def find_author(self, commenter_email):
+        return (
+            self.env["res.partner"]
+            .sudo()
+            .search([("email", "=", commenter_email)], limit=1)
+        ).id or self.env.user.id
+
+    def create_comment_with_attachments(
+        self, messages, comment_id, res_id, comment_text, author_id, attachment_urls
+    ):
+        new_message = messages.sudo().create(
+            {
+                "model": "project.project",
+                "external_id": comment_id,
+                "res_id": res_id,
+                "message_type": "comment",
+                "author_id": author_id,
+                "body": comment_text,
+            }
+        )
+        for attachment_url in attachment_urls:
+            attachment_data = {
+                "name": attachment_url.split("/")[-1],
+                "url": attachment_url,
+            }
+            new_message.attachment_ids = [(0, 0, attachment_data)]
 
 
 class ProjectAdapter(Component):
@@ -151,29 +235,60 @@ class ProjectAdapter(Component):
 
         return data
 
+    # def create(self, data):
+    #     """
+    #     Returns the information of a record
+
+    #     :rtype: dict
+    #     """
+
+    #     if self.backend_record.test_mode is True:
+    #         backend_record = self.backend_record
+    #         space_id = (
+    #             backend_record.test_location if backend_record.test_location else []
+    #         )
+    #     else:
+    #         backend_record = self.backend_record
+    #         space_id = backend_record.uri if backend_record.uri else []
+
+    #     folder = data.get("folder")
+    #     if folder:
+    #         resource_path = "/folder/{}/list".format(folder)
+    #         self._clickup_model = resource_path
+    #     else:
+    #         resource_path = "/space/{}/list".format(space_id)
+    #         self._clickup_model = resource_path
+    #     return super().create(data)
+
     def create(self, data):
         """
         Returns the information of a record
 
         :rtype: dict
         """
-
-        if self.backend_record.test_mode is True:
-            backend_record = self.backend_record
-            space_id = (
-                backend_record.test_location if backend_record.test_location else []
-            )
-        else:
-            backend_record = self.backend_record
-            space_id = backend_record.uri if backend_record.uri else []
-
         folder = data.get("folder")
         if folder:
             resource_path = "/folder/{}/list".format(folder)
             self._clickup_model = resource_path
         else:
-            resource_path = "/space/{}/list".format(space_id)
-            self._clickup_model = resource_path
+            if self.backend_record.test_mode:
+                space_ids = (
+                    self.backend_record.test_location.split(",")
+                    if self.backend_record.test_location
+                    else []
+                )
+            else:
+                space_ids = (
+                    self.backend_record.uri.split(",")
+                    if self.backend_record.uri
+                    else []
+                )
+
+            if space_ids:
+                space_id = space_ids[0]  # Select the first space_id
+                resource_path = "/space/{}/list".format(space_id)
+                self._clickup_model = resource_path
+
         return super().create(data)
 
     def write(self, external_id, data):

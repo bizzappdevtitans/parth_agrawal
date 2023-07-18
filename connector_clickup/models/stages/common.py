@@ -47,28 +47,31 @@ class TaskTypeAdapter(Component):
         """
 
         if self.backend_record.test_mode:
-            backend_record = self.backend_record
-            space_id = (
-                backend_record.test_location if backend_record.test_location else []
+            space_ids = (
+                self.backend_record.test_location.split(",")
+                if self.backend_record.test_location
+                else []
             )
         else:
-            backend_record = self.backend_record
-            space_id = backend_record.uri if backend_record.uri else []
+            space_ids = (
+                self.backend_record.uri.split(",") if self.backend_record.uri else []
+            )
 
         data = []
-        self._clickup_model = "/space/{}/folder".format(space_id)
-        folder_project_payload = self._call(self._clickup_model, arguments=filters)
+        for space_id in space_ids:
+            self._clickup_model = "/space/{}/folder".format(space_id)
+            folder_project_payload = self._call(self._clickup_model, arguments=filters)
 
-        if folder_project_payload:
-            for rec in folder_project_payload["folders"]:
-                for item in rec["lists"]:
-                    data.append(item)
+            if folder_project_payload:
+                for rec in folder_project_payload["folders"]:
+                    for item in rec["lists"]:
+                        data.append(item)
 
-        self._clickup_model = "/space/{}/list".format(space_id)
-        space_project_payload = self._call(self._clickup_model, arguments=filters)
+            self._clickup_model = "/space/{}/list".format(space_id)
+            space_project_payload = self._call(self._clickup_model, arguments=filters)
 
-        if space_project_payload:
-            for rec in space_project_payload["lists"]:
-                data.append(rec)
+            if space_project_payload:
+                for rec in space_project_payload["lists"]:
+                    data.append(rec)
 
         return data

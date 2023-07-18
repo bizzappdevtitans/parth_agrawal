@@ -42,6 +42,12 @@
 * After that just click on Generate Token button which will set the new access_token in API Key field at clickup backend level.
 * Note: All the credential fields for API key authentication and OAuth 2.0 authentication are available for Production mode as well as Test mode.
 
+**Other Configuration:**
+
+* To correctly import or export the project and tasks we should select one workspace(team) at the time of generation authentication code if authentication type is Oauth authentication or provide one workspace id(team) if auth type is API key.
+* We can import projects and tasks from more than one space(URI/Test location). At the time of export if folder id is no provided it will be exported to first space id.
+* Creating different backend for workspaces(team) and location(space id) is recommended.
+
 **Features & Highlights**
 *************************
 
@@ -105,7 +111,7 @@
 **********************************
 
 * Currently only That stages can be imported that is implemented for folder level or whole space level in clickup website.
-* Currently we set the team id in backend automatically that helps to open particular project at clickup website,
+* Currently we set the team id in backend automatically in Oauth 2.0 authentication that helps to open particular project at clickup website,
   If team ids are more then one it will be stored as comma seperated values.
 * Currently if we dont choose folder to export particular project,by default it will be exported in to the space.
 * Currently We need to first create stage in clickup website, import that stage in order to use that stage in tasks.
