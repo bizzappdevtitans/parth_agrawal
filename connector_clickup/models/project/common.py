@@ -148,10 +148,12 @@ class ProjectProject(models.Model):
                 )
 
     def update_existing_message(self, messages, external_id, comment_text):
+        """Update comments and attachments from clickup to project"""
         existing_message = messages.filtered(lambda msg: msg.external_id == external_id)
         existing_message.write({"body": comment_text})
 
     def get_attachment_urls(self, attachments):
+        """Get attachments url from clickup to project"""
         attachment_urls = []
         for attachment in attachments:
             if attachment.get("type") == "attachment":
@@ -161,6 +163,7 @@ class ProjectProject(models.Model):
         return attachment_urls
 
     def find_author(self, commenter_email):
+        """Find the user to define author"""
         return (
             self.env["res.partner"]
             .sudo()
@@ -170,6 +173,7 @@ class ProjectProject(models.Model):
     def create_comment_with_attachments(
         self, messages, comment_id, res_id, comment_text, author_id, attachment_urls
     ):
+        """Create comments and attachments from clickup to project"""
         new_message = messages.sudo().create(
             {
                 "model": "project.project",
@@ -234,31 +238,6 @@ class ProjectAdapter(Component):
                 data.append(space_project_payload)
 
         return data
-
-    # def create(self, data):
-    #     """
-    #     Returns the information of a record
-
-    #     :rtype: dict
-    #     """
-
-    #     if self.backend_record.test_mode is True:
-    #         backend_record = self.backend_record
-    #         space_id = (
-    #             backend_record.test_location if backend_record.test_location else []
-    #         )
-    #     else:
-    #         backend_record = self.backend_record
-    #         space_id = backend_record.uri if backend_record.uri else []
-
-    #     folder = data.get("folder")
-    #     if folder:
-    #         resource_path = "/folder/{}/list".format(folder)
-    #         self._clickup_model = resource_path
-    #     else:
-    #         resource_path = "/space/{}/list".format(space_id)
-    #         self._clickup_model = resource_path
-    #     return super().create(data)
 
     def create(self, data):
         """

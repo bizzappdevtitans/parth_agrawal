@@ -142,10 +142,12 @@ class ProjectTask(models.Model):
                 )
 
     def update_existing_message(self, messages, external_id, comment_text):
+        """Update comments and attachments from clickup to task"""
         existing_message = messages.filtered(lambda msg: msg.external_id == external_id)
         existing_message.write({"body": comment_text})
 
     def get_attachment_urls(self, attachments):
+        """Get attachments from clickup to task"""
         attachment_urls = []
         for attachment in attachments:
             if attachment.get("type") == "attachment":
@@ -155,6 +157,7 @@ class ProjectTask(models.Model):
         return attachment_urls
 
     def find_author(self, commenter_email):
+        """Find the user to define author"""
         return (
             self.env["res.partner"]
             .sudo()
@@ -164,6 +167,7 @@ class ProjectTask(models.Model):
     def create_comment_with_attachments(
         self, messages, comment_id, res_id, comment_text, author_id, attachment_urls
     ):
+        """Create the comments and attachments"""
         new_message = messages.sudo().create(
             {
                 "model": "project.task",

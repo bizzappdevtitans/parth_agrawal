@@ -74,4 +74,13 @@ class TaskTypeAdapter(Component):
                 for rec in space_project_payload["lists"]:
                     data.append(rec)
 
+        team_id = self.backend_record.team_id
+        if team_id:
+            self._clickup_model = "/team/{}/space".format(team_id)
+            team_payload = self._call(self._clickup_model, arguments=filters)
+
+            if team_payload:
+                for rec in team_payload["spaces"]:
+                    data.append(rec)
+
         return data

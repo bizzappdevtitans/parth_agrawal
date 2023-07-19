@@ -80,9 +80,11 @@
 
 **Task-Level Operations:**
 
-* Import Changes in individual tasks from ClickUp website by clicking the "Update To Clickup" button in the task form view.
+* Import Changes in individual task from ClickUp website by clicking the "Update From Clickup" button in the task form view.
 * Export Changes from individual tasks To ClickUp Website by clicking the "Update To Clickup" button in the task form view.
+* Export a particular task to ClickUp by clicking the "Export To Clickup" button in the task form view.
 * Particular task can be open in clickup website by clicking "Open Task In Clickup" button in task form view.
+* We can import the comments and attachments of particular task by clicking "Get ClickUp Comments and Attachments" button in task form view.
 
 **Project-Level Operations:**
 
@@ -92,6 +94,7 @@
 * By clicking on boolean field and selecting the folder id in project form view we can export project to that particular folder in clickup website.
 * Retrieve project-specific information and manage synchronization between your application and ClickUp.
 * Particular project can be open in clickup website by clicking "Open Project In Clickup" button in Project form view.
+* We can import the comments and attachments of particular project by clicking "Get ClickUp Comments and Attachments" button in project form view.
 
 **Multi-Company Functionality:**
 
@@ -119,6 +122,7 @@
 * Currently If the stages are not imported before importing the tasks it can cause queue job fail as the stages not found for tasks.
 * Currently importing tasks directly can import it's projects first but the performance of it is unstable.
 * Currently the redirect uri which is set in connector clickup module must also be saved in Clickup Website's Clickup API app.
+* Currently by clicking on "Update From Clickup" button the "Get Clickup Comments and Attachments" also excutes in project and task level.
 
 **Changelog**
 *************
