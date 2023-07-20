@@ -1,8 +1,5 @@
-import base64
 import logging
 from datetime import date, datetime, timedelta
-
-import requests
 
 from odoo import _
 
@@ -192,34 +189,15 @@ class ProjectTaskImportMapper(Component):
             return {"user_ids": self.env.user}
         assignee_ids = []
         for assignee in assignees:
-            user_name = assignee.get("username")
-            email = assignee.get("email")
-            login = assignee.get("id")
+            user_id = assignee.get("id")
             user = self.env["res.users"].search(
-                [
-                    ("login", "=", login),
-                    ("email", "=", email),
-                ],
+                [("login", "=", user_id)],
                 limit=1,
             )
-            picture_url = assignee.get("profilePicture")
-            response = requests.get(picture_url, timeout=10)
-            if response.status_code == 200:
-                picture_data = response.content
-                picture_base64 = base64.b64encode(picture_data)
-
             if user:
                 assignee_ids.append(user.id)
             if not user:
-                new_user = self.env["res.users"].create(
-                    {
-                        "name": user_name,
-                        "login": login,
-                        "email": email,
-                        "image_1920": picture_base64,
-                    }
-                )
-                assignee_ids.append(new_user.id)
+                raise MappingError(_("User Not Exist for assigning the task"))
         return {"user_ids": assignee_ids}
 
     def finalize(self, map_record, values):

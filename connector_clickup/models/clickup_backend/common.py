@@ -141,6 +141,17 @@ class ClickupBackend(models.Model):
         if from_date_field:
             self.write({from_date_field: next_time})
 
+    def import_members(self, with_delay=True):
+        """Import Clickup projects button action"""
+        for backend in self:
+            backend._import_from_date(
+                model="clickup.res.users",
+                from_date_field=None,
+                priority=5,
+                with_delay=with_delay,
+                force_update_field=None,
+            )
+
     def import_projects(self, with_delay=True):
         """Import Clickup projects button action"""
         for backend in self:

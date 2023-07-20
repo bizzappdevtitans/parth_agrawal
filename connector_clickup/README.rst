@@ -18,14 +18,14 @@
 
 **To set up the Connector Clickup module, you need to provide the following information:**
 
-**Production Mode(API Key Authentication)**
+**Production Mode(API Key Authentication):**
 
 * API Key: An API token obtained from ClickUp to authenticate your application's access to ClickUp's API.
 * Location/URI: The unique identifier known as the space id is required from where you want to import or export projects and tasks.
 * Version: Provide the version on which the api will working on.
 * Url Path: The base url which can be change according to the requirements.
 
-**Test Mode(API Key Authentication)**
+**Test Mode(API Key Authentication):**
 
 * Test Token: Same as production mode here we also need to provide the token in Test Token field.
 * Test Location: We need to provide the space id in test location field if the test mode is enabled.
@@ -47,12 +47,19 @@
 * To correctly import or export the project and tasks we should select one workspace(team) at the time of generation authentication code if authentication type is Oauth authentication or provide one workspace id(team) if auth type is API key.
 * We can import projects and tasks from more than one space(URI/Test location). At the time of export if folder id is no provided it will be exported to first space id.
 * Creating different backend for workspaces(team) and location(space id) is recommended.
+* Removing demo data of project module before starting to use this module is recommended.
+* We need Connector module as well as Queue_job module to run this module.
+* Queue_job configuration in odoo.conf file is necessary to fulfill the worker's dependency.
 
 **Features & Highlights**
 *************************
 
 
 **The Connector Clickup module offers the following functionalities:**
+
+**Import Users/Members:**
+
+* By clicking on "Import Members" button in backend level we first import all the users which is associated with clickup website.
 
 **Import Projects and Tasks:**
 

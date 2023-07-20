@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from bs4 import BeautifulSoup
@@ -44,6 +45,12 @@ class ProjectProjectImportMapper(Component):
     _apply_on = "clickup.project.project"
     _mapper_ext_key = "identifier"
 
+    def date_to_timestamp(self, date=False):
+        date_object = datetime.datetime.strptime(str(date), "%Y-%m-%d")
+        midnight = datetime.datetime.combine(date_object, datetime.time.min)
+        epoch_timestamp = int(midnight.timestamp() * 1000)
+        return epoch_timestamp
+
     @mapping
     def name(self, record):
         """Mapped name"""
@@ -59,6 +66,21 @@ class ProjectProjectImportMapper(Component):
         content = soup.get_text()
 
         return {"content": content}
+
+    @mapping
+    def due_date(self, record):
+        date = record.date
+        if date:
+            epoch_timestamp = self.date_to_timestamp(date=date)
+
+            return {"due_date": epoch_timestamp}
+
+    @mapping
+    def start_date(self, record):
+        date = record.date_start
+        if date:
+            epoch_timestamp = self.date_to_timestamp(date=date)
+            return {"start_date": epoch_timestamp}
 
     @mapping
     def folder_id(self, record):

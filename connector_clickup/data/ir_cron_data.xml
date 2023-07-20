@@ -13,7 +13,7 @@
         <field name="active" eval="False" />
         <field
             name="nextcall"
-            eval="(DateTime.now().replace(hour=2, minute=30, second=0, microsecond=0, tzinfo=pytz.timezone('Asia/Kolkata')) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"
+            eval="(DateTime.now().replace(hour=0, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"
         />
     </record>
      <!-- Scheduled action for import stages from clickup backend model -->
@@ -29,7 +29,7 @@
         <field name="active" eval="False" />
         <field
             name="nextcall"
-            eval="(DateTime.now().replace(hour=2, minute=30, second=0, microsecond=0, tzinfo=pytz.timezone('Asia/Kolkata')) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"
+            eval="(DateTime.now().replace(hour=0, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"
         />
     </record>
      <!-- Scheduled action for import tasks from clickup backend model -->
@@ -45,7 +45,7 @@
         <field name="active" eval="False" />
         <field
             name="nextcall"
-            eval="(DateTime.now().replace(hour=2, minute=30, second=0, microsecond=0, tzinfo=pytz.timezone('Asia/Kolkata')) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"
+            eval="(DateTime.now().replace(hour=0, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"
         />
     </record>
 
@@ -62,7 +62,7 @@
         <field name="active" eval="False" />
         <field
             name="nextcall"
-            eval="(DateTime.now().replace(hour=14, minute=30, second=0, microsecond=0, tzinfo=pytz.timezone('Asia/Kolkata')) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"
+            eval="(DateTime.now().replace(hour=0, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"
         />
     </record>
 
@@ -79,11 +79,8 @@
         <field name="active" eval="False" />
         <field
             name="nextcall"
-            eval="(DateTime.now().replace(hour=14, minute=30, second=0, microsecond=0, tzinfo=pytz.timezone('Asia/Kolkata')) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"
+            eval="(DateTime.now().replace(hour=0, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"
         />
     </record>
-
-
-
 
 </odoo>

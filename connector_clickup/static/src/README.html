@@ -20,7 +20,7 @@
     information:</strong
   >
 </p>
-<p><strong>Production Mode(API Key Authentication)</strong></p>
+<p><strong>Production Mode(API Key Authentication):</strong></p>
 <ul>
   <li>
     API Key: An API token obtained from ClickUp to authenticate your application's
@@ -33,7 +33,7 @@
   <li>Version: Provide the version on which the api will working on.</li>
   <li>Url Path: The base url which can be change according to the requirements.</li>
 </ul>
-<p><strong>Test Mode(API Key Authentication)</strong></p>
+<p><strong>Test Mode(API Key Authentication):</strong></p>
 <ul>
   <li>
     Test Token: Same as production mode here we also need to provide the token in Test
@@ -91,11 +91,27 @@
     Creating different backend for workspaces(team) and location(space id) is
     recommended.
   </li>
+  <li>
+    Removing demo data of project module before starting to use this module is
+    recommended.
+  </li>
+  <li>We need Connector module as well as Queue_job module to run this module.</li>
+  <li>
+    Queue_job configuration in odoo.conf file is necessary to fulfill the worker's
+    dependency.
+  </li>
 </ul>
 <h2 id="features-highlights"><strong>Features &amp; Highlights</strong></h2>
 <p>
   <strong>The Connector Clickup module offers the following functionalities:</strong>
 </p>
+<p><strong>Import Users/Members:</strong></p>
+<ul>
+  <li>
+    By clicking on "Import Members" button in backend level we first import all the
+    users which is associated with clickup website.
+  </li>
+</ul>
 <p><strong>Import Projects and Tasks:</strong></p>
 <ul>
   <li>
