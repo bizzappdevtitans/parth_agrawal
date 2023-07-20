@@ -43,12 +43,7 @@ class ClickupBackend(models.Model):
 
     force_update_tasks = fields.Boolean()
     company_id = fields.Many2one(comodel_name="res.company", string="Company")
-    auth_code = fields.Char(
-        help="""Enter the url that consist auth code to generate access token"""
-    )
-    auth_code_test = fields.Char(
-        help="""Enter the url that consist auth code to generate access token"""
-    )
+
     team_id = fields.Char()
     redirect_url = fields.Char(
         help="""Enter that redirect url which is already set
@@ -65,6 +60,10 @@ class ClickupBackend(models.Model):
         default="v2",
         help="""select the version for api url path""",
     )
+    auth_code = fields.Char(
+        help="""Auth code to generate access token""",
+        readonly=True,
+    )
 
     # Test
     test_mode = fields.Boolean(default=True)
@@ -77,6 +76,10 @@ class ClickupBackend(models.Model):
         [("v2", "V2")],
         default="v2",
         help="""select the version for api url path""",
+    )
+    auth_code_test = fields.Char(
+        help="""Auth code to generate access token""",
+        readonly=True,
     )
 
     def redirect_action(self):
@@ -343,6 +346,24 @@ class ClickupBackend(models.Model):
         for backend in backends:
             backend.export_tasks()
 
+    def get_team_info(self):
+        """Set team in team id field"""
+        with self.work_on(self._name) as work:
+            backend_adapter = work.component(usage="backend.adapter")
+            team_id_dict = backend_adapter.get_team()
+            teams = team_id_dict.get("teams", [])
+            team = [team.get("id") for team in teams]
+            self.team_id = ",".join(team)
+
+    def _get_company_domain(self):
+        """Add company related domain"""
+        domain = [
+            "|",
+            ("company_id", "=", self.company_id.id),
+            ("company_id", "=", False),
+        ]
+        return domain
+
     def generate_token(self):
         """Generate token for clickup."""
         required_fields = [
@@ -383,38 +404,21 @@ class ClickupBackend(models.Model):
                     self.api_key = token
             return self.get_team_info()
 
-    def get_team_info(self):
-        """Set team in team id field"""
-        with self.work_on(self._name) as work:
-            backend_adapter = work.component(usage="backend.adapter")
-            team_id_dict = backend_adapter.get_team()
-            teams = team_id_dict.get("teams", [])
-            team = [team.get("id") for team in teams]
-            self.team_id = ",".join(team)
-
-    def _get_company_domain(self):
-        """Add company related domain"""
-        domain = [
-            "|",
-            ("company_id", "=", self.company_id.id),
-            ("company_id", "=", False),
-        ]
-        return domain
-
     def get_authorization_url(self):
         """Prepare the authorization url with parameters"""
-        redirect_url = self.redirect_url + "/api"
+        redirect_url = self.redirect_url
 
         if self.test_mode:
             client_id = self.client_id_test
         else:
             client_id = self.client_id
-
+        backend_id = self.id
         params = {
+            "state": backend_id,
             "client_id": client_id,
             "response_type": "code",
             "scope": "read",
-            "redirect_uri": redirect_url,
+            "redirect_uri": redirect_url + "/clickup/oauth/callback",
         }
         authorization_url = "https://app.clickup.com/api?" + urlencode(params)
 

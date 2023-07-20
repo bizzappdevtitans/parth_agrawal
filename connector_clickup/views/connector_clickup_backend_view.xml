@@ -69,6 +69,7 @@
                                 <field
                                 attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="redirect_url"
+                                placeholder="http://localhost:8090"
                             />
                                 <field
                                 attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
@@ -100,6 +101,7 @@
                                 <field
                                 attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="redirect_url"
+                                placeholder="http://localhost:8090"
                             />
                                 <field
                                 attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
@@ -189,6 +191,10 @@
                             />
                                 <group>
                                     <field name="force_update_tasks" />
+                                    <field
+                                    name="datetime_filter_task"
+                                    class="oe_inline"
+                                />
                                 </group>
                                 <group />
                             </page>
@@ -196,7 +202,7 @@
                                 <group>
                                     <group>
                                         <field name="company_id" />
-                                        <field name="datetime_filter_task" />
+
                                         <field name="team_id" />
                                     </group>
                                 </group>

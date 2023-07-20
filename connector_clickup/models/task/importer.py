@@ -118,6 +118,14 @@ class ProjectTaskImportMapper(Component):
         return {"stage_id": stage.id}
 
     @mapping
+    def personal_stage_type_id(self, record):
+        stage_id = record.get("status").get("status")
+        stage = self.env["project.task.type"].search([("name", "=", stage_id)], limit=1)
+        if not stage:
+            raise MappingError(_("Stage not exist"))
+        return {"personal_stage_type_id": stage.id}
+
+    @mapping
     def name(self, record):
         """Map name"""
         name = record.get("name")

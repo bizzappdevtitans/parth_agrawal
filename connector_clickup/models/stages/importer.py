@@ -49,13 +49,11 @@ class ProjectTaskTypeImportMapper(Component):
     @mapping
     def odoo_id(self, record):
         """Creating odoo id"""
-        stage_name = self._check_stage(record)
-        if not stage_name:
-            stage = self.get_binding(record, model=self._apply_on, value="id")
-            if not stage:
-                return {}
-            return {"odoo_id": stage.id}
-        return {}
+
+        stage = self.get_binding(record, model=self._apply_on, value="id")
+        if not stage:
+            return {}
+        return {"odoo_id": stage.id}
 
     @mapping
     def name(self, record):

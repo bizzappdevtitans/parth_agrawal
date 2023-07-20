@@ -2,7 +2,6 @@ import logging
 import socket
 import urllib
 from datetime import datetime
-from urllib.parse import parse_qs, urlparse
 
 import requests
 from simplejson.errors import JSONDecodeError
@@ -65,21 +64,13 @@ class ClickupTokenClient:
         self._client_secret = client_secret
         self._auth_code = auth_code
 
-    def extract_code_from_url(self, url):
-        """Extract the authorization code from the given URL"""
-        parsed_url = urlparse(url)
-        query_params = parse_qs(parsed_url.query)
-        code = query_params.get("code", [""])[0]
-
-        return code
-
     def get_data(self):
         """Get the token grant credentials"""
-        code = self.extract_code_from_url(url=self._auth_code)
+
         data = {
             "client_id": self._client_id,
             "client_secret": self._client_secret,
-            "code": code,
+            "code": self._auth_code,
         }
         return data
 
