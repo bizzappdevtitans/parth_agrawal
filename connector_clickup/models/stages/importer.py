@@ -71,3 +71,10 @@ class ProjectTaskTypeImportMapper(Component):
         if not stage_name:
             return {"backend_id": self.backend_record.id}
         return {}
+
+    @mapping
+    def project_ids(self, record):
+        projects = self.env["project.project"].search(
+            [("clickup_backend_id", "=", self.backend_record.id)]
+        )
+        return {"project_ids": projects.ids}

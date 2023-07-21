@@ -157,6 +157,14 @@ class ClickupBackend(models.Model):
 
     def import_projects(self, with_delay=True):
         """Import Clickup projects button action"""
+        if self.test_mode:
+            if not self.test_location:
+                raise ValidationError(_("Please Provide the Test Location(Space id)"))
+        if not self.test_mode:
+            if not self.uri:
+                raise ValidationError(_("Please Provide the URI (Space id)"))
+        if not self.team_id:
+            raise ValidationError(_("Please Provide the team id"))
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.project",
@@ -168,6 +176,14 @@ class ClickupBackend(models.Model):
 
     def import_tasks(self, with_delay=True):
         """Import Clickup tasks button action"""
+        if self.test_mode:
+            if not self.test_location:
+                raise ValidationError(_("Please Provide the Test Location(Space id)"))
+        if not self.test_mode:
+            if not self.uri:
+                raise ValidationError(_("Please Provide the URI (Space id)"))
+        if not self.team_id:
+            raise ValidationError(_("Please Provide the team id"))
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.task",
@@ -179,6 +195,14 @@ class ClickupBackend(models.Model):
 
     def import_stages(self, with_delay=True):
         """Import Clickup stages button action"""
+        if self.test_mode:
+            if not self.test_location:
+                raise ValidationError(_("Please Provide the Test Location(Space id)"))
+        if not self.test_mode:
+            if not self.uri:
+                raise ValidationError(_("Please Provide the URI (Space id)"))
+        if not self.team_id:
+            raise ValidationError(_("Please Provide the team id"))
         for backend in self:
             backend._import_from_date(
                 model="clickup.project.task.type",
@@ -232,6 +256,14 @@ class ClickupBackend(models.Model):
 
     def export_projects(self, with_delay=True, from_sync=False):
         """Export Clickup projects button action"""
+        if self.test_mode:
+            if not self.test_location:
+                raise ValidationError(_("Please Provide the Test Location(Space id)"))
+        if not self.test_mode:
+            if not self.uri:
+                raise ValidationError(_("Please Provide the URI (Space id)"))
+        if not self.team_id:
+            raise ValidationError(_("Please Provide the team id"))
         for backend in self.sudo():
             backend._export_from_date(
                 model="clickup.project.project",
@@ -242,6 +274,14 @@ class ClickupBackend(models.Model):
 
     def export_tasks(self, with_delay=True, from_sync=False):
         """Export Clickup tasks button action"""
+        if self.test_mode:
+            if not self.test_location:
+                raise ValidationError(_("Please Provide the Test Location(Space id)"))
+        if not self.test_mode:
+            if not self.uri:
+                raise ValidationError(_("Please Provide the URI (Space id)"))
+        if not self.team_id:
+            raise ValidationError(_("Please Provide the team id"))
         for backend in self.sudo():
             backend._export_from_date(
                 model="clickup.project.task",

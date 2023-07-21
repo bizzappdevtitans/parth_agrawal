@@ -86,4 +86,3 @@ class ResUsersImportMapper(Component):
             picture_data = response.content
             picture_base64 = base64.b64encode(picture_data)
             return {"image_1920": picture_base64}
-        return {}

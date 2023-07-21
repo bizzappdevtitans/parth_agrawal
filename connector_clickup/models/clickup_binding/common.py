@@ -24,7 +24,6 @@ class ClickupBinding(models.AbstractModel):
     def import_record(self, backend, external_id, force=False, data=None, **kwargs):
         with backend.work_on(self._name) as work:
             importer = work.component(usage="record.importer")
-
             return importer.run(external_id, force=force, data=data, **kwargs)
 
     @api.model
