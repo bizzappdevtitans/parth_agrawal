@@ -122,6 +122,7 @@ class ClickupClient:
         if resource_path is None:
             _logger.exception("Remote System API called without resource path")
             raise NotImplementedError
+
         url = self._location + resource_path
         if http_method is None:
             http_method = "get"
@@ -137,6 +138,7 @@ class ClickupClient:
         res = function(url, **kwargs)
         try:
             results = res.json()
+
         except JSONDecodeError as err:
             raise InvalidDataError from err(
                 url, res.status_code, res._content, headers, __name__

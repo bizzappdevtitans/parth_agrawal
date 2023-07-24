@@ -191,6 +191,7 @@ class ClickupBackend(models.Model):
                 priority=10,
                 with_delay=with_delay,
                 force_update_field="force_update_tasks",
+                filters={"subtasks": True, "reverse": True},
             )
 
     def import_stages(self, with_delay=True):

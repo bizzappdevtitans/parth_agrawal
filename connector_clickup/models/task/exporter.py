@@ -91,6 +91,13 @@ class ProjectTaskImportMapper(Component):
         return {"status": record.stage_id.name}
 
     @mapping
+    def parent(self, record):
+        """Mapped stage"""
+        parent = record.parent_id.clickup_bind_ids.external_id
+        if parent:
+            return {"parent": parent}
+
+    @mapping
     def tags(self, record):
         """Mapped tags"""
         total_tags = []

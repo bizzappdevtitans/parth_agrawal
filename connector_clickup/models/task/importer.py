@@ -90,6 +90,14 @@ class ProjectTaskImportMapper(Component):
     _apply_on = "clickup.project.task"
     _map_child_fallback = "clickup.map.child.import"
 
+    def extract_currency_value(self, record):
+        """Extracts the value of a custom field of type 'currency'."""
+        for field in record.get("custom_fields", []):
+            if field["type"] == "currency":
+                value = field.get("value")
+                return value
+        return None
+
     @only_create
     @mapping
     def odoo_id(self, record):
@@ -107,6 +115,15 @@ class ProjectTaskImportMapper(Component):
         project = binder.to_internal(project_id, unwrap=True)
         if project:
             return {"project_id": project.id}
+
+    @mapping
+    def display_project_id(self, record):
+        """Map project id"""
+        project_id = record.get("list").get("id")
+        binder = self.binder_for("clickup.project.project")
+        project = binder.to_internal(project_id, unwrap=True)
+        if project:
+            return {"display_project_id": project.id}
 
     @mapping
     def stage_id(self, record):
@@ -190,6 +207,18 @@ class ProjectTaskImportMapper(Component):
         return {"company_id": self.backend_record.company_id.id}
 
     @mapping
+    def parent_id(self, record):
+        """Map company id"""
+        parent_task = record.get("parent")
+
+        task = self.env["project.task"].search(
+            [("clickup_bind_ids.external_id", "=", parent_task)]
+        )
+
+        if task:
+            return {"parent_id": task.id}
+
+    @mapping
     def assignee_id(self, record):
         """Map assignee id"""
         assignees = record.get("assignees", [])
@@ -207,6 +236,12 @@ class ProjectTaskImportMapper(Component):
             if not user:
                 raise MappingError(_("User Not Exist for assigning the task"))
         return {"user_ids": assignee_ids}
+
+    @mapping
+    def estimated_cost(self, record):
+        cost = self.extract_currency_value(record=record)
+        if cost:
+            return {"estimated_cost": cost}
 
     def finalize(self, map_record, values):
         """Tags mapping through child mapper"""

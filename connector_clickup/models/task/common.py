@@ -47,6 +47,8 @@ class ProjectTask(models.Model):
     updated_at = fields.Datetime(related="clickup_bind_ids.updated_at", readonly=True)
     project_info = fields.Char(readonly=True)
 
+    estimated_cost = fields.Char()
+
     def action_open_task_in_clickup(self):
         """This method open the particular task on clickup's website"""
         return {
@@ -255,6 +257,7 @@ class TaskAdapter(Component):
             self._clickup_model = "/list/{}/task".format(external_id)
             task_payload = self._call(self._clickup_model, arguments=filters)
             result.append(task_payload)
+
         return result
 
     def create(self, data):
@@ -265,6 +268,7 @@ class TaskAdapter(Component):
         """
 
         external_id = data.get("project_id")
+
         if external_id:
             resource_path = "/list/{}/task".format(external_id)
             self._clickup_model = resource_path

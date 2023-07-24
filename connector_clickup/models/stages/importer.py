@@ -6,6 +6,8 @@ from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
 from odoo.addons.connector.exception import MappingError
 
+# from odoo.exceptions import ValidationError
+
 _logger = logging.getLogger(__name__)
 
 
@@ -42,8 +44,10 @@ class ProjectTaskTypeImportMapper(Component):
 
     def _check_stage(self, record):
         name = record.get("status")
-        stage_name = self.env["project.task.type"].search([("name", "=", name)])
-        return stage_name
+        stage = self.env["clickup.project.task.type"].search(
+            [("odoo_id.name", "=", name)]
+        )
+        return stage
 
     @only_create
     @mapping
@@ -58,11 +62,11 @@ class ProjectTaskTypeImportMapper(Component):
     @mapping
     def name(self, record):
         """Map name"""
-        stage_name = self._check_stage(record)
-        if not stage_name:
+        stage = self._check_stage(record)
+        if not stage:
             return {"name": record.get("status")}
-        if stage_name:
-            raise MappingError(_("'%s' Stage already exist") % stage_name.name)
+        else:
+            raise MappingError(_("Stage already exist"))
 
     @mapping
     def backend_id(self, record):
