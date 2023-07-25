@@ -17,5 +17,4 @@ class ClickupModelBinder(Component):
         "clickup.project.project",
         "clickup.project.task",
         "clickup.project.task.type",
-        "clickup.res.users",
     ]

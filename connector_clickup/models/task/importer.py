@@ -219,26 +219,8 @@ class ProjectTaskImportMapper(Component):
             return {"parent_id": task.id}
 
     @mapping
-    def assignee_id(self, record):
-        """Map assignee id"""
-        assignees = record.get("assignees", [])
-        if not assignees:
-            return {"user_ids": self.env.user}
-        assignee_ids = []
-        for assignee in assignees:
-            user_id = assignee.get("id")
-            user = self.env["res.users"].search(
-                [("login", "=", user_id)],
-                limit=1,
-            )
-            if user:
-                assignee_ids.append(user.id)
-            if not user:
-                raise MappingError(_("User Not Exist for assigning the task"))
-        return {"user_ids": assignee_ids}
-
-    @mapping
     def estimated_cost(self, record):
+        """Map custom currency field"""
         cost = self.extract_currency_value(record=record)
         if cost:
             return {"estimated_cost": cost}

@@ -1,10 +1,7 @@
 import logging
 
-from odoo import _
-
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping, only_create
-from odoo.addons.connector.exception import MappingError
 
 # from odoo.exceptions import ValidationError
 
@@ -42,12 +39,12 @@ class ProjectTaskTypeImportMapper(Component):
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.project.task.type"
 
-    def _check_stage(self, record):
-        name = record.get("status")
-        stage = self.env["clickup.project.task.type"].search(
-            [("odoo_id.name", "=", name)]
-        )
-        return stage
+    # def _check_stage(self, record):
+    #     external_id = record.get("id")
+    #     stage = self.env["clickup.project.task.type"].search(
+    #         [("external_id", "=", external_id)]
+    #     )
+    #     return stage
 
     @only_create
     @mapping
@@ -60,25 +57,20 @@ class ProjectTaskTypeImportMapper(Component):
         return {"odoo_id": stage.id}
 
     @mapping
-    def name(self, record):
-        """Map name"""
-        stage = self._check_stage(record)
-        if not stage:
-            return {"name": record.get("status")}
-        else:
-            raise MappingError(_("Stage already exist"))
-
-    @mapping
-    def backend_id(self, record):
-        """Map the backend id"""
-        stage_name = self._check_stage(record)
-        if not stage_name:
-            return {"backend_id": self.backend_record.id}
-        return {}
-
-    @mapping
     def project_ids(self, record):
         projects = self.env["project.project"].search(
             [("clickup_backend_id", "=", self.backend_record.id)]
         )
         return {"project_ids": projects.ids}
+
+    @mapping
+    def name(self, record):
+        """Map name"""
+
+        return {"name": record.get("status")}
+
+    @mapping
+    def backend_id(self, record):
+        """Map the backend id"""
+
+        return {"backend_id": self.backend_record.id}

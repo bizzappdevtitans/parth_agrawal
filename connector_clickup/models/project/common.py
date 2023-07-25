@@ -64,12 +64,14 @@ class ProjectProject(models.Model):
         self.env["clickup.project.project"].import_record(
             backend=self.sudo().clickup_backend_id,
             external_id=self.clickup_bind_ids.external_id,
+            force=True,
         )
         self.get_project_chats()
         for task in self.tasks:
             self.env["clickup.project.task"].import_record(
                 backend=self.sudo().clickup_backend_id,
                 external_id=task.clickup_bind_ids.external_id,
+                force=True,
             )
 
     def update_export_project(self):

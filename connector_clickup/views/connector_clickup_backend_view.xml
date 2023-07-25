@@ -144,18 +144,7 @@
                             />
                             </page>
                             <page string="Import">
-                                <span style="margin-right: 10px;">
-                                    <b>Click to Import Members of ClickUp</b>
-                                </span>
-                                <button
-                                class="oe_highlight"
-                                name="import_members"
-                                string="Import Members"
-                                type="object"
-                            />
-                                <group />
-                                <group />
-                                <br />
+
                                 <span style="margin-right: 10px;">
                                     <b>Click to Import Projects of ClickUp</b>
                                 </span>

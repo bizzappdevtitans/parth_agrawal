@@ -94,26 +94,6 @@
             <field name="channel_id" ref="channel_clickup" />
         </record>
 
-        <!-- Clickup Res Users import-->
-        <record id="job_function_clickup_import_user_batch" model="queue.job.function">
-            <field name="model_id" ref="connector_clickup.model_clickup_res_users" />
-            <field name="method">import_batch</field>
-            <field
-                name="related_action"
-                eval='{"func_name": "related_action_open_view"}'
-            />
-            <field name="channel_id" ref="channel_clickup" />
-        </record>
-
-        <record id="job_function_clickup_import_user_record" model="queue.job.function">
-            <field name="model_id" ref="connector_clickup.model_clickup_res_users" />
-            <field name="method">import_record</field>
-            <field
-                name="related_action"
-                eval='{"func_name": "related_action_open_view"}'
-            />
-            <field name="channel_id" ref="channel_clickup" />
-        </record>
         <!-- Clickup project project export-->
         <record
             id="job_function_clickup_export_project_batch"
