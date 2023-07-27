@@ -37,6 +37,7 @@ def queue_job_description(self, model):
 def update_existing_message(self, messages, external_id, comment_text):
     """Update comments and attachments from clickup to project"""
     existing_message = messages.filtered(lambda msg: msg.external_id == external_id)
+
     existing_message.write({"body": comment_text})
 
 

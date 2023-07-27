@@ -58,7 +58,7 @@
                         title="Production"
                     />
 
-                        <group>
+                      <group>
                             <group>
                                 <field
                                 name="name"
@@ -69,16 +69,16 @@
                             </group>
                             <group attrs="{'invisible': [('test_mode', '=', True)]}">
                                 <field
-                                attrs="{'invisible': [('auth_type', '=', 'api_key')],'required': [('auth_type', '=', 'Oauth')]}"
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="redirect_url"
                                 placeholder="http://localhost:8090"
                             />
                                 <field
-                                attrs="{'invisible': [('auth_type', '=', 'api_key')],'required': [('auth_type', '=', 'Oauth')]}"
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="client_id"
                             />
                                 <field
-                                attrs="{'invisible': [('auth_type', '=', 'api_key')],'required': [('auth_type', '=', 'Oauth')]}"
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="client_secret"
                                 password="True"
                             />
@@ -95,29 +95,22 @@
                                 <field
                                 name="url_path"
                                 placeholder="https://api.clickup.com"
-                                attrs="{'required': [('test_mode', '=', False)]}"
                             />
-                                <field
-                                name="version"
-                                attrs="{'required': [('test_mode', '=', False)]}"
-                            />
-                                <field
-                                name="uri"
-                                attrs="{'required': [('test_mode', '=', False)]}"
-                            />
+                                <field name="version" />
+                                <field name="uri" />
                             </group>
                             <group attrs="{'invisible': [('test_mode', '=', False)]}">
                                 <field
-                                attrs="{'invisible': [('auth_type', '=', 'api_key')],'required': [('auth_type', '=', 'Oauth')]}"
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="redirect_url"
                                 placeholder="http://localhost:8090"
                             />
                                 <field
-                                attrs="{'invisible': [('auth_type', '=', 'api_key')],'required': [('auth_type', '=', 'Oauth')]}"
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="test_client_id"
                             />
                                 <field
-                                attrs="{'invisible': [('auth_type', '=', 'api_key')],'required': [('auth_type', '=', 'Oauth')]}"
+                                attrs="{'invisible': [('auth_type', '=', 'api_key')]}"
                                 name="test_client_secret"
                                 password="True"
                             />
@@ -134,16 +127,9 @@
                                 <field
                                 name="test_url_path"
                                 placeholder="https://api.clickup.com"
-                                attrs="{'required': [('test_mode', '=', True)]}"
                             />
-                                <field
-                                name="version"
-                                attrs="{'required': [('test_mode', '=', True)]}"
-                            />
-                                <field
-                                name="test_location"
-                                attrs="{'required': [('test_mode', '=', True)]}"
-                            />
+                                <field name="version" />
+                                <field name="test_location" />
                             </group>
                         </group>
                         <notebook>

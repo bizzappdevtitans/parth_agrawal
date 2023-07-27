@@ -2,10 +2,7 @@
     "name": "ClickUp Connector",
     "version": "16.0.1.0.0",
     "category": "Connector",
-    "depends": [
-        "project",
-        "connector",
-    ],
+    "depends": ["project", "connector", "projects_task_checklists"],
     "author": "Bizzappdev",
     "license": "LGPL-3",
     "website": "https://bizzappdev.com",

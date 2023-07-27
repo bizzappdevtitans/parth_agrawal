@@ -100,3 +100,15 @@ class ProjectTaskImportMapper(Component):
                 }
             )
         return {"tags": total_tags}
+
+    @mapping
+    def resolved(self, record):
+        """Mapped checklist items"""
+
+        total_record = []
+        for rec in record.checklists:
+            if rec.state == "todo":
+                total_record.append(rec)
+                return {"resolved": False}
+            if rec.state == "done":
+                return {"resolved": True}

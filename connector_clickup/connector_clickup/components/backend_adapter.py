@@ -121,7 +121,6 @@ class ClickupClient:
             _logger.exception("Remote System API called without resource path")
             raise NotImplementedError
         url = self._location + resource_path
-
         if http_method is None:
             http_method = "get"
         function = getattr(requests, http_method)
@@ -318,6 +317,15 @@ class ClickupCRUDAdapter(AbstractComponent):
             resource_path=resource_path,
             arguments=arguments,
             http_method="get",
+            is_token=False,
+        )
+
+    def set_checklist(self, arguments=None, http_method=None, resource_path=None):
+        """Method to get chats from remote system"""
+        return self._call(
+            resource_path=resource_path,
+            arguments=arguments,
+            http_method="put",
             is_token=False,
         )
 

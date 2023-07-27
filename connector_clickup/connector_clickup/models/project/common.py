@@ -113,20 +113,18 @@ class ProjectProject(models.Model):
                 resource_path="/list/" + self.clickup_bind_ids.external_id + "/comment"
             )
             comments = chat_dict.get("comments", [])
-            task_messages = (
+            messages = (
                 self.env["mail.message"]
                 .sudo()
                 .search([("res_id", "=", self.id), ("model", "=", "project.project")])
             )
-            existing_external_ids = task_messages.mapped("external_id")
+            existing_external_ids = messages.mapped("external_id")
             for comment_data in comments:
                 comment_id = comment_data.get("id", "")
                 comment_text = comment_data.get("comment_text", "")
                 commenter_email = comment_data.get("user", {}).get("email", "")
                 if comment_id in existing_external_ids:
-                    update_existing_message(
-                        self, task_messages, comment_id, comment_text
-                    )
+                    update_existing_message(self, messages, comment_id, comment_text)
                     continue
                 # Attachments
                 attachments = comment_data.get("comment", [])
@@ -134,7 +132,7 @@ class ProjectProject(models.Model):
                 author_id = find_author(self, commenter_email)
                 create_comment_with_attachments(
                     self,
-                    task_messages,
+                    messages,
                     comment_id,
                     self.id,
                     comment_text,

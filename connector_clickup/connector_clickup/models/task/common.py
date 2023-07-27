@@ -78,6 +78,7 @@ class ProjectTask(models.Model):
         self.env["clickup.project.task"].export_record(
             backend=self.sudo().clickup_backend_id, record=self
         )
+        self.update_checklist()
 
     def export_task_to_clickup(self):
         """Export newly created task from odoo to clickup website"""
@@ -106,20 +107,18 @@ class ProjectTask(models.Model):
                 resource_path="/task/" + self.clickup_bind_ids.external_id + "/comment"
             )
             comments = chat_dict.get("comments", [])
-            task_messages = (
+            messages = (
                 self.env["mail.message"]
                 .sudo()
-                .search([("res_id", "=", self.id), ("model", "=", "project.project")])
+                .search([("res_id", "=", self.id), ("model", "=", "project.task")])
             )
-            existing_external_ids = task_messages.mapped("external_id")
+            existing_external_ids = messages.mapped("external_id")
             for comment_data in comments:
                 comment_id = comment_data.get("id", "")
                 comment_text = comment_data.get("comment_text", "")
                 commenter_email = comment_data.get("user", {}).get("email", "")
                 if comment_id in existing_external_ids:
-                    update_existing_message(
-                        self, task_messages, comment_id, comment_text
-                    )
+                    update_existing_message(self, messages, comment_id, comment_text)
                     continue
                 # Attachments
                 attachments = comment_data.get("comment", [])
@@ -127,13 +126,28 @@ class ProjectTask(models.Model):
                 author_id = find_author(self, commenter_email)
                 create_comment_with_attachments(
                     self,
-                    task_messages,
+                    messages,
                     comment_id,
                     self.id,
                     comment_text,
                     author_id,
                     attachment_urls,
                     model=self._name,
+                )
+
+    def update_checklist(self):
+        """Update checklist items in ClickUp based on the state"""
+        self.ensure_one()
+        with self.clickup_backend_id.work_on("clickup.project.task") as work:
+            backend_adapter = work.component(usage="backend.adapter")
+            for record in self.checklists:
+                resolved_status = record.state == "done"
+                backend_adapter.set_checklist(
+                    resource_path="/checklist/"
+                    + record.parent_checklist
+                    + "/checklist_item/"
+                    + record.item_id,
+                    arguments={"resolved": resolved_status},
                 )
 
 

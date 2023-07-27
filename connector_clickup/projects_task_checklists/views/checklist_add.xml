@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="project_task_progress_notebook" model="ir.ui.view">
+        <field name="name">project.task.notebook</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="checklist_id" invisible="1" />
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[last()]" position="after">
+                <page
+                    string="Checklist"
+                    attrs="{'invisible':[('checklist_id','=',False)]}"
+                >
+                    <field name="checklists">
+                        <tree>
+                            <field name="name" />
+                            <button
+                                type="object"
+                                name="mark_completed"
+                                icon="fa-check-circle"
+                                string="Complete"
+                                title="Complete"
+                                class="text-success"
+                            />
+                            <button
+                                type="object"
+                                name="reset_stage"
+                                icon="fa-times"
+                                string="To Do"
+                                title="To Do"
+                                class="text-danger"
+                            />
+                            <field name="state" />
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
