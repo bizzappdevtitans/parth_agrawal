@@ -232,6 +232,11 @@ class ClickupBackend(models.Model):
                 priority=10,
                 with_delay=with_delay,
             )
+            tasks = self.env["project.task"].search(
+                [("clickup_backend_id", "=", backend.id)]
+            )
+            for task in tasks:
+                task.update_checklist()
 
     def _export_from_date(
         self,

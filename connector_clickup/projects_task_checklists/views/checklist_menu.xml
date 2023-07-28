@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+    <!-- Task checklist tree view -->
     <record id="task_checklist_action_tree" model="ir.ui.view">
         <field name="name">task.checklist.action.tree</field>
         <field name="model">task.checklist</field>
@@ -11,7 +12,7 @@
         </field>
     </record>
 
-
+    <!-- Task checklist form view -->
     <record id="task_checklist_action_form" model="ir.ui.view">
         <field name="name">task.checklist.action.form</field>
         <field name="model">task.checklist</field>
@@ -27,7 +28,6 @@
                             <field name="task_ids" />
                         </group>
                     </group>
-
                     <label for="checklist_ids" string="CheckList Items" />
                     <field name="checklist_ids">
                         <tree create="1">
@@ -39,14 +39,13 @@
         </field>
     </record>
 
-
+    <!-- Checklist item form view -->
     <record id="checklist_item_action_form" model="ir.ui.view">
         <field name="name">checklist.item.action.form</field>
         <field name="model">checklist.item</field>
         <field name="arch" type="xml">
             <form string="Checklist Item">
                 <header>
-
                     <button
                         type="object"
                         name="mark_completed"
@@ -78,7 +77,7 @@
         </field>
     </record>
 
-
+    <!-- Task checklist action -->
     <record id="task_checklist_action" model="ir.actions.act_window">
         <field name="name">Task Checklist</field>
         <field name="res_model">task.checklist</field>
@@ -90,7 +89,7 @@
         </field>
     </record>
 
-
+    <!-- menu buttons -->
     <menuitem
         id="project_checklist_root"
         name="Checklist"

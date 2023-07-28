@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+    <!-- Inherited project.task model form view to add checklist page -->
     <record id="project_task_progress_notebook" model="ir.ui.view">
         <field name="name">project.task.notebook</field>
         <field name="model">project.task</field>
