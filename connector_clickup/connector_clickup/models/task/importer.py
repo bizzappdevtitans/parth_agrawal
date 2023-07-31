@@ -86,6 +86,14 @@ class ProjectTaskImportMapper(Component):
     _apply_on = "clickup.project.task"
     _map_child_fallback = "clickup.map.child.import"
 
+    children = [
+        (
+            "checklists",
+            "checklist_ids",
+            "clickup.task.checklist",
+        ),
+    ]
+
     def extract_currency_value(self, record):
         """Extracts the value of a custom field of type 'currency'."""
         for field in record.get("custom_fields", []):
@@ -220,67 +228,67 @@ class ProjectTaskImportMapper(Component):
         cost = self.extract_currency_value(record=record)
         return {"estimated_cost": cost} if cost else {}
 
-    @mapping
-    def clickup_checklists(self, record):
-        """Map ClickUp checklists to task.checklist and checklist.item in Odoo."""
-        checklists = record.get("checklists", [])
-        checklist_item_mapping = {}
+    # @mapping
+    # def clickup_checklists(self, record):
+    #     """Map ClickUp checklists to task.checklist and checklist.item in Odoo."""
+    #     checklists = record.get("checklists", [])
+    #     checklist_item_mapping = {}
 
-        task_checklist = None
+    #     task_checklist = None
 
-        for checklist_data in checklists:
-            checklist_items_data = checklist_data.get("items", [])
-            checklist_name = checklist_data.get("id")
+    #     for checklist_data in checklists:
+    #         checklist_items_data = checklist_data.get("items", [])
+    #         checklist_name = checklist_data.get("id")
 
-            if checklist_name:
-                # Create or find the task.checklist record
-                task_checklist = self.env["task.checklist"].search(
-                    [("name", "=", checklist_name)]
-                )
+    #         if checklist_name:
+    #             # Create or find the task.checklist record
+    #             task_checklist = self.env["task.checklist"].search(
+    #                 [("name", "=", checklist_name)]
+    #             )
 
-                if not task_checklist:
-                    task_checklist = self.env["task.checklist"].create(
-                        {"name": checklist_name}
-                    )
+    #             if not task_checklist:
+    #                 task_checklist = self.env["task.checklist"].create(
+    #                     {"name": checklist_name}
+    #                 )
 
-                for item_data in checklist_items_data:
-                    checklist_item_name = item_data.get("name")
-                    checklist_item_id = item_data.get("id")
-                    checklist_item_state = item_data.get("resolved")
-                    checklist_item = self.env["checklist.item"].search(
-                        [("item_id", "=", checklist_item_id)]
-                    )
+    #             for item_data in checklist_items_data:
+    #                 checklist_item_name = item_data.get("name")
+    #                 checklist_item_id = item_data.get("id")
+    #                 checklist_item_state = item_data.get("resolved")
+    #                 checklist_item = self.env["checklist.item"].search(
+    #                     [("checklist_item", "=", checklist_item_id)]
+    #                 )
 
-                    if not checklist_item:
-                        # Create the checklist.item record and store the mapping
-                        checklist_item = self.env["checklist.item"].create(
-                            {
-                                "name": checklist_item_name,
-                                "item_id": checklist_item_id,
-                                "checklist_id": task_checklist.id,
-                                "state": "done" if checklist_item_state else "todo",
-                            }
-                        )
-                    if checklist_item:
-                        # Update the existing checklist.item record
-                        checklist_item.write(
-                            {
-                                "name": checklist_item_name,
-                                "item_id": checklist_item_id,
-                                "checklist_id": task_checklist.id,
-                                "state": "done" if checklist_item_state else "todo",
-                            }
-                        )
+    #                 if not checklist_item:
+    #                     # Create the checklist.item record and store the mapping
+    #                     checklist_item = self.env["checklist.item"].create(
+    #                         {
+    #                             "name": checklist_item_name,
+    #                             "checklist_item": checklist_item_id,
+    #                             "checklist_id": task_checklist.id,
+    #                             "state": "done" if checklist_item_state else "todo",
+    #                         }
+    #                     )
+    #                 if checklist_item:
+    #                     # Update the existing checklist.item record
+    #                     checklist_item.write(
+    #                         {
+    #                             "name": checklist_item_name,
+    #                             "checklist_item": checklist_item_id,
+    #                             "checklist_id": task_checklist.id,
+    #                             "state": "done" if checklist_item_state else "todo",
+    #                         }
+    #                     )
 
-                    checklist_item_mapping[item_data["id"]] = checklist_item.id
+    #                 checklist_item_mapping[item_data["id"]] = checklist_item.id
 
-        if task_checklist:
-            return {
-                "checklist_id": task_checklist.id,
-                "checklists": [(6, 0, list(checklist_item_mapping.values()))],
-            }
-        else:
-            return {}
+    #     if task_checklist:
+    #         return {
+    #             "checklist_id": task_checklist.id,
+    #             "checklists": [(6, 0, list(checklist_item_mapping.values()))],
+    #         }
+    #     else:
+    #         return {}
 
     def finalize(self, map_record, values):
         """Tags mapping through child mapper"""

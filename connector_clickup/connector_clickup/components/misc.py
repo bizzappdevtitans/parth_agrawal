@@ -1,3 +1,5 @@
+from collections import Counter
+
 from odoo import _, fields
 from odoo.exceptions import ValidationError
 from odoo.tools.misc import ustr
@@ -26,12 +28,16 @@ def to_iso_datetime(date):
         raise ValidationError from ex(_("%s") % (ustr(ex)))
 
 
-def queue_job_description(self, model):
-    """Return dynamic queue job description"""
-    model_parts = model.split(".")
-    model_name = " ".join(part.title() for part in model_parts[1:])
-    model_name = " ".join(dict.fromkeys(model_name.split()))
-    return model_name
+def get_queue_job_description(model_name, batch=False, type=""):
+    """Customize queue job description"""
+    if batch:
+        message = "Prepare Batch {} of ".format(type)
+    else:
+        message = "Record {} of ".format(type)
+    return "{} {}".format(
+        message,
+        " ".join(list(Counter(model_name.replace(".", " ").title().split()).keys())),
+    )
 
 
 def update_existing_message(self, messages, external_id, comment_text):

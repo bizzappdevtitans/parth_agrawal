@@ -8,11 +8,12 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="checklist_id" invisible="1" />
+                <field name="checklist_ids" widget="many2many_tags" />
             </xpath>
             <xpath expr="//form/sheet/notebook/page[last()]" position="after">
                 <page
                     string="Checklist"
-                    attrs="{'invisible':[('checklist_id','=',False)]}"
+                    attrs="{'invisible':[('checklist_ids','=',[])]}"
                 >
                     <field name="checklists">
                         <tree>

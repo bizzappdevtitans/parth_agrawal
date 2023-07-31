@@ -13,7 +13,7 @@ from ...components.backend_adapter import (
     ClickupLocation,
     ClickupTokenLocation,
 )
-from ...components.misc import queue_job_description, to_iso_datetime
+from ...components.misc import get_queue_job_description, to_iso_datetime
 
 _logger = logging.getLogger(__name__)
 IMPORT_DELTA_BUFFER = 30  # seconds
@@ -43,7 +43,9 @@ class ClickupBackend(models.Model):
          or updated after your provided date and time"""
     )
     force_update_tasks = fields.Boolean()
-    company_id = fields.Many2one(comodel_name="res.company", string="Company")
+    company_id = fields.Many2one(
+        comodel_name="res.company", string="Company", required=True
+    )
     team_id = fields.Char()
     redirect_url = fields.Char(
         help="""Enter that redirect url which is already set
@@ -112,8 +114,9 @@ class ClickupBackend(models.Model):
             force = False
             if force_update_field:
                 force = backend[force_update_field]
-            model_name = queue_job_description(self, model=model)
-            job_options["description"] = f"Import Batch of Clickup {model_name}"
+            job_options["description"] = get_queue_job_description(
+                model_name=model, batch=True, type="Import"
+            )
 
             self.env[model].with_company(backend.company_id).with_delay(
                 **job_options or {}
@@ -262,8 +265,10 @@ class ClickupBackend(models.Model):
                     from_date = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                 else:
                     from_date = to_iso_datetime(from_date)
-            model_name = queue_job_description(self, model=model)
-            job_options["description"] = f"Export Batch of Clickup {model_name}"
+            job_options["description"] = get_queue_job_description(
+                model_name=model, batch=True, type="Export"
+            )
+
             clickup_model = (
                 self.env[model].with_delay(**job_options or {})
                 if with_delay

@@ -23,6 +23,10 @@ class ClickupProjectTasks(models.Model):
     created_at = fields.Datetime(readonly=True)
     updated_at = fields.Datetime(readonly=True)
 
+    clickup_task_checklist_ids = fields.One2many(
+        comodel_name="clickup.task.checklist", inverse_name="task_checklist_id"
+    )
+
 
 class MailMessage(models.Model):
     _inherit = "mail.message"
@@ -146,7 +150,7 @@ class ProjectTask(models.Model):
                     resource_path="/checklist/"
                     + record.parent_checklist
                     + "/checklist_item/"
-                    + record.item_id,
+                    + record.checklist_item,
                     arguments={"resolved": resolved_status},
                 )
 
