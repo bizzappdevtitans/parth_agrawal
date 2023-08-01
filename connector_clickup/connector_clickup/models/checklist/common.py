@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 from odoo.addons.component.core import Component
 
@@ -14,8 +14,28 @@ class ClickupTaskChecklist(models.Model):
         comodel_name="clickup.checklist.item",
         inverse_name="clickup_checklist_item_id",
     )
-
     task_checklist_id = fields.Many2one("clickup.project.task")
+    # backend_id = fields.Many2one(
+    #     related="task_checklist_id.backend_id",
+    #     string="Shopify Backend",
+    #     readonly=True,
+    #     store=True,
+    # )
+
+    @api.model
+    def create(self, vals):
+        """to set the picking_id on shipment.
+        while importing shipment for the first time
+        - added here as in mapping no binding for the transfer exists
+         to identify based on external id"""
+
+        if not vals.get("task_id"):
+            task_checklist_id = vals.get("task_checklist_id")
+            if not task_checklist_id:
+                return super().create(vals)
+            binding = self.env["clickup.project.task"].browse(task_checklist_id)
+            vals["task_id"] = binding.odoo_id.id
+        return super().create(vals)
 
 
 class TaskChecklist(models.Model):
@@ -26,11 +46,12 @@ class TaskChecklist(models.Model):
         "odoo_id",
         readonly=True,
     )
+
     clickup_backend_id = fields.Many2one(
         "clickup.backend",
         related="clickup_bind_ids.backend_id",
         string="Clickup Backend",
-        readonly=False,
+        readonly=True,
     )
 
 

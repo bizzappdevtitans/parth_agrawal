@@ -235,11 +235,23 @@ class ClickupBackend(models.Model):
                 priority=10,
                 with_delay=with_delay,
             )
-            tasks = self.env["project.task"].search(
-                [("clickup_backend_id", "=", backend.id)]
+            # tasks = self.env["project.task"].search(
+            #     [("clickup_backend_id", "=", backend.id)]
+            # )
+            # for task in tasks:
+            #     task.update_checklist()
+
+    def export_checklists(self, with_delay=True, from_sync=False):
+        """Export Clickup tasks button action"""
+        if not self.team_id:
+            raise ValidationError(_("Please Provide the team id"))
+        for backend in self.sudo():
+            backend._export_from_date(
+                model="clickup.checklist.item",
+                from_date_field=None if not from_sync else False,
+                priority=10,
+                with_delay=with_delay,
             )
-            for task in tasks:
-                task.update_checklist()
 
     def _export_from_date(
         self,

@@ -18,19 +18,28 @@ class TaskChecklistImportMapper(Component):
     children = [
         (
             "items",
-            "checklist_ids",
+            "clickup_checklist_item_ids",
             "clickup.checklist.item",
         ),
     ]
+
+    # @only_create
+    # @mapping
+    # def odoo_id(self, record):
+    #     """Creating odoo id"""
+    #     checklist_id = record.get("id")
+    #     binder = self.binder_for("clickup.task.checklist")
+    #     checklist = binder.to_internal(checklist_id, unwrap=True)
+    #     return {"odoo_id": checklist.id} if checklist else {}
 
     @only_create
     @mapping
     def odoo_id(self, record):
         """Creating odoo id"""
-        checklist_id = record.get("id")
-        binder = self.binder_for("clickup.task.checklist")
-        checklist = binder.to_internal(checklist_id, unwrap=True)
-        return {"odoo_id": checklist.id} if checklist else {}
+        task_checklist = self.get_binding(record, model=self._apply_on, value="id")
+        if not task_checklist:
+            return {}
+        return {"odoo_id": task_checklist.id}
 
     @mapping
     def name(self, record):
@@ -40,12 +49,12 @@ class TaskChecklistImportMapper(Component):
             raise MappingError(_("Checklist must consist name"))
         return {"name": name}
 
-    # @mapping
-    # def exteral_id(self, record):
-    #     """Map external Id"""
-    #     return {"external_id": record.get("id")}
+    @mapping
+    def exteral_id(self, record):
+        """Map external Id"""
+        return {"external_id": record.get("id")}
 
-    # @mapping
-    # def backend_id(self, record):
-    #     """Map backend Id"""
-    #     return {"backend_id": self.backend_record.id}
+    @mapping
+    def backend_id(self, record):
+        """Map backend Id"""
+        return {"backend_id": self.backend_record.id}

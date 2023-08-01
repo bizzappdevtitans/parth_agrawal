@@ -89,7 +89,7 @@ class ProjectTaskImportMapper(Component):
     children = [
         (
             "checklists",
-            "checklist_ids",
+            "clickup_task_checklist_ids",
             "clickup.task.checklist",
         ),
     ]

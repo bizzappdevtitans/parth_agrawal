@@ -167,6 +167,12 @@ class TaskAdapter(Component):
             "list",
         ),
     ]
+    _model_export_dependencies = [
+        (
+            "clickup.checklist.item",
+            "checklists",
+        )
+    ]
 
     def search(self, filters=None, from_date=None, to_date=None):
         """

@@ -1,0 +1,60 @@
+import logging
+
+from odoo.osv import expression
+
+from odoo.addons.component.core import Component
+from odoo.addons.connector.components.mapper import mapping
+
+_logger = logging.getLogger(__name__)
+
+
+class ChecklistItemExporter(Component):
+    _name = "clickup.checklist.item.exporter"
+    _inherit = "clickup.exporter"
+    _apply_on = "clickup.checklist.item"
+
+
+class ChecklistItemDelayedBatchExporter(Component):
+    """Delay import of the records"""
+
+    _name = "clickup.checklist.item.batch.exporter"
+    _inherit = "clickup.delayed.batch.exporter"
+    _apply_on = "clickup.checklist.item"
+
+    def run(self, filters=None, job_options=None):
+        """Run the synchronization"""
+        filters = filters or {}
+        domain = expression.OR(
+            [
+                [("clickup_bind_ids", "=", False)],
+                [("clickup_bind_ids.backend_id", "=", self.backend_record.id)],
+            ]
+        )
+        records = self.env["checklist.item"].search(domain)
+        for record in records:
+            self._export_record(record, job_options=job_options)
+
+
+class ChecklistItemImportMapper(Component):
+    _name = "clickup.checklist.item.export.mapper"
+    _inherit = "clickup.export.mapper"
+    _apply_on = "clickup.checklist.item"
+    _mapper_ext_key = "identifier"
+
+    @mapping
+    def name(self, record):
+        """Mapped name"""
+        return {"name": record.name}
+
+    @mapping
+    def resolved(self, record):
+        """Mapped state"""
+        state = record.state
+        if state == "todo":
+            return {"resolved": False}
+        return {"resolved": True}
+
+    @mapping
+    def task_checklist_id(self, record):
+        """Mapped task checklist id"""
+        return {"task_checklist_id": record.checklist_id.clickup_bind_ids.external_id}

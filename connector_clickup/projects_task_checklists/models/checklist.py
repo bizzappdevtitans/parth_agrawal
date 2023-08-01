@@ -45,7 +45,7 @@ class ChecklistProgress(models.Model):
     _inherit = "project.task"
 
     checklist_id = fields.Many2one("task.checklist", string="Checklist")
-    checklist_ids = fields.Many2many("task.checklist", string="Checklists")
+    checklist_ids = fields.One2many("task.checklist", "task_id", string="Checklists")
     checklists = fields.One2many(
         "checklist.item",
         compute="_compute_checklist_items",
@@ -57,26 +57,3 @@ class ChecklistProgress(models.Model):
         """Get checklist items"""
         for record in self:
             self.checklists = [(6, 0, record.checklist_ids.mapped("checklist_ids").ids)]
-
-    # checklist_ids = fields.One2many("checklist.item", "project_id", string="Checklists")
-    # checklists = fields.One2many(
-    #     "checklist.item",
-    #     compute="_compute_checklist_items",
-    #     string="CheckList Items",
-    # )
-
-    # @api.depends("checklist_ids")
-    # def _compute_checklist_items(self):
-    #     """Get checklist items"""
-    #     for record in self:
-    #         self.checklists = record.checklist_ids
-
-    # @api.onchange("checklist_ids")
-    # def _onchange_project_id(self):
-    #     self.checklists = []
-    #     for rec in self.checklist_ids:
-    #         checklist = self.env["task.checklist"].search(
-    #             [("id", "=", rec.checklist_ids.id)]
-    #         )
-    #         for rec in checklist:
-    #             self.checklists += rec.checklist_ids.checklist_ids.ids

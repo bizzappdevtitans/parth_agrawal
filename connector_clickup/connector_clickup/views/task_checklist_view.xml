@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Inherited task.checklist model form view-->
+    <record id="inherit_task_checklist_form_view" model="ir.ui.view">
+        <field name="name">task.checklist.inherit.form</field>
+        <field name="model">task.checklist</field>
+        <field
+            name="inherit_id"
+            ref="projects_task_checklists.task_checklist_action_form"
+        />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='checklist_ids']" position="after">
+                <field
+                    name="clickup_bind_ids"
+                    attrs="{'invisible':[('clickup_bind_ids','=',[])]}"
+                />
+                <field
+                    name="clickup_backend_id"
+                    attrs="{'invisible':[('clickup_bind_ids','=',[])]}"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherited checklist.item model form view-->
+    <record id="inherit_checklist_item_form_view" model="ir.ui.view">
+        <field name="name">checklist.item.inherit.form</field>
+        <field name="model">checklist.item</field>
+        <field
+            name="inherit_id"
+            ref="projects_task_checklists.checklist_item_action_form"
+        />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_checklist']" position="after">
+                <field
+                    name="clickup_bind_ids"
+                    attrs="{'invisible':[('clickup_bind_ids','=',[])]}"
+                />
+                <field
+                    name="clickup_backend_id"
+                    attrs="{'invisible':[('clickup_bind_ids','=',[])]}"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

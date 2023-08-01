@@ -14,14 +14,23 @@ class ChecklistItemImportMapper(Component):
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.checklist.item"
 
+    # @only_create
+    # @mapping
+    # def odoo_id(self, record):
+    #     """Creating odoo id"""
+    #     checklist_item_id = record.get("id")
+    #     binder = self.binder_for("clickup.checklist.item")
+    #     checklist_item = binder.to_internal(checklist_item_id, unwrap=True)
+    #     return {"odoo_id": checklist_item.id} if checklist_item else {}
+
     @only_create
     @mapping
     def odoo_id(self, record):
         """Creating odoo id"""
-        checklist_item_id = record.get("id")
-        binder = self.binder_for("clickup.checklist.item")
-        checklist_item = binder.to_internal(checklist_item_id, unwrap=True)
-        return {"odoo_id": checklist_item.id} if checklist_item else {}
+        checklist_item = self.get_binding(record, model=self._apply_on, value="id")
+        if not checklist_item:
+            return {}
+        return {"odoo_id": checklist_item.id}
 
     @mapping
     def name(self, record):
@@ -37,15 +46,19 @@ class ChecklistItemImportMapper(Component):
         state = record.get("resolved")
         if state is True:
             return {"state": "done"}
-        if state is False:
-            return {"state": "todo"}
+        return {"state": "todo"}
 
-    # @mapping
-    # def backend_id(self, record):
-    #     """Map backend Id"""
-    #     return {"backend_id": self.backend_record.id}
+    @mapping
+    def exteral_id(self, record):
+        """Map external Id"""
+        # checklist_item = self.env["clickup.checklist.item"].search(
+        #     [("external_id", "=", record.get("id"))]
+        # )
+        # if checklist_item:
+        #     raise MappingError(_("checklist item already exist"))
+        return {"external_id": record.get("id")}
 
-    # @mapping
-    # def exteral_id(self, record):
-    #     """Map external Id"""
-    #     return {"external_id": record.get("id")}
+    @mapping
+    def backend_id(self, record):
+        """Map backend Id"""
+        return {"backend_id": self.backend_record.id}

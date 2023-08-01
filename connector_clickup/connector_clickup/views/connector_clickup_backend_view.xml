@@ -199,6 +199,18 @@
                                 type="object"
                             />
                                 <group />
+
+                                <br />
+                                <span style="margin-right: 27px;">
+                                    <b>Click to Export Checklists In ClickUp remote</b>
+                                </span>
+                                <button
+                                class="oe_highlight"
+                                name="export_checklists"
+                                string="Export Checklists"
+                                type="object"
+                            />
+                                <group />
                             </page>
                              <page string="Advance Configuration">
                                 <group>

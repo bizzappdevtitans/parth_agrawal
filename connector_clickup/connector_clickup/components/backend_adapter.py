@@ -120,6 +120,7 @@ class ClickupClient:
         if resource_path is None:
             _logger.exception("Remote System API called without resource path")
             raise NotImplementedError
+
         url = self._location + resource_path
         if http_method is None:
             http_method = "get"

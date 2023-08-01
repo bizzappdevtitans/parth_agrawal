@@ -7,7 +7,6 @@
         <field name="arch" type="xml">
             <tree string="Task Checklist">
                 <field name="name" />
-                <field name="project_id" />
             </tree>
         </field>
     </record>
@@ -24,7 +23,6 @@
                             <field name="name" />
                         </group>
                         <group>
-                            <field name="project_id" />
                             <field name="task_id" />
                         </group>
                     </group>
@@ -32,6 +30,7 @@
                     <field name="checklist_ids">
                         <tree create="1">
                             <field name="name" required="1" />
+                            <field name="state" />
                         </tree>
                     </field>
                 </sheet>
@@ -89,6 +88,17 @@
         </field>
     </record>
 
+    <record id="checklist_item_action" model="ir.actions.act_window">
+        <field name="name">Checklist Item</field>
+        <field name="res_model">checklist.item</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a checklist Item
+            </p>
+        </field>
+    </record>
+
     <!-- menu buttons -->
     <menuitem
         id="project_checklist_root"
@@ -104,6 +114,14 @@
         name="Task Checklist"
         action="task_checklist_action"
         sequence="1"
+    />
+
+    <menuitem
+        parent="project_checklist_root"
+        id="menu_checklist_item"
+        name="Checklist Item"
+        action="checklist_item_action"
+        sequence="2"
     />
 
 </odoo>
