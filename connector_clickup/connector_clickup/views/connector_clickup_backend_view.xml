@@ -136,7 +136,7 @@
                             <page string="Import">
 
                                 <span style="margin-right: 10px;">
-                                    <b>Click to Import Projects of ClickUp</b>
+                                    <b>Import Projects of ClickUp</b>
                                 </span>
                                 <button
                                 class="oe_highlight"
@@ -148,7 +148,7 @@
                                 <group />
                                 <br />
                                 <span style="margin-right: 19px; ">
-                                    <b>Click to Import Stages of ClickUp</b>
+                                    <b>Import Stages of ClickUp</b>
                                 </span>
                                 <button
                                 class="oe_highlight"
@@ -160,7 +160,7 @@
                                 <group />
                                 <br />
                                 <span style="margin-right: 27px;">
-                                    <b>Click to Import Tasks of ClickUp</b>
+                                    <b>Import Tasks of ClickUp</b>
                                 </span>
                                 <button
                                 class="oe_highlight"
@@ -179,7 +179,7 @@
                             </page>
                             <page string="Export">
                                 <span style="margin-right: 10px;">
-                                    <b>Click to Export Projects In ClickUp remote</b>
+                                    <b>Export Projects In ClickUp remote</b>
                                 </span>
                                 <button
                                 class="oe_highlight"
@@ -190,7 +190,7 @@
                                 <group />
                                 <br />
                                 <span style="margin-right: 27px;">
-                                    <b>Click to Export Tasks In ClickUp remote</b>
+                                    <b>Export Tasks In ClickUp remote</b>
                                 </span>
                                 <button
                                 class="oe_highlight"
@@ -198,18 +198,9 @@
                                 string="Export Tasks"
                                 type="object"
                             />
-                                <group />
-
-                                <br />
-                                <span style="margin-right: 27px;">
-                                    <b>Click to Export Checklists In ClickUp remote</b>
-                                </span>
-                                <button
-                                class="oe_highlight"
-                                name="export_checklists"
-                                string="Export Checklists"
-                                type="object"
-                            />
+                                <group>
+                                    <field name="export_with_checklist" />
+                                </group>
                                 <group />
                             </page>
                              <page string="Advance Configuration">

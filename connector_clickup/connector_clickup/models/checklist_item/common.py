@@ -12,18 +12,11 @@ class ClickupChecklistItem(models.Model):
     odoo_id = fields.Many2one("checklist.item", required=True, ondelete="restrict")
     clickup_checklist_item_id = fields.Many2one("clickup.task.checklist")
 
-    # backend_id = fields.Many2one(
-    #     related="clickup_checklist_item_id.backend_id",
-    #     string="Clickup Backend",
-    #     readonly=True,
-    #     store=True,
-    # )
-
     @api.model
     def create(self, vals):
-        """to set the picking_id on shipment.
-        while importing shipment for the first time
-        - added here as in mapping no binding for the transfer exists
+        """to set the checklist_id of checklist.
+        while importing checklist for the first time
+        - added here as in mapping no binding exists
          to identify based on external id"""
         if not vals.get("checklist_id"):
             clickup_checklist_item_id = vals.get("clickup_checklist_item_id")
@@ -58,14 +51,13 @@ class ChecklistItemAdapter(Component):
     _name = "clickup.checklist.item.adapter"
     _inherit = "clickup.adapter"
     _apply_on = "clickup.checklist.item"
-    _clickup_model = None
+    _clickup_model = "/checklist/{}/checklist_item"
     _clickup_ext_id_key = "id"
 
-    # def write(self, external_id, data):
-    #     """Update records on the external system"""
-    #     resource_path = "/checklist/{}/checklist_item/{}".format(
-    #         data.get("task_checklist_id"), external_id
-    #     )
-    #     result = self._call(resource_path, data, http_method="put")
-    #     return super().write(data)
-    #     return result
+    def write(self, external_id, data):
+        """Update records on the external system"""
+        resource_path = "/checklist/{}/checklist_item".format(
+            data.get("task_checklist_id")
+        )
+        self._clickup_model = resource_path
+        return super().write(external_id, data)

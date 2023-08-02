@@ -321,15 +321,6 @@ class ClickupCRUDAdapter(AbstractComponent):
             is_token=False,
         )
 
-    def set_checklist(self, arguments=None, http_method=None, resource_path=None):
-        """Method to get chats from remote system"""
-        return self._call(
-            resource_path=resource_path,
-            arguments=arguments,
-            http_method="put",
-            is_token=False,
-        )
-
     def _call(self, resource_path, arguments=None, http_method=None, is_token=False):
         """Use clickup api attribute for call method execution"""
         try:

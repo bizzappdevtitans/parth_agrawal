@@ -8,18 +8,18 @@ from odoo.addons.connector.components.mapper import mapping
 _logger = logging.getLogger(__name__)
 
 
-class ChecklistItemExporter(Component):
-    _name = "clickup.checklist.item.exporter"
+class TaskChecklistExporter(Component):
+    _name = "clickup.task.checklist.exporter"
     _inherit = "clickup.exporter"
-    _apply_on = "clickup.checklist.item"
+    _apply_on = "clickup.task.checklist"
 
 
-class ChecklistItemDelayedBatchExporter(Component):
+class TaskChecklistDelayedBatchExporter(Component):
     """Delay import of the records"""
 
-    _name = "clickup.checklist.item.batch.exporter"
+    _name = "clickup.task.checklist.batch.exporter"
     _inherit = "clickup.delayed.batch.exporter"
-    _apply_on = "clickup.checklist.item"
+    _apply_on = "clickup.task.checklist"
 
     def run(self, filters=None, job_options=None):
         """Run the synchronization"""
@@ -30,16 +30,25 @@ class ChecklistItemDelayedBatchExporter(Component):
                 [("clickup_backend_id", "=", self.backend_record.id)],
             ]
         )
-        records = self.env["checklist.item"].search(domain)
+        records = self.env["task.checklist"].search(domain)
         for record in records:
             self._export_record(record, job_options=job_options)
 
 
 class ChecklistItemImportMapper(Component):
-    _name = "clickup.checklist.item.export.mapper"
+    _name = "clickup.task.checklist.export.mapper"
     _inherit = "clickup.export.mapper"
-    _apply_on = "clickup.checklist.item"
+    _apply_on = "clickup.task.checklist"
     _mapper_ext_key = "identifier"
+    # _map_child_fallback = "clickup.map.child.exporter"
+
+    # children = [
+    #     (
+    #         "items",
+    #         "clickup_checklist_item_ids",
+    #         "clickup.checklist.item",
+    #     ),
+    # ]
 
     @mapping
     def name(self, record):
@@ -47,14 +56,6 @@ class ChecklistItemImportMapper(Component):
         return {"name": record.name}
 
     @mapping
-    def resolved(self, record):
-        """Mapped state"""
-        state = record.state
-        if state == "todo":
-            return {"resolved": False}
-        return {"resolved": True}
-
-    @mapping
-    def task_checklist_id(self, record):
-        """Mapped task checklist id"""
-        return {"task_checklist_id": record.checklist_id.clickup_bind_ids.external_id}
+    def task_id(self, record):
+        """Mapped task_id"""
+        return {"task_id": record.clickup_bind_ids.external_id}

@@ -82,7 +82,10 @@ class ProjectTask(models.Model):
         self.env["clickup.project.task"].export_record(
             backend=self.sudo().clickup_backend_id, record=self
         )
-        self.update_checklist()
+        for checklist in self.checklists:
+            self.env["clickup.checklist.item"].export_record(
+                backend=self.sudo().clickup_backend_id, record=checklist
+            )
 
     def export_task_to_clickup(self):
         """Export newly created task from odoo to clickup website"""
@@ -139,21 +142,6 @@ class ProjectTask(models.Model):
                     model=self._name,
                 )
 
-    def update_checklist(self):
-        """Update checklist items in ClickUp based on the state"""
-        self.ensure_one()
-        with self.clickup_backend_id.work_on("clickup.project.task") as work:
-            backend_adapter = work.component(usage="backend.adapter")
-            for record in self.checklists:
-                resolved_status = record.state == "done"
-                backend_adapter.set_checklist(
-                    resource_path="/checklist/"
-                    + record.parent_checklist
-                    + "/checklist_item/"
-                    + record.checklist_item,
-                    arguments={"resolved": resolved_status},
-                )
-
 
 class TaskAdapter(Component):
     _name = "clickup.project.task.adapter"
@@ -166,12 +154,6 @@ class TaskAdapter(Component):
             "clickup.project.project",
             "list",
         ),
-    ]
-    _model_export_dependencies = [
-        (
-            "clickup.checklist.item",
-            "checklists",
-        )
     ]
 
     def search(self, filters=None, from_date=None, to_date=None):

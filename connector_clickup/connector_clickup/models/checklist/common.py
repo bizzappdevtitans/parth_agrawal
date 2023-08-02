@@ -15,18 +15,12 @@ class ClickupTaskChecklist(models.Model):
         inverse_name="clickup_checklist_item_id",
     )
     task_checklist_id = fields.Many2one("clickup.project.task")
-    # backend_id = fields.Many2one(
-    #     related="task_checklist_id.backend_id",
-    #     string="Shopify Backend",
-    #     readonly=True,
-    #     store=True,
-    # )
 
     @api.model
     def create(self, vals):
-        """to set the picking_id on shipment.
-        while importing shipment for the first time
-        - added here as in mapping no binding for the transfer exists
+        """to set the task_id in checklist.
+        while importing task for the first time
+        - added here as in mapping no binding exists
          to identify based on external id"""
 
         if not vals.get("task_id"):

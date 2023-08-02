@@ -23,15 +23,6 @@ class TaskChecklistImportMapper(Component):
         ),
     ]
 
-    # @only_create
-    # @mapping
-    # def odoo_id(self, record):
-    #     """Creating odoo id"""
-    #     checklist_id = record.get("id")
-    #     binder = self.binder_for("clickup.task.checklist")
-    #     checklist = binder.to_internal(checklist_id, unwrap=True)
-    #     return {"odoo_id": checklist.id} if checklist else {}
-
     @only_create
     @mapping
     def odoo_id(self, record):

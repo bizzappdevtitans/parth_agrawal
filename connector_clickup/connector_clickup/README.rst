@@ -103,6 +103,11 @@
 * Particular project can be open in clickup website by clicking "Open Project In Clickup" button in Project form view.
 * We can import the comments and attachments of particular project by clicking "Get ClickUp Comments and Attachments" button in project form view.
 
+**Task Checklists:**
+
+* While using projects_task_checklists module along with the current connector_clickup module we can import the checklists that are created in clickup tasks.
+* We can also change the state for checklist items and can update it from odoo to clickup website by clicking on the "export with checklist" in backend level while exporting the tasks.
+
 **Multi-Company Functionality:**
 
 * We can select any particular company and then can import project and tasks for that company specifically.

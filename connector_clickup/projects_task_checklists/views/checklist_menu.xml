@@ -11,6 +11,23 @@
         </field>
     </record>
 
+    <!-- search/groupby view -->
+    <record id="task_checklist_search_form" model="ir.ui.view">
+        <field name="name">task.checklist.search.form</field>
+        <field name="model">task.checklist</field>
+        <field name="arch" type="xml">
+            <search string="Checklists">
+                <group expand="0" string="Group By">
+                    <filter
+                        string="Task"
+                        name="task_id"
+                        context="{'group_by': 'task_id'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- Task checklist form view -->
     <record id="task_checklist_action_form" model="ir.ui.view">
         <field name="name">task.checklist.action.form</field>
@@ -76,6 +93,40 @@
         </field>
     </record>
 
+     <!-- search/groupby view -->
+    <record id="checklist_item_search_form" model="ir.ui.view">
+        <field name="name">checklist.item.search.form</field>
+        <field name="model">checklist.item</field>
+        <field name="arch" type="xml">
+            <search string="Checklist Items">
+                <group expand="0" string="Group By">
+                    <filter
+                        string="Checklist"
+                        name="checklist_id"
+                        context="{'group_by': 'checklist_id'}"
+                    />
+                    <filter
+                        string="State"
+                        name="state"
+                        context="{'group_by': 'state'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="checklist_item_pivot" model="ir.ui.view">
+        <field name="name">checklist.item.pivot</field>
+        <field name="model">checklist.item</field>
+        <field name="arch" type="xml">
+            <pivot string="Checklist Items" sample="1">
+                <field name="state" type="column" />
+                <field name="checklist_id" type="row" />
+            </pivot>
+        </field>
+    </record>
+
     <!-- Task checklist action -->
     <record id="task_checklist_action" model="ir.actions.act_window">
         <field name="name">Task Checklist</field>
@@ -91,7 +142,7 @@
     <record id="checklist_item_action" model="ir.actions.act_window">
         <field name="name">Checklist Item</field>
         <field name="res_model">checklist.item</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create a checklist Item

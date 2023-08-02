@@ -15,8 +15,12 @@
                     attrs="{'invisible':[('checklist_ids','=',[])]}"
                 >
                     <field name="checklists">
-                        <tree>
-                            <field name="name" />
+                        <tree string="Checklists" decoration-bf="1">
+                            <field
+                                name="name"
+                                decoration-success="state =='done'"
+                                decoration-danger="state =='todo'"
+                            />
                             <button
                                 type="object"
                                 name="mark_completed"
@@ -33,7 +37,12 @@
                                 title="To Do"
                                 class="text-danger"
                             />
-                            <field name="state" />
+                            <field
+                                name="state"
+                                widget="badge"
+                                decoration-success="state =='done'"
+                                decoration-danger="state =='todo'"
+                            />
                         </tree>
                     </field>
                 </page>

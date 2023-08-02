@@ -312,3 +312,10 @@ class DelayedBatchExporter(AbstractComponent):
         )
         delayable = self.model.with_delay(**job_options or {})
         delayable.export_record(self.backend_record, record, **kwargs)
+
+
+class ClickupExportMapperChild(AbstractComponent):
+    """:py:class:`MapChild` for the Imports"""
+
+    _name = "clickup.map.child.export"
+    _inherit = ["base.clickup.connector", "base.map.child.export"]

@@ -42,7 +42,10 @@ class ClickupBackend(models.Model):
         help="""This will get all the tasks which is created
          or updated after your provided date and time"""
     )
-    force_update_tasks = fields.Boolean()
+    force_update_tasks = fields.Boolean(
+        help="""If true,task will be forcefully imported
+        whether it is upto date or not"""
+    )
     company_id = fields.Many2one(
         comodel_name="res.company", string="Company", required=True
     )
@@ -50,6 +53,10 @@ class ClickupBackend(models.Model):
     redirect_url = fields.Char(
         help="""Enter that redirect url which is already set
         in clickup website's Clickup API app"""
+    )
+    export_with_checklist = fields.Boolean(
+        help="""If true, any changes made to the checklist status in odoo tasks
+         will be transferred to clickup along with the tasks."""
     )
     # Live
     api_key = fields.Char(help="Enter API Key")
@@ -156,7 +163,10 @@ class ClickupBackend(models.Model):
                 priority=10,
                 with_delay=with_delay,
                 force_update_field="force_update_tasks",
-                filters={"subtasks": True, "reverse": True},
+                filters={
+                    "subtasks": True,
+                    "reverse": True,
+                },
             )
 
     def import_stages(self, with_delay=True):
@@ -229,17 +239,14 @@ class ClickupBackend(models.Model):
         if not self.team_id:
             raise ValidationError(_("Please Provide the team id"))
         for backend in self.sudo():
+            if backend.export_with_checklist:
+                backend.export_checklists(with_delay=True, from_sync=False)
             backend._export_from_date(
                 model="clickup.project.task",
                 from_date_field=None if not from_sync else False,
                 priority=10,
                 with_delay=with_delay,
             )
-            # tasks = self.env["project.task"].search(
-            #     [("clickup_backend_id", "=", backend.id)]
-            # )
-            # for task in tasks:
-            #     task.update_checklist()
 
     def export_checklists(self, with_delay=True, from_sync=False):
         """Export Clickup tasks button action"""
