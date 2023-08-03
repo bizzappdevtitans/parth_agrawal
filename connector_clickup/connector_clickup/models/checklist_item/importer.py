@@ -14,6 +14,8 @@ class ChecklistItemImportMapper(Component):
     _inherit = "clickup.import.mapper"
     _apply_on = "clickup.checklist.item"
 
+    direct = [("id", "external_id")]
+
     @only_create
     @mapping
     def odoo_id(self, record):
@@ -33,16 +35,11 @@ class ChecklistItemImportMapper(Component):
 
     @mapping
     def state(self, record):
-        """Map the backend id"""
+        """Map the state"""
         state = record.get("resolved")
         if state is True:
             return {"state": "done"}
         return {"state": "todo"}
-
-    @mapping
-    def exteral_id(self, record):
-        """Map external Id"""
-        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):

@@ -1,0 +1,2445 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * connector_clickup
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-03 06:52+0000\n"
+"PO-Revision-Date: 2023-08-03 06:52+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__collaborator_count
+msgid "# Collaborators"
+msgstr "# सहयोगी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_count
+msgid "# Ratings"
+msgstr "# रेटिंग्स"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<br/>\n"
+"                                <span style=\"margin-right: 10px;\">\n"
+"                                    <b>ClickUp के प्रोजेक्ट्स को आयात करें</b>\n"
+"                                </span>"
+msgstr ""
+"<br/>\n"
+"                                <span style=\"margin-right: 10px;\">\n"
+"                                    <b>ClickUp के प्रोजेक्ट्स को आयात करें</b>\n"
+"                                </span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<br/>\n"
+"                                <span style=\"margin-right: 19px; \">\n"
+"                                    <b>ClickUp के स्टेज को आयात करें</b>\n"
+"                                </span>"
+msgstr ""
+"<br/>\n"
+"                                <span style=\"margin-right: 19px; \">\n"
+"                                    <b>ClickUp के स्टेज को आयात करें</b>\n"
+"                                </span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<br/>\n"
+"                                <span style=\"margin-right: 27px;\">\n"
+"                                    <b>ClickUp रिमोट में टास्क एक्सपोर्ट करें</b>\n"
+"                                </span>"
+msgstr ""
+"<br/>\n"
+"                                <span style=\"margin-right: 27px;\">\n"
+"                                    <b>ClickUp रिमोट में टास्क एक्सपोर्ट करें</b>\n"
+"                                </span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<br/>\n"
+"                                <span style=\"margin-right: 27px;\">\n"
+"                                    <b>ClickUp के टास्क को आयात करें</b>\n"
+"                                </span>"
+msgstr ""
+"<br/>\n"
+"                                <span style=\"margin-right: 27px;\">\n"
+"                                    <b>ClickUp के टास्क को आयात करें</b>\n"
+"                                </span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<span attrs=\"{'invisible': [('test_mode', '=', True)]}\" class=\"o_stat_text text-success\">Production</span>\n"
+"                                <span attrs=\"{'invisible': [('test_mode', '=', False)]}\" class=\"o_stat_text text-warning\">Test</span>"
+msgstr ""
+"<span attrs=\"{'invisible': [('test_mode', '=', True)]}\" class=\"o_stat_text text-success\">प्रोडक्शन</span>\n"
+"                                <span attrs=\"{'invisible': [('test_mode', '=', False)]}\" class=\"o_stat_text text-warning\">परीक्षण</span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.res_config_settings_view_form_inherit_clickup
+msgid "<span class=\"o_form_label\">Clickup Backend</span>"
+msgstr "<span class=\"o_form_label\">क्लिकअप बैकएंड</span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<span style=\"margin-right: 10px;\">\n"
+"                                    <b>ClickUp रिमोट में प्रोजेक्ट्स एक्सपोर्ट करें</b>\n"
+"                                </span>"
+msgstr ""
+"<span style=\"margin-right: 10px;\">\n"
+"                                    <b>ClickUp में प्रोजेक्ट्स को एक्सपोर्ट करें |</b>\n"
+"                                </span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<span style=\"margin-right: 10px;\">\n"
+"                                    <b>ClickUp की मेटाडेटा को सिंक करें</b>\n"
+"                                </span>"
+msgstr ""
+"<span style=\"margin-right: 10px;\">\n"
+"                                    <b>ClickUp की मेटाडेटा को सिंक करें</b>\n"
+"                                </span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+msgid ""
+"<span style=\"margin-right: 10px;\"><b>ClickUp में प्रोजेक्ट खोलने के लिए क्लिक करें</b></span>"
+msgstr ""
+"<span style=\"margin-right: 10px;\"><b>ClickUp में प्रोजेक्ट खोलने के लिए क्लिक करें</b></span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid ""
+"<span style=\"margin-right: 10px;\"><b>ClickUp में टास्क खोलने के लिए क्लिक करें</b></span>"
+msgstr ""
+"<span style=\"margin-right: 10px;\"><b>ClickUp में टास्क खोलने के लिए क्लिक करें</b></span>"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"<span>Please refer the Documentation regarding this module in order to utilize and experience this\n"
+"                               in the best possible way.\n"
+"                            </span>"
+msgstr ""
+"<span>कृपया इस मॉड्यूल का अधिकतम लाभ उठाने और इसका पूर्ण अनुभव लेने के तरीके के बारे में जानकारी के लिए दस्तावेज़ देखें।</span>"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_defaults
+msgid ""
+"A Python dictionary that will be evaluated to provide default values when "
+"creating new records for this alias."
+msgstr ""
+"एक Python डिक्शनरी जो इस एलियास के लिए नए रिकॉर्ड बनाने पर डिफ़ॉल्ट मान उपलब्ध करने के लिए आकलन किया जाएगा।"
+
+#. module: connector_clickup
+#: model:ir.model.fields.selection,name:connector_clickup.selection__clickup_backend__auth_type__api_key
+msgid "API Key"
+msgstr "एपीआई कुंजी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__access_instruction_message
+msgid "Access Instruction Message"
+msgstr "पहुंच निर्देश संदेश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__access_warning
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__access_warning
+msgid "Access warning"
+msgstr "पहुंच चेतावनी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_needaction
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_needaction
+msgid "Action Needed"
+msgstr "कार्रवाई की आवश्यकता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__active
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__active
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__active
+msgid "Active"
+msgstr "सक्रिय"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_ids
+msgid "Activities"
+msgstr "गतिविधियाँ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_exception_decoration
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "गतिविधि अपवाद डेकोरेशन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_state
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_state
+msgid "Activity State"
+msgstr "गतिविधि स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_type_icon
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "गतिविधि प्रकार आइकन"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Advance Configuration"
+msgstr "उन्नत समाकृति"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"After providing the client id, client secret, and redirect URL, click this "
+"button to generate the Auth code."
+msgstr ""
+"क्लाइंट आईडी, क्लाइंट सीक्रेट, और रीडायरेक्ट यूआरएल प्रदान करने के बाद, ऑथ कोड उत्पन्न करने के लिए इस बटन पर क्लिक करें।"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid ""
+"After providing the URL in the Auth Code field, click to get the Access Token."
+msgstr ""
+"ऑथ कोड फ़ील्ड में यूआरएल प्रदान करने के बाद, एक्सेस टोकन प्राप्त करने के लिए क्लिक करें।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_id
+msgid "Alias"
+msgstr "उपनाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_contact
+msgid "Alias Contact Security"
+msgstr "उपनाम संपर्क सुरक्षा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_name
+msgid "Alias Name"
+msgstr "उपनाम नाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_domain
+msgid "Alias domain"
+msgstr "उपनाम डोमेन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_value
+msgid "Alias email"
+msgstr "उपनाम ईमेल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_model_id
+msgid "Aliased Model"
+msgstr "उपनाम आधारित मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__allocated_hours
+msgid "Allocated Hours"
+msgstr "आवंटित घंटे"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__allocation_type
+msgid "Allocation Type"
+msgstr "आवंटन प्रकार"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__allow_rating
+msgid "Allow Customer Ratings"
+msgstr "ग्राहक रेटिंग की अनुमति दें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__allow_subtasks
+msgid "Allow Sub-tasks"
+msgstr "सब-टास्क की अनुमति दें"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/importer.py:0
+#, python-format
+msgid "Already up-to-date."
+msgstr "पहले से ही अप-टू-डेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__analytic_account_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__analytic_account_id
+msgid "Analytic Account"
+msgstr "विश्लेषिक खाता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__analytic_account_id
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__project_analytic_account_id
+msgid ""
+"Analytic account to which this project, its tasks, and its timesheets are linked. \n"
+"Track the costs and revenues of your project by setting this analytic account on your related documents (e.g. sales orders, invoices, purchase orders, vendor bills, expenses, etc.).\n"
+"This analytic account can be changed on each task individually if necessary.\n"
+"An analytic account is required to use timesheets."
+msgstr ""
+"इस प्रोजेक्ट, इसके टास्क और इसके टाइमशीट्स से जुड़ा विश्लेषिक खाता। \n"
+"अपने संबंधित दस्तावेज़ों पर इस विश्लेषिक खाते को सेट करके अपने प्रोजेक्ट की लागत और आय ट्रैक करें (उदाहरण के लिए बिक्री आदेश, चालान, खरीद आदेश, विक्रेता बिल, खर्च आदि)।\n"
+"यदि आवश्यक हो, तो प्रत्येक टास्क पर विश्लेषिक खाते को अलग-अलग बदला जा सकता है।\n"
+"टाइमशीट का उपयोग करने के लिए विश्लेषिक खाता आवश्यक है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__analytic_account_id
+msgid ""
+"Analytic account to which this task and its timesheets are linked.\n"
+"Track the costs and revenues of your task by setting its analytic account on your related documents (e.g. sales orders, invoices, purchase orders, vendor bills, expenses, etc.).\n"
+"By default, the analytic account of the project is set. However, it can be changed on each task individually if necessary."
+msgstr ""
+"विश्लेषिक खाता, जिससे इस टास्क और इसके टाइमशीट्स को जोड़ा गया है।\n"
+"अपने संबंधित दस्तावेज़ों पर इस टास्क की लागत और आय को ट्रैक करें (उदाहरण के लिए बिक्री आदेश, चालान, खरीद आदेश, विक्रेता बिल, खर्च आदि)।\n"
+"डिफ़ॉल्ट रूप से, प्रोजेक्ट का विश्लेषिक खाता सेट होता है। यहां तक ​​कि यदि आवश्यक हो, तो प्रत्येक टास्क पर इसे अलग-अलग बदला जा सकता है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__ancestor_id
+msgid "Ancestor Task"
+msgstr "पूर्वज टास्क"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__api_key
+msgid "Api Key"
+msgstr "एपीआई कुंजी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__user_ids
+msgid "Assignees"
+msgstr "नियुक्त व्यक्ति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__date_assign
+msgid "Assigning Date"
+msgstr "नियुक्ति दिनांक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_attachment_count
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_attachment_count
+msgid "Attachment Count"
+msgstr "अटैचमेंट की संख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__attachment_ids
+msgid "Attachments that don't come from a message."
+msgstr "अटैचमेंट जो संदेश से नहीं हैं।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__auth_code
+msgid "Auth Code"
+msgstr "ऑथ कोड"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__auth_type
+msgid "Auth Type"
+msgstr "ऑथ प्रकार"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__auth_code
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__test_auth_code
+msgid "Auth code to generate access token"
+msgstr "एक्सेस टोकन उत्पन्न करने के लिए ऑथ कोड"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__auto_validation_kanban_state
+msgid "Automatic Kanban Status"
+msgstr "स्वचालित कांबन स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task_type__auto_validation_kanban_state
+msgid ""
+"Automatically modify the kanban state when the customer replies to the feedback for this stage.\n"
+" * Good feedback from the customer will update the kanban state to 'ready for the new stage' (green bullet).\n"
+" * Neutral or bad feedback will set the kanban state to 'blocked' (red bullet).\n"
+msgstr ""
+"जब ग्राहक इस स्टेज के लिए प्रतिक्रिया करते हैं तो स्वचालित रूप से कांबन स्थिति को संशोधित करें।\n"
+" * ग्राहक से अच्छी प्रतिक्रिया, कांबन स्थिति को 'नए स्टेज के लिए तैयार' (हरा गोली) पर अपडेट करेगी।\n"
+" * तटस्थ या खराब प्रतिक्रिया, कांबन स्थिति को 'ब्लॉक किया गया' (लाल गोली) पर सेट करेगी।\n"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_avg
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_avg
+msgid "Average Rating"
+msgstr "औसत रेटिंग"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_avg_percentage
+msgid "Average Rating (%)"
+msgstr "औसत रेटिंग (%)"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_binding__backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__backend_id
+msgid "Backend"
+msgstr "बैकएंड"
+
+#. module: connector_clickup
+#: model:ir.ui.menu,name:connector_clickup.menu_clickup_backend
+msgid "Backends"
+msgstr "बैकएंड्स"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__analytic_account_balance
+msgid "Balance"
+msgstr "संतुलन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__dependent_ids
+msgid "Block"
+msgstr "ब्लॉक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__depend_on_ids
+msgid "Blocked By"
+msgstr "इस द्वारा ब्लॉक किया गया"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__partner_is_company
+msgid "Check if the contact is a company, otherwise, it is a person"
+msgstr "जांचें कि संपर्क एक कंपनी है या फिर व्यक्ति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__checklists
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__checklist_ids
+msgid "CheckList Items"
+msgstr "चेकलिस्ट आइटम्स"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__checklist_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__checklist_id
+msgid "Checklist"
+msgstr "चेकलिस्ट"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_checklist_item
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__checklist_item
+msgid "Checklist Item"
+msgstr "चेकलिस्ट आइटम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__parent_checklist
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__name
+msgid "Checklist Name"
+msgstr "चेकलिस्ट का नाम"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/checklist/importer.py:0
+#: code:addons/connector_clickup/models/checklist_item/importer.py:0
+#, python-format
+msgid "Checklist must consist name"
+msgstr "चेकलिस्ट में नाम होना चाहिए"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__checklist_ids
+msgid "Checklists"
+msgstr "चेकलिस्ट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__child_text
+msgid "Child Text"
+msgstr "चाइल्ड टेक्स्ट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_city
+msgid "City"
+msgstr "शहर"
+
+#. module: connector_clickup
+#: model:ir.ui.menu,name:connector_clickup.menu_clickup_root
+#: model_terms:ir.ui.view,arch_db:connector_clickup.res_config_settings_view_form_inherit_clickup
+msgid "Clickup"
+msgstr "क्लिकअप"
+
+#. module: connector_clickup
+#: model:ir.actions.act_window,name:connector_clickup.action_clickup_backend
+#: model:ir.model.fields,field_description:connector_clickup.field_checklist_item__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_project_project__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task_type__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_task_checklist__clickup_backend_id
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_tree
+msgid "Clickup Backend"
+msgstr "क्लिकअप बैकएंड"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task_type__clickup_bind_ids
+msgid "Clickup Backend ID"
+msgstr "क्लिकअप बैकएंड आईडी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_checklist_item__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_project_project__clickup_bind_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_task_checklist__clickup_bind_ids
+msgid "Clickup Bind"
+msgstr "क्लिकअप बाइंड"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_type_form_view
+msgid "Clickup Binding Details"
+msgstr "क्लिकअप बाइंडिंग विवरण"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_binding
+msgid "Clickup Binding Model"
+msgstr "क्लिकअप बाइंडिंग मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__clickup_checklist_item_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__clickup_checklist_item_ids
+msgid "Clickup Checklist Item"
+msgstr "क्लिकअप चेकलिस्ट आइटम"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_checklist_item
+msgid "Clickup Checklist Item binding model"
+msgstr "क्लिकअप चेकलिस्ट आइटम बाइंडिंग मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_metadata
+msgid "Clickup Metadata"
+msgstr "क्लिकअप मेटाडेटा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__clickup_task_checklist_ids
+msgid "Clickup Task Checklist"
+msgstr "क्लिकअप टास्क चेकलिस्ट"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_task_checklist
+msgid "Clickup Task Checklist binding model"
+msgstr "क्लिकअप टास्क चेकलिस्ट बाइंडिंग मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_team
+msgid "Clickup Team"
+msgstr "क्लिकअप टीम"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_backend
+msgid "Clickup backend"
+msgstr "क्लिकअप बैकएंड"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_project_project
+msgid "Clickup project.project binding model"
+msgstr "क्लिकअप प्रोजेक्ट.प्रोजेक्ट बाइंडिंग मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_project_task_type
+msgid "Clickup project.task.type binding model"
+msgstr "क्लिकअप प्रोजेक्ट.टास्क.टाइप बाइंडिंग मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_clickup_project_task
+msgid "Clickup project.tasks binding model"
+msgstr "क्लिकअप प्रोजेक्ट.टास्क बाइंडिंग मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__client_id
+msgid "Client"
+msgstr "क्लाइंट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__client_secret
+msgid "Client Secret"
+msgstr "क्लाइंट सीक्रेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__is_closed
+msgid "Closing Stage"
+msgstr "स्टेज बंद करना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__collaborator_ids
+msgid "Collaborators"
+msgstr "सहयोगी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__rating_status
+msgid ""
+"Collect feedback from your customers by sending them a rating request when a task enters a certain stage. To do so, define a rating email template on the corresponding stages.\n"
+"Rating when changing stage: an email will be automatically sent when the task reaches the stage on which the rating email template is set.\n"
+"Periodic rating: an email will be automatically sent at regular intervals as long as the task remains in the stage in which the rating email template is set."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__color
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__color
+msgid "Color Index"
+msgstr "रंग इंडेक्स"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__commercial_partner_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__commercial_partner_id
+msgid "Commercial Entity"
+msgstr "वाणिज्यिक संस्था"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_res_company
+msgid "Companies"
+msgstr "कंपनियों"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__company_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__company_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__company_id
+msgid "Company"
+msgstr "कंपनी"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/project/importer.py:0
+#: code:addons/connector_clickup/models/task/importer.py:0
+#, python-format
+msgid "Company must be selected in backend"
+msgstr "कंपनी को बैकएंड में चुनना होगा"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_res_config_settings
+msgid "Config Settings"
+msgstr "कॉन्फ़िग सेटिंग्स"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.res_config_settings_view_form_inherit_clickup
+msgid "Connector ClickUp"
+msgstr "कनेक्टर क्लिकअप"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+msgid "Connector Clickup Project"
+msgstr "कनेक्टर क्लिकअप प्रोजेक्ट"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid "Connector Clickup Task"
+msgstr "कनेक्टर क्लिकअप टास्क"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__displayed_image_id
+msgid "Cover Image"
+msgstr "कवर इमेज"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__created_at
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task__created_at
+msgid "Created At"
+msgstr "बनाया गया"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__create_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__create_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__create_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__create_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__create_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__create_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__create_uid
+msgid "Created by"
+msgstr "द्वारा बनाया गया"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__create_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__create_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__create_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__create_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__create_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__create_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__create_date
+msgid "Created on"
+msgstr "पर बनाया गया"
+
+#. module: connector_clickup
+#: model:ir.actions.server,name:connector_clickup.ir_cron_for_export_clickup_project_changes_ir_actions_server
+#: model:ir.cron,cron_name:connector_clickup.ir_cron_for_export_clickup_project_changes
+msgid "Cron Export Clickup Project Changes"
+msgstr "क्रॉन क्लिकअप प्रोजेक्ट बदलाव निर्यात"
+
+#. module: connector_clickup
+#: model:ir.actions.server,name:connector_clickup.ir_cron_for_export_clickup_task_changes_ir_actions_server
+#: model:ir.cron,cron_name:connector_clickup.ir_cron_for_export_clickup_task_changes
+msgid "Cron Export Clickup Task Changes"
+msgstr "क्रॉन क्लिकअप टास्क बदलाव निर्यात"
+
+#. module: connector_clickup
+#: model:ir.actions.server,name:connector_clickup.ir_cron_for_import_clickup_project_changes_ir_actions_server
+#: model:ir.cron,cron_name:connector_clickup.ir_cron_for_import_clickup_project_changes
+msgid "Cron Import Clickup Project Changes"
+msgstr "क्रॉन क्लिकअप प्रोजेक्ट बदलाव आयात"
+
+#. module: connector_clickup
+#: model:ir.actions.server,name:connector_clickup.ir_cron_for_import_clickup_stage_changes_ir_actions_server
+#: model:ir.cron,cron_name:connector_clickup.ir_cron_for_import_clickup_stage_changes
+msgid "Cron Import Clickup Stage Changes"
+msgstr "क्रॉन क्लिकअप स्टेज बदलाव आयात"
+
+#. module: connector_clickup
+#: model:ir.actions.server,name:connector_clickup.ir_cron_for_import_clickup_task_changes_ir_actions_server
+#: model:ir.cron,cron_name:connector_clickup.ir_cron_for_import_clickup_task_changes
+msgid "Cron Import Clickup Task Changes"
+msgstr "क्रॉन क्लिकअप टास्क बदलाव आयात"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__currency_id
+msgid "Currency"
+msgstr "मुद्रा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_bounced_content
+msgid "Custom Bounced Message"
+msgstr "कस्टम बाउंस संदेश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__partner_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_id
+msgid "Customer"
+msgstr "ग्राहक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__access_url
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__access_url
+msgid "Customer Portal URL"
+msgstr "ग्राहक पोर्टल URL"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_active
+msgid "Customer Ratings"
+msgstr "ग्राहक रेटिंग"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_status
+msgid "Customer Ratings Status"
+msgstr "ग्राहक रेटिंग स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__date_last_stage_update
+msgid ""
+"Date on which the stage of your task has last been modified.\n"
+"Based on this information you can identify tasks that are stalling and get statistics on the time it usually takes to move tasks from one stage to another."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__date
+msgid ""
+"Date on which this project ends. The timeframe defined on the project is "
+"taken into account when viewing its planning."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__date_assign
+msgid ""
+"Date on which this task was last assigned (or unassigned). Based on this, "
+"you can get statistics on the time it usually takes to assign tasks."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_weekday
+msgid "Day Of The Week"
+msgstr "सप्ताह का दिन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__date_deadline
+msgid "Deadline"
+msgstr "समयसीमा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_res_company__clickup_backend_id
+#: model:ir.model.fields,field_description:connector_clickup.field_res_config_settings__clickup_backend_id
+msgid "Default Clickup Backend"
+msgstr "डिफ़ॉल्ट क्लिकअप बैकएंड"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_defaults
+msgid "Default Values"
+msgstr "डिफ़ॉल्ट मूल्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__milestone_id
+msgid ""
+"Deliver your services automatically when a milestone is reached by linking "
+"it to a sales order item."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__dependent_tasks_count
+msgid "Dependent Tasks"
+msgstr "अधीनस्थ कार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__description
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__description
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__description
+msgid "Description"
+msgstr "विवरण"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__description
+msgid "Description to provide more information and context about this project"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__disabled_rating_warning
+msgid "Disabled Rating Warning"
+msgstr "रेटिंग चेतावनी अक्षम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__display_name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__display_name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__display_name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__display_name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__display_name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__display_name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__display_name
+msgid "Display Name"
+msgstr "प्रदर्शित नाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__display_parent_task_button
+msgid "Display Parent Task Button"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__display_project_id
+msgid "Display Project"
+msgstr "प्रोजेक्ट प्रदर्शित करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__display_warning_dependency_in_gantt
+msgid "Display Warning Dependency In Gantt"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__duration
+msgid "Duration"
+msgstr "अवधि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__partner_email
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_email
+msgid "Email"
+msgstr "ईमेल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__email_from
+msgid "Email From"
+msgstr "ईमेल से"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__mail_template_id
+msgid "Email Template"
+msgstr "ईमेल टेम्पलेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__email_cc
+msgid ""
+"Email addresses that were in the CC of the incoming emails from this task "
+"and that are not currently linked to an existing customer."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__email_cc
+msgid "Email cc"
+msgstr "ईमेल सीसी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_until
+msgid "End Date"
+msgstr "समाप्ति तिथि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__planned_date_end
+msgid "End date"
+msgstr "समाप्ति तिथि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__date_end
+msgid "Ending Date"
+msgstr "समाप्ति तिथि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__api_key
+msgid "Enter API Key"
+msgstr "API कुंजी डालें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__uri
+msgid "Enter End Point Location Of Space Id"
+msgstr "स्थान आईडी के एंड प्वाइंट स्थान दर्ज करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__redirect_url
+msgid ""
+"Enter that redirect url which is already set\n"
+"in clickup website's Clickup API app"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__test_url_path
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__url_path
+msgid "Enter the url path"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__estimated_cost
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task__estimated_cost
+msgid "Estimated Cost"
+msgstr "अनुमानित लागत"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Ex:-Test 1"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__date
+msgid "Expiration Date"
+msgstr "समाप्ति तिथि"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Export"
+msgstr "निर्यात"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Export Projects"
+msgstr "प्रोजेक्ट निर्यात"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Export Tasks"
+msgstr "टास्क निर्यात"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid "Export To ClickUp"
+msgstr "क्लिकअप में निर्यात करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__export_to_folder
+#: model:ir.model.fields,field_description:connector_clickup.field_project_project__export_to_folder
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+msgid "Export To Folder"
+msgstr "फ़ोल्डर में निर्यात करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__export_with_checklist
+msgid "Export With Checklist"
+msgstr "चेकलिस्ट के साथ निर्यात करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_binding__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_mail_mail__external_id
+#: model:ir.model.fields,field_description:connector_clickup.field_mail_message__external_id
+msgid "External"
+msgstr "बाह्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__fold
+msgid "Folded in Kanban"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__is_closed
+msgid "Folded in Kanban stages are closing stages."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__folder_id
+#: model:ir.model.fields,field_description:connector_clickup.field_project_project__folder_id
+msgid "Folder"
+msgstr "फ़ोल्डर"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+msgid "Folder Id"
+msgstr "फ़ोल्डर आईडी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__folder_info
+#: model:ir.model.fields,field_description:connector_clickup.field_project_project__folder_info
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+msgid "Folder Info"
+msgstr "फ़ोल्डर जानकारी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_follower_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_follower_ids
+msgid "Followers"
+msgstr "अनुयायी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_partner_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "अनुयायी (साथी)"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__activity_type_icon
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__force_update_tasks
+msgid "Force Update Tasks"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__fri
+msgid "Fri"
+msgstr "शुक्र"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Generate Oauth Code"
+msgstr ""
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Generate Token"
+msgstr ""
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid "Get ClickUp Comments and Attachments"
+msgstr "ClickUp टिप्पणियों और अटैचमेंट प्राप्त करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__legend_done
+msgid "Green Kanban Label"
+msgstr "हरा कांबन लेबल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__legend_normal
+msgid "Grey Kanban Label"
+msgstr "धूसर कांबन लेबल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__has_late_and_unreached_milestone
+msgid "Has Late And Unreached Milestone"
+msgstr "देरी और अपराप्त मीलस्टोन है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__has_message
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__has_message
+msgid "Has Message"
+msgstr "मेसेज है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__id
+msgid "ID"
+msgstr "आईडी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_parent_thread_id
+msgid ""
+"ID of the parent record holding the alias (example: project holding the task"
+" creation alias)"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_exception_icon
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_exception_icon
+msgid "Icon"
+msgstr "आइकन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__activity_exception_icon
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "अपवाद गतिविधि को दर्शाने के लिए आइकन।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__message_needaction
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "यदि चेक किया गया है, नए संदेश आपकी ध्यान आवश्यकता करते हैं।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__message_has_error
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__message_has_sms_error
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__message_has_error
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "यदि चेक किया गया है, कुछ संदेशों में वितरण त्रुटि है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task_type__fold
+msgid ""
+"If enabled, this stage will be displayed as folded in the Kanban view of "
+"your tasks. Tasks in a folded stage are considered as closed."
+msgstr "यदि सक्षम है, तो आपके कार्यों के कांबन दृश्य में यह चरण फोल्ड हो जाएगा। फोल्डेड स्टेज में कार्य को बंद माना जाता है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task_type__rating_template_id
+msgid ""
+"If set, a rating request will automatically be sent by email to the customer when the task reaches this stage. \n"
+"Alternatively, it will be sent at a regular interval as long as the task remains in this stage, depending on the configuration of your project. \n"
+"To use this feature make sure that the 'Customer Ratings' option is enabled on your project."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task_type__sms_template_id
+msgid ""
+"If set, an SMS Text Message will be automatically sent to the customer when "
+"the task reaches this stage."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task_type__mail_template_id
+msgid ""
+"If set, an email will be automatically sent to the customer when the task "
+"reaches this stage."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_bounced_content
+msgid ""
+"If set, this content will automatically be sent out to unauthorized users "
+"instead of the default message."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__active
+msgid ""
+"If the active field is set to False, it will allow you to hide the project "
+"without removing it."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__export_with_checklist
+msgid ""
+"If true, any changes made to the checklist status in odoo tasks\n"
+"         will be transferred to clickup along with the tasks."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__force_update_tasks
+msgid ""
+"If true,task will be forcefully imported\n"
+"        whether it is upto date or not"
+msgstr ""
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Import"
+msgstr "आयात करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__import_from_date_task
+msgid "Import From Date Task"
+msgstr ""
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Import Projects"
+msgstr "प्रोजेक्ट आयात करें"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Import Stages"
+msgstr ""
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Import Tasks"
+msgstr "कार्य आयात करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__planned_hours
+msgid "Initially Planned Hours"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_id
+msgid ""
+"Internal email associated with this project. Incoming emails are "
+"automatically synchronized with Tasks (or optionally Issues if the Issue "
+"Tracker module is installed)."
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__is_analytic_account_id_changed
+msgid "Is Analytic Account Manually Changed"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__is_blocked
+msgid "Is Blocked"
+msgstr "ब्लॉक है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_is_follower
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_is_follower
+msgid "Is Follower"
+msgstr "अनुयायी है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__is_milestone_exceeded
+msgid "Is Milestone Exceeded"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__is_private
+msgid "Is Private"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_is_company
+msgid "Is a Company"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__legend_blocked
+msgid "Kanban Blocked Explanation"
+msgstr ""
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__legend_normal
+msgid "Kanban Ongoing Explanation"
+msgstr "कांबन चल रही व्याख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__kanban_state_label
+msgid "Kanban State Label"
+msgstr "कांबन स्थिति लेबल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__legend_done
+msgid "Kanban Valid Explanation"
+msgstr "कांबन वैध व्याख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend____last_update
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item____last_update
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project____last_update
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task____last_update
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type____last_update
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist____last_update
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team____last_update
+msgid "Last Modified on"
+msgstr "अंतिम संशोधन हुआ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__date_last_stage_update
+msgid "Last Stage Update"
+msgstr "अंतिम चरण अपडेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__last_update_id
+msgid "Last Update"
+msgstr "अंतिम अद्यतन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__last_update_color
+msgid "Last Update Color"
+msgstr "अंतिम अद्यतन रंग"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__last_update_status
+msgid "Last Update Status"
+msgstr "अंतिम अद्यतन स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__write_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__write_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__write_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__write_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__write_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__write_uid
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__write_uid
+msgid "Last Updated by"
+msgstr "द्वारा अंतिम अद्यतित"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__write_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__write_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__write_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__write_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__write_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__write_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__write_date
+msgid "Last Updated on"
+msgstr "अंतिम अद्यतित हुआ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_binding__sync_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__sync_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__sync_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__sync_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__sync_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__sync_date
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__sync_date
+msgid "Last synchronization date"
+msgstr "अंतिम समकालीनता तिथि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_main_attachment_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "मुख्य अटैचमेंट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__attachment_ids
+msgid "Main Attachments"
+msgstr "मुख्य अटैचमेंट्स"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__favorite_user_ids
+msgid "Members"
+msgstr "सदस्य"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_mail_message
+msgid "Message"
+msgstr "संदेश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_has_error
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_has_error
+msgid "Message Delivery error"
+msgstr "संदेश वितरण त्रुटि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_ids
+msgid "Messages"
+msgstr "संदेश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__milestone_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__milestone_id
+msgid "Milestone"
+msgstr "मील स्तंभ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__milestone_count
+msgid "Milestone Count"
+msgstr "मील स्तंभ गिनती"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__milestone_count_reached
+msgid "Milestone Count Reached"
+msgstr "मील स्तंभ गिनती जांची"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__allow_milestones
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__allow_milestones
+msgid "Milestones"
+msgstr "मील स्तंभ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_mobile
+msgid "Mobile"
+msgstr "मोबाइल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__mon
+msgid "Mon"
+msgstr "सोम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__my_activity_date_deadline
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "मेरी गतिविधि समयसीमा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__name
+msgid "Name"
+msgstr "नाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__name
+msgid ""
+"Name of your project. It can be anything you want e.g. the name of a "
+"customer or a service."
+msgstr "आपके प्रोजेक्ट का नाम। यह किसी भी चीज का हो सकता है जैसे ग्राहक का नाम या सेवा का नाम।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__label_tasks
+msgid ""
+"Name used to refer to the tasks of your project e.g. tasks, tickets, "
+"sprints, etc..."
+msgstr "आपके प्रोजेक्ट के कार्यों के लिए उपयोग किया जाने वाला नाम, जैसे कार्य, टिकट, स्प्रिंट आदि..."
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_date_deadline
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "अगली गतिविधि समयसीमा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_summary
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_summary
+msgid "Next Activity Summary"
+msgstr "अगली गतिविधि सारांश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_type_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_type_id
+msgid "Next Activity Type"
+msgstr "अगली गतिविधि प्रकार"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__recurrence_message
+msgid "Next Recurrences"
+msgstr "अगले पुनरावृत्तियाँ"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/exporter.py:0
+#, python-format
+msgid "No record found to export!!!"
+msgstr "निर्यात करने के लिए कोई रिकॉर्ड नहीं मिला!!!"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/exporter.py:0
+#: code:addons/connector_clickup/components/exporter.py:0
+#, python-format
+msgid "Nothing to export."
+msgstr "निर्यात करने के लिए कुछ नहीं।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_needaction_counter
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_needaction_counter
+msgid "Number of Actions"
+msgstr "कार्रवाईयों की संख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__doc_count
+msgid "Number of documents attached"
+msgstr "जुड़े गए दस्तावेज़ों की संख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_has_error_counter
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_has_error_counter
+msgid "Number of errors"
+msgstr "त्रुटियों की संख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__message_needaction_counter
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "कार्रवाई की आवश्यकता है जिनकी संख्या संदेश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__message_has_error_counter
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "प्रसारण त्रुटि के साथ संदेशों की संख्या"
+
+#. module: connector_clickup
+#: model:ir.model.fields.selection,name:connector_clickup.selection__clickup_backend__auth_type__oauth
+msgid "Oauth Authentication"
+msgstr "ओथ अधिकृतीकरण"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__odoo_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__odoo_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__odoo_id
+msgid "Odoo"
+msgstr "ओडू"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+msgid "Open In ClickUp"
+msgstr "क्लिकअप में खोलें"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid "Open Task In ClickUp"
+msgstr "क्लिकअप में कार्य खोलें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_force_thread_id
+msgid ""
+"Optional ID of a thread (record) to which all incoming messages will be "
+"attached, even if they did not reply to it. If set, this will disable the "
+"creation of new records completely."
+msgstr "एक धागे (रिकॉर्ड) का वैकल्पिक आईडी, जिसमें सभी आयने वाले संदेश जुड़ेँगे, चाहे उसका उत्तर न हो। यदि सेट किया जाता है, तो यह नए रिकॉर्ड बनाने को पूरी तरह से अक्षम कर देगा।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__overlap_warning
+msgid "Overlap Warning"
+msgstr "ओवरलैप चेतावनी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_user_id
+msgid "Owner"
+msgstr "मालिक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_parent_model_id
+msgid "Parent Model"
+msgstr "मुख्य मॉडल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_parent_thread_id
+msgid "Parent Record Thread ID"
+msgstr "मुख्य रिकॉर्ड धागा आईडी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__parent_id
+msgid "Parent Task"
+msgstr "मुख्य कार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_parent_model_id
+msgid ""
+"Parent model holding the alias. The model holding the alias reference is not"
+" necessarily the model given by alias_model_id (example: project "
+"(parent_model) and task (model))"
+msgstr "मुख्य मॉडल में एलियास रखा जाने वाला मॉडल। एलियास संदर्भ का धारक मॉडल अनिवार्य रूप से एलियास मॉडल आईडी (उदाहरण: परियोजना (मुख्य मॉडल) और कार्य (मॉडल)) द्वारा दिया जाने वाला मॉडल नहीं है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__privacy_visibility
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__project_privacy_visibility
+msgid ""
+"People to whom this project and its tasks will be visible.\n"
+"\n"
+"- Invited internal users: when following a project, internal users will get access to all of its tasks without distinction. Otherwise, they will only get access to the specific tasks they are following.\n"
+" A user with the project > administrator access right level can still access this project and its tasks, even if they are not explicitly part of the followers.\n"
+"\n"
+"- All internal users: all internal users can access the project and all of its tasks without distinction.\n"
+"\n"
+"- Invited portal users and all internal users: all internal users can access the project and all of its tasks without distinction.\n"
+"When following a project, portal users will get access to all of its tasks without distinction. Otherwise, they will only get access to the specific tasks they are following.\n"
+"\n"
+"When a project is shared in read-only, the portal user is redirected to their portal. They can view the tasks, but not edit them.\n"
+"When a project is shared in edit, the portal user is redirected to the kanban and list views of the tasks. They can modify a selected number of fields on the tasks.\n"
+"\n"
+"In any case, an internal user with no project access rights can still access a task, provided that they are given the corresponding URL (and that they are part of the followers if the project is private)."
+msgstr "लोग जिनको इस परियोजना और उसके कार्य दिखाए जाएंगे।\n\n- आमंत्रित आंतरिक उपयोगकर्ता: परियोजना का पालन करते समय, आंतरिक उपयोगकर्ता को उसके सभी कार्यों तक पहुंच मिलती है बिना किसी भेदभाव के। अन्यथा, वे केवल उन विशेष कार्यों तक पहुंच प्राप्त करेंगे जिनका वे पालन कर रहे हैं। परियोजना > प्रशासक पहुंच अधिकार स्तर के साथ एक उपयोगकर्ता फॉलोअर्स के सक्षम भागीदार न होने के बावजूद भी इस परियोजना और उसके कार्यों तक पहुंच सकता है।\n\n- सभी आंतरिक उपयोगकर्ता: सभी आंतरिक उपयोगकर्ता परियोजना और उसके सभी कार्यों तक पहुंच सकते हैं बिना किसी भेदभाव के।\n\n- आमंत्रित पोर्टल उपयोगकर्ता और सभी आंतरिक उपयोगकर्ता: सभी आंतरिक उपयोगकर्ता परियोजना और उसके सभी कार्यों तक पहुंच सकते हैं बिना किसी भेदभाव के। परियोजना का पालन करते समय, पोर्टल उपयोगकर्ता को उसके सभी कार्यों तक पहुंच मिलती है बिना किसी भेदभाव के। अन्यथा, वे केवल उन विशेष कार्यों तक पहुंच प्राप्त करेंगे जिनका वे पालन कर रहे हैं।\n\nकिसी भी स्थिति में, परियोजना अधिकार अधिकार वाले आंतरिक उपयोगकर्ता अभी भी एक कार्य तक पहुंच सकते हैं, यह बात ध्यान देनी होगी कि उन्हें उसका संबंधित URL दिया गया है (और यदि परियोजना निजी है तो उन्हें फॉलोअर्स का हिस्सा होना होगा)।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__rating_percentage_satisfaction
+msgid "Percentage of happy ratings"
+msgstr "खुश रेटिंग का प्रतिशत"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__personal_stage_type_ids
+msgid "Personal Stage"
+msgstr "निजी स्तर"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__personal_stage_id
+msgid "Personal Stage State"
+msgstr "निजी स्तर की स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__personal_stage_type_id
+msgid "Personal User Stage"
+msgstr "निजी उपयोगकर्ता स्तर"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/task/importer.py:0
+#, python-format
+msgid "Personal stage not exist"
+msgstr "निजी स्तर मौजूद नहीं है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__partner_phone
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_phone
+msgid "Phone"
+msgstr "फ़ोन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__planning_overlap
+msgid "Planning Overlap"
+msgstr "योजना ओवरलैप"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/clickup_backend/common.py:0
+#: code:addons/connector_clickup/models/clickup_backend/common.py:0
+#: code:addons/connector_clickup/models/clickup_backend/common.py:0
+#: code:addons/connector_clickup/models/clickup_backend/common.py:0
+#: code:addons/connector_clickup/models/clickup_backend/common.py:0
+#: code:addons/connector_clickup/models/clickup_backend/common.py:0
+#, python-format
+msgid "Please Provide the team id"
+msgstr "कृपया टीम आईडी प्रदान करें"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/project/common.py:0
+#: code:addons/connector_clickup/models/project/common.py:0
+#: code:addons/connector_clickup/models/project/common.py:0
+#: code:addons/connector_clickup/models/task/common.py:0
+#: code:addons/connector_clickup/models/task/common.py:0
+#: code:addons/connector_clickup/models/task/common.py:0
+#, python-format
+msgid "Please add backend!!!"
+msgstr "कृपया बैकएंड जोड़ें!!!"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/misc.py:0
+#, python-format
+msgid "Please provide date"
+msgstr "कृपया तारीख दें"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/misc.py:0
+#, python-format
+msgid "Please provide date format."
+msgstr "कृपया तारीख प्रारूप दें।"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/task/common.py:0
+#, python-format
+msgid "Please select project that consist backend!!!"
+msgstr "कृपया बैकएंड से संबद्ध होने वाले परियोजना का चयन करें!!!"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_contact
+msgid ""
+"Policy to post a message on the document using the mailgateway.\n"
+"- everyone: everyone can post\n"
+"- partners: only authenticated partners\n"
+"- followers: only followers of the related document or members of following channels\n"
+msgstr ""
+"मेलगेटवे का उपयोग करके दस्तावेज़ पर संदेश पोस्ट करने के लिए नीति।\n"
+"- सभी: सभी संदेश पोस्ट कर सकते हैं\n"
+"- साथी: केवल प्रमाणित साथी\n"
+"- अनुयायियों: केवल संबंधित दस्तावेज़ के अनुयायियों या निम्नलिखित चैनलों के सदस्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__access_url
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__access_url
+msgid "Portal Access URL"
+msgstr "पोर्टल पहुंच URL"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__portal_user_names
+msgid "Portal User Names"
+msgstr "पोर्टल उपयोगकर्ता नाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__priority
+msgid "Priority"
+msgstr "प्राथमिकता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__privacy_visibility_warning
+msgid "Privacy Visibility Warning"
+msgstr "गोपनीयता दृश्यता चेतावनी"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Production"
+msgstr "उत्पादन"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_project_project
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__project_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__project_id
+msgid "Project"
+msgstr "परियोजना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__project_analytic_account_id
+msgid "Project Analytic Account"
+msgstr "परियोजना विश्लेषिक खाता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__project_info
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task__project_info
+msgid "Project Info"
+msgstr "परियोजना जानकारी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__user_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__manager_id
+msgid "Project Manager"
+msgstr "परियोजना प्रबंधक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_active
+msgid "Project Rating Status"
+msgstr "परियोजना रेटिंग स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__project_privacy_visibility
+msgid "Project Visibility"
+msgstr "परियोजना दृश्यता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__project_color
+msgid "Project color"
+msgstr "परियोजना रंग"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/project/importer.py:0
+#, python-format
+msgid "Project must consist name"
+msgstr "परियोजना का नाम होना आवश्यक है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__project_ids
+msgid "Projects"
+msgstr "परियोजनाएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task_type__project_ids
+msgid ""
+"Projects in which this stage is present. If you follow a similar workflow in"
+" several projects, you can share this stage among them and get consolidated "
+"information this way."
+msgstr ""
+"जिन परियोजनाओं में इस चरण मौजूद है। यदि आप कई परियोजनाओं में एक समान विधि अनुसरण करते हैं, तो आप इस चरण को उन सभी के बीच साझा कर सकते हैं और इस तरह से समेकित जानकारी प्राप्त कर सकते हैं।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__task_properties
+msgid "Properties"
+msgstr "गुण"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_queue_job
+msgid "Queue Job"
+msgstr "कतार नौकरी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_ids
+msgid "Rating"
+msgstr "रेटिंग"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_avg_text
+msgid "Rating Avg Text"
+msgstr "रेटिंग औसत पाठ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__rating_template_id
+msgid "Rating Email Template"
+msgstr "रेटिंग ईमेल टेम्पलेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_status_period
+msgid "Rating Frequency"
+msgstr "रेटिंग फ़्रीक्वेंसी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_last_feedback
+msgid "Rating Last Feedback"
+msgstr "रेटिंग अंतिम प्रतिक्रिया"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_last_image
+msgid "Rating Last Image"
+msgstr "रेटिंग अंतिम छवि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_last_value
+msgid "Rating Last Value"
+msgstr "रेटिंग अंतिम मूल्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_request_deadline
+msgid "Rating Request Deadline"
+msgstr "रेटिंग अनुरोध समयसीमा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_percentage_satisfaction
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_percentage_satisfaction
+msgid "Rating Satisfaction"
+msgstr "रेटिंग संतुष्टि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_last_text
+msgid "Rating Text"
+msgstr "रेटिंग अंतिम पाठ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__rating_count
+msgid "Rating count"
+msgstr "रेटिंग गणना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__rating_ids
+msgid "Ratings"
+msgstr "रेटिंग"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Read Me"
+msgstr "मुझे पढ़ें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_force_thread_id
+msgid "Record Thread ID"
+msgstr "रिकॉर्ड धागा आईडी"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/importer.py:0
+#, python-format
+msgid "Record does no longer exist in clickup"
+msgstr "रिकॉर्ड क्लिकअप में अब मौजूद नहीं है"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/components/exporter.py:0
+#, python-format
+msgid "Record exported with ID %s on Backend."
+msgstr "रिकॉर्ड बैकएंड पर ID %s के साथ निर्यात किया गया।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__recurrence_id
+msgid "Recurrence"
+msgstr "आवर्तन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__recurrence_update
+msgid "Recurrence Update"
+msgstr "आवर्तन अपडेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__recurring_task
+msgid "Recurrent"
+msgstr "आवर्ती"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__allow_recurring_tasks
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__allow_recurring_tasks
+msgid "Recurring Tasks"
+msgstr "आवर्ती कार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__legend_blocked
+msgid "Red Kanban Label"
+msgstr "लाल कान्बन लेबल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__redirect_url
+msgid "Redirect Url"
+msgstr "रीडायरेक्ट यूआरएल"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/queue_job.py:0
+#, python-format
+msgid "Related Record"
+msgstr "संबंधित रिकॉर्ड"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/queue_job.py:0
+#, python-format
+msgid "Related Records"
+msgstr "संबंधित रिकॉर्ड्स"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_day
+msgid "Repeat Day"
+msgstr "दिन दोहराएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_interval
+msgid "Repeat Every"
+msgstr "प्रत्येक दोहराएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_month
+msgid "Repeat Month"
+msgstr "महीना दोहराएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_on_month
+msgid "Repeat On Month"
+msgstr "महीने पर दोहराएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_on_year
+msgid "Repeat On Year"
+msgstr "वर्ष पर दोहराएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_show_day
+msgid "Repeat Show Day"
+msgstr "दिन दोहराएं दिखाएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_show_dow
+msgid "Repeat Show Dow"
+msgstr "दिनों को दोहराएं दिखाएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_show_month
+msgid "Repeat Show Month"
+msgstr "महीने को दोहराएं दिखाएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_show_week
+msgid "Repeat Show Week"
+msgstr "सप्ताह को दोहराएं दिखाएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_unit
+msgid "Repeat Unit"
+msgstr "दोहराने का इकाई"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_week
+msgid "Repeat Week"
+msgstr "सप्ताह दोहराएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_number
+msgid "Repetitions"
+msgstr "दोहराना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__activity_user_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__activity_user_id
+msgid "Responsible User"
+msgstr "जिम्मेदार उपयोगकर्ता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__message_has_sms_error
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "एसएमएस डिलीवरी त्रुटि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__sms_template_id
+msgid "SMS Template"
+msgstr "एसएमएस टेम्पलेट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__sat
+msgid "Sat"
+msgstr "शनि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__access_token
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__access_token
+msgid "Security Token"
+msgstr "सुरक्षा टोकन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__sequence
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__sequence
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__sequence
+msgid "Sequence"
+msgstr "क्रम"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.res_config_settings_view_form_inherit_clickup
+msgid "Set the default backend."
+msgstr "डिफ़ॉल्ट बैकएंड सेट करें।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__is_favorite
+msgid "Show Project on Dashboard"
+msgstr "डैशबोर्ड पर प्रोजेक्ट दिखाएं"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__stage_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__stage_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__odoo_id
+msgid "Stage"
+msgstr "चरण"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task_type__user_id
+msgid "Stage Owner"
+msgstr "चरण के मालिक"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/stages/importer.py:0
+#, python-format
+msgid "Stage must consist name"
+msgstr "चरण में नाम होना चाहिए"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/task/importer.py:0
+#, python-format
+msgid "Stage not exist"
+msgstr "चरण मौजूद नहीं है"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__date_start
+msgid "Start Date"
+msgstr "प्रारंभ तिथि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__planned_date_begin
+msgid "Start date"
+msgstr "प्रारंभ तिथि"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__state
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__kanban_state
+msgid "Status"
+msgstr "स्थिति"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__activity_state
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr "गतिविधियों पर आधारित स्थिति।\nविलंबित: समयसीमा पहले ही चला गया\nआज: गतिविधि तिथि आज है\nप्लान: भविष्य की गतिविधियां।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_street
+msgid "Street"
+msgstr "सड़क"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__subtask_count
+msgid "Sub-task Count"
+msgstr "उपकार्य गणना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__allow_subtasks
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__child_ids
+msgid "Sub-tasks"
+msgstr "उपकार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__subtask_planned_hours
+msgid "Sub-tasks Planned Hours"
+msgstr "उपकार्य योजित घंटे"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__subtask_planned_hours
+msgid ""
+"Sum of the hours allocated for all the sub-tasks (and their own sub-tasks) "
+"linked to this task. Usually less than or equal to the allocated hours of "
+"this task."
+msgstr "इस कार्य से जुड़े सभी उपकार्यों (और उनके उपकार्यों) के लिए आवंटित घंटों का योग। आम तौर पर इस कार्य के आवंटित घंटों से कम या बराबर होता है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__sun
+msgid "Sun"
+msgstr "रवि"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Sync Metadata"
+msgstr "मेटाडाटा सिंक करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__synced_at
+msgid "Synced At"
+msgstr "सिंक की गई समय"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__tag_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__tag_ids
+msgid "Tags"
+msgstr "टैग्स"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_project_task
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_checklist_item__task_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__odoo_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__task_id
+msgid "Task"
+msgstr "कार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__tasks
+msgid "Task Activities"
+msgstr "कार्य गतिविधियाँ"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_task_checklist
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_task_checklist__task_checklist_id
+msgid "Task Checklist"
+msgstr "कार्य चेकलिस्ट"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__task_count
+msgid "Task Count"
+msgstr "कार्य गणना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__task_count_with_subtasks
+msgid "Task Count With Subtasks"
+msgstr "उपकार्य सहित कार्य गणना"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__allow_task_dependencies
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__allow_task_dependencies
+msgid "Task Dependencies"
+msgstr "कार्य आधारितता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__task_properties_definition
+msgid "Task Properties"
+msgstr "कार्य गुणवत्ता"
+
+#. module: connector_clickup
+#: model:ir.model,name:connector_clickup.model_project_task_type
+msgid "Task Stage"
+msgstr "कार्य चरण"
+
+#. module: connector_clickup
+#. odoo-python
+#: code:addons/connector_clickup/models/task/importer.py:0
+#, python-format
+msgid "Task must consist name"
+msgstr "कार्य में नाम होना चाहिए"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__task_ids
+msgid "Tasks"
+msgstr "कार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__type_ids
+msgid "Tasks Stages"
+msgstr "कार्य चरण"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__recurring_count
+msgid "Tasks in Recurrence"
+msgstr "आवर्तन में कार्य"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__team_id
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__team_id
+#: model:ir.model.fields,field_description:connector_clickup.field_project_project__team_id
+msgid "Team"
+msgstr "टीम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_auth_code
+msgid "Test Auth Code"
+msgstr "परीक्षण प्रमाणीकरण कोड"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_client_id
+msgid "Test Client"
+msgstr "परीक्षण ग्राहक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_client_secret
+msgid "Test Client Secret"
+msgstr "परीक्षण ग्राहक गोपनीयता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_location
+msgid "Test Location"
+msgstr "परीक्षण स्थान"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_mode
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "Test Mode"
+msgstr "परीक्षण मोड"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_token
+msgid "Test Token"
+msgstr "परीक्षण टोकन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__test_url_path
+msgid "Test Url Path"
+msgstr "परीक्षण URL पथ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__personal_stage_id
+msgid "The current user's personal stage."
+msgstr "वर्तमान उपयोगकर्ता का व्यक्तिगत चरण।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__personal_stage_type_id
+msgid "The current user's personal task stage."
+msgstr "वर्तमान उपयोगकर्ता का व्यक्तिगत कार्य चरण।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_model_id
+msgid ""
+"The model (Odoo Document Kind) to which this alias corresponds. Any incoming"
+" email that does not reply to an existing record will cause the creation of "
+"a new record of this model (e.g. a Project Task)"
+msgstr ""
+"वह मॉडल (Odoo दस्तावेज़ प्रकार) जिससे यह उपनाम मेल खाता है। किसी भी आगमन मेल "
+"को जो किसी मौजूदा रिकॉर्ड के उत्तर नहीं देता है, उसके कारण इस मॉडल के एक "
+"नए रिकॉर्ड को बनाने का कारण बनेगा (जैसे एक प्रोजेक्ट कार्य)"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_name
+msgid ""
+"The name of the email alias, e.g. 'jobs' if you want to catch emails for "
+"<jobs@example.odoo.com>"
+msgstr ""
+"ईमेल उपनाम का नाम, जैसे 'जॉब्स' अगर आप ईमेल को पकड़ना चाहते हैं "
+"<jobs@example.odoo.com>"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__alias_user_id
+msgid ""
+"The owner of records created upon receiving emails on this alias. If this "
+"field is not set the system will attempt to find the right owner based on "
+"the sender (From) address, or will use the Administrator account if no "
+"system user is found for that address."
+msgstr ""
+"उपनाम पर ईमेल प्राप्त होने पर बनाए गए रिकॉर्ड के मालिक। यदि इस फ़ील्ड को सेट नहीं "
+"किया गया है तो सिस्टम देखेगा कि प्रेषक (से) पते के आधार पर सही मालिक का "
+"पता लगाने का प्रयास करेगा, या यदि उस पते के लिए कोई सिस्टम उपयोगकर्ता नहीं "
+"मिलता है तो प्रशासक खाता का उपयोग करेगा।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__email_from
+msgid "These people will receive email."
+msgstr "इन लोगों को ईमेल प्राप्त होगा।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__auth_type
+msgid ""
+"This will allow current backend to perform import export\n"
+"        through selected authentication type"
+msgstr ""
+"इससे मौजूदा बैकएंड को चयनित प्रमाणीकरण प्रकार के माध्यम से आयात निर्यात "
+"करने की अनुमति होगी"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__import_from_date_task
+msgid ""
+"This will get all the tasks which is created\n"
+"         or updated after your provided date and time"
+msgstr ""
+"इससे आपको वे सभी कार्य मिलेंगे जिन्हें आपके द्वारा प्रदान किए गए दिनांक और समय "
+"के बाद बनाया गया है या अपडेट किया गया है।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__thu
+msgid "Thu"
+msgstr "गुरु"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__name
+msgid "Title"
+msgstr "शीर्षक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__tue
+msgid "Tue"
+msgstr "मंगल"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__activity_exception_decoration
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "रिकॉर्ड पर अनुदार असामान्य गतिविधि का प्रकार।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__repeat_type
+msgid "Until"
+msgstr "तक"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__update_ids
+msgid "Update"
+msgstr "अपडेट"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid "Update From ClickUp"
+msgstr "क्लिकअप से अपडेट करें"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_project_form_view
+#: model_terms:ir.ui.view,arch_db:connector_clickup.inherit_project_task_form_view
+msgid "Update To ClickUp"
+msgstr "क्लिकअप में अपडेट करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__updated_at
+#: model:ir.model.fields,field_description:connector_clickup.field_project_task__updated_at
+msgid "Updated At"
+msgstr "अद्यतित किया गया"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__uri
+msgid "Uri"
+msgstr "यूआरआई"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__url_path
+msgid "Url Path"
+msgstr "यूआरएल पथ"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__alias_enabled
+msgid "Use Email Alias"
+msgstr "ईमेल उपनाम का उपयोग करें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__label_tasks
+msgid "Use Tasks as"
+msgstr "कार्यों का उपयोग करें जैसा"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__user_names
+msgid "User Names"
+msgstr "उपयोगकर्ता नाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields.selection,name:connector_clickup.selection__clickup_backend__version__v2
+msgid "V2"
+msgstr "V2"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_backend__version
+msgid "Version"
+msgstr "संस्करण"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__privacy_visibility
+msgid "Visibility"
+msgstr "दृश्यता"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__website_message_ids
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__website_message_ids
+msgid "Website Messages"
+msgstr "वेबसाइट संदेश"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_project__website_message_ids
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__website_message_ids
+msgid "Website communication history"
+msgstr "वेबसाइट संचार इतिहास"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__wed
+msgid "Wed"
+msgstr "बुध"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__working_days_open
+msgid "Working Days to Assign"
+msgstr "असाइन करने के लिए काम के दिन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__working_days_close
+msgid "Working Days to Close"
+msgstr "बंद करने के लिए काम के दिन"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__working_hours_open
+msgid "Working Hours to Assign"
+msgstr "असाइन करने के लिए काम का समय"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__working_hours_close
+msgid "Working Hours to Close"
+msgstr "बंद करने के लिए काम का समय"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_project__resource_calendar_id
+msgid "Working Time"
+msgstr "कार्य समय"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_project_task__tag_ids
+msgid ""
+"You can only see tags that are already present in your project. If you try "
+"creating a tag that is already existing in other projects, it won't generate"
+" any duplicates."
+msgstr ""
+"आप केवल वे टैग देख सकते हैं जो आपके परियोजना में पहले से मौजूद हैं। यदि आप "
+"किसी ऐसे टैग को बनाने का प्रयास करते हैं जो पहले से ही अन्य परियोजनाओं में मौजूद "
+"है, तो यह इसे कोई प्रतिलिपि नहीं बनाएगा।"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_project_task__partner_zip
+msgid "Zip"
+msgstr "ज़िप"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_company_form_inherit
+msgid "clickUp"
+msgstr "क्लिकअप"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "http://localhost:8090"
+msgstr "http://localhost:8090"
+
+#. module: connector_clickup
+#: model_terms:ir.ui.view,arch_db:connector_clickup.view_clickup_backend_form
+msgid "https://api.clickup.com"
+msgstr "https://api.clickup.com"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_metadata__name
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__name
+msgid "name"
+msgstr "नाम"
+
+#. module: connector_clickup
+#: model:ir.model.fields,help:connector_clickup.field_clickup_backend__version
+msgid "select the version for api url path"
+msgstr "एपीआई यूआरएल पथ के लिए संस्करण चुनें"
+
+#. module: connector_clickup
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_metadata__team
+#: model:ir.model.fields,field_description:connector_clickup.field_clickup_team__team
+msgid "team"
+msgstr "टीम"
+

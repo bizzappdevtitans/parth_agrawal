@@ -6,7 +6,6 @@ class TaskChecklist(models.Model):
     _description = "Task Checklist"
 
     name = fields.Char(string="Checklist Name")
-    project_id = fields.Many2one("project.project", string="Project")
     task_id = fields.Many2one("project.task", string="Task")
     checklist_ids = fields.One2many(
         "checklist.item", "checklist_id", string="CheckList Items", required=True
@@ -18,7 +17,6 @@ class ChecklistItem(models.Model):
     _description = "Checklist Item"
 
     name = fields.Char(required=True)
-    checklist_item = fields.Char()
     task_id = fields.Many2one("project.task")
     checklist_id = fields.Many2one("task.checklist")
     parent_checklist = fields.Char(related="checklist_id.name")
@@ -44,9 +42,8 @@ class ChecklistItem(models.Model):
 class ChecklistProgress(models.Model):
     _inherit = "project.task"
 
-    checklist_id = fields.Many2one("task.checklist", string="Checklist")
     checklist_ids = fields.One2many("task.checklist", "task_id", string="Checklists")
-    checklists = fields.One2many(
+    checklist_item_ids = fields.One2many(
         "checklist.item",
         compute="_compute_checklist_items",
         string="CheckList Items",
@@ -56,4 +53,6 @@ class ChecklistProgress(models.Model):
     def _compute_checklist_items(self):
         """Get checklist items"""
         for record in self:
-            self.checklists = [(6, 0, record.checklist_ids.mapped("checklist_ids").ids)]
+            self.checklist_item_ids = [
+                (6, 0, record.checklist_ids.mapped("checklist_ids").ids)
+            ]

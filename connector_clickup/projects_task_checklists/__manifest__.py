@@ -8,8 +8,8 @@
     "depends": ["project"],
     "data": [
         "security/ir.model.access.csv",
-        "views/checklist_menu.xml",
-        "views/checklist_add.xml",
+        "views/checklist_menu_views.xml",
+        "views/checklist_add_view.xml",
     ],
     "license": "LGPL-3",
 }

@@ -50,6 +50,7 @@
 * Removing demo data of project module before starting to use this module is recommended.
 * We need Connector module as well as Queue_job module to run this module.
 * Queue_job configuration in odoo.conf file is necessary to fulfill the worker's dependency.
+* The space id should be provide of that team(workspace_id) which is selected in backend Many2one field.
 
 **Features & Highlights**
 *************************

@@ -82,7 +82,7 @@ class ProjectTask(models.Model):
         self.env["clickup.project.task"].export_record(
             backend=self.sudo().clickup_backend_id, record=self
         )
-        for checklist in self.checklists:
+        for checklist in self.checklist_item_ids:
             self.env["clickup.checklist.item"].export_record(
                 backend=self.sudo().clickup_backend_id, record=checklist
             )

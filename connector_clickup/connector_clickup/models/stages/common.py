@@ -44,7 +44,7 @@ class TaskTypeAdapter(Component):
         :rtype: dict
         """
         data = []
-        team_id = self.backend_record.team_id
+        team_id = self.backend_record.team_id.external_id
         if team_id:
             self._clickup_model = "/team/{}/space".format(team_id)
             team_payload = self._call(self._clickup_model, arguments=filters)

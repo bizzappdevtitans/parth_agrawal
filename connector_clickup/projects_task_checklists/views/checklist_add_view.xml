@@ -7,14 +7,14 @@
         <field name="inherit_id" ref="project.view_task_form2" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="checklist_ids" widget="many2many_tags" />
+                <field name="checklist_ids" widget="many2many_tags" invisible="1" />
             </xpath>
-            <xpath expr="//form/sheet/notebook/page[last()]" position="after">
+            <xpath expr="//form/sheet/notebook" position="inside">
                 <page
                     string="Checklist"
                     attrs="{'invisible':[('checklist_ids','=',[])]}"
                 >
-                    <field name="checklists">
+                    <field name="checklist_item_ids">
                         <tree string="Checklists" decoration-bf="1">
                             <field
                                 name="name"

@@ -106,7 +106,7 @@ class ProjectProjectImportMapper(Component):
     @mapping
     def team_id(self, record):
         """Map team id"""
-        team_id = self.backend_record.team_id
+        team_id = self.backend_record.team_id.external_id
         return {"team_id": team_id} if team_id else {}
 
     @mapping

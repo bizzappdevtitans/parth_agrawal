@@ -134,8 +134,19 @@
                         </group>
                         <notebook>
                             <page string="Import">
+                                <span style="margin-right: 30px;">
+                                    <b>Sync Metadata of ClickUp</b>
+                                </span>
+                                <button
+                                class="oe_highlight"
+                                name="sync_metadata"
+                                string="Sync Metadata"
+                                type="object"
+                            />
+                                <group />
 
-                                <span style="margin-right: 10px;">
+                                <br />
+                                <span style="margin-right: 24px;">
                                     <b>Import Projects of ClickUp</b>
                                 </span>
                                 <button
@@ -145,9 +156,9 @@
                                 type="object"
                             />
                                 <group />
-                                <group />
+
                                 <br />
-                                <span style="margin-right: 19px; ">
+                                <span style="margin-right: 33px; ">
                                     <b>Import Stages of ClickUp</b>
                                 </span>
                                 <button
@@ -157,9 +168,8 @@
                                 type="object"
                             />
                                 <group />
-                                <group />
                                 <br />
-                                <span style="margin-right: 27px;">
+                                <span style="margin-right: 40px;">
                                     <b>Import Tasks of ClickUp</b>
                                 </span>
                                 <button
@@ -174,8 +184,7 @@
                                     name="import_from_date_task"
                                     class="oe_inline"
                                 />
-                                </group>
-                                <group />
+                            </group>
                             </page>
                             <page string="Export">
                                 <span style="margin-right: 10px;">
@@ -207,10 +216,7 @@
                                 <group>
                                     <group>
                                         <field name="company_id" />
-                                        <field
-                                        name="team_id"
-                                        attrs="{'readonly': [('auth_type', '=', 'Oauth')]}"
-                                    />
+                                        <field name="team_id" />
                                     </group>
                                 </group>
                                  <span

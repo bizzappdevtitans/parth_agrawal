@@ -84,8 +84,8 @@
                     <group>
                         <group>
                             <field name="name" />
-                            <field name="checklist_item" />
                             <field name="parent_checklist" />
+                            <field name="checklist_id" invisible="1" />
                         </group>
                     </group>
                 </sheet>

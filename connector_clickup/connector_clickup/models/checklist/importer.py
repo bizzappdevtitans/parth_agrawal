@@ -22,6 +22,7 @@ class TaskChecklistImportMapper(Component):
             "clickup.checklist.item",
         ),
     ]
+    direct = [("id", "external_id")]
 
     @only_create
     @mapping
@@ -39,11 +40,6 @@ class TaskChecklistImportMapper(Component):
         if not name:
             raise MappingError(_("Checklist must consist name"))
         return {"name": name}
-
-    @mapping
-    def exteral_id(self, record):
-        """Map external Id"""
-        return {"external_id": record.get("id")}
 
     @mapping
     def backend_id(self, record):

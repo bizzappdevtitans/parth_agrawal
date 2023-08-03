@@ -40,15 +40,6 @@ class ChecklistItemImportMapper(Component):
     _inherit = "clickup.export.mapper"
     _apply_on = "clickup.task.checklist"
     _mapper_ext_key = "identifier"
-    # _map_child_fallback = "clickup.map.child.exporter"
-
-    # children = [
-    #     (
-    #         "items",
-    #         "clickup_checklist_item_ids",
-    #         "clickup.checklist.item",
-    #     ),
-    # ]
 
     @mapping
     def name(self, record):

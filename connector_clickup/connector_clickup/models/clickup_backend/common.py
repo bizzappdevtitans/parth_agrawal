@@ -49,7 +49,7 @@ class ClickupBackend(models.Model):
     company_id = fields.Many2one(
         comodel_name="res.company", string="Company", required=True
     )
-    team_id = fields.Char()
+    team_id = fields.Many2one(comodel_name="clickup.team", string="Team")
     redirect_url = fields.Char(
         help="""Enter that redirect url which is already set
         in clickup website's Clickup API app"""
@@ -352,15 +352,6 @@ class ClickupBackend(models.Model):
         for backend in backends:
             backend.export_tasks()
 
-    def get_team_info(self):
-        """Set team in team id field"""
-        with self.work_on(self._name) as work:
-            backend_adapter = work.component(usage="backend.adapter")
-            team_id_dict = backend_adapter.get_team()
-            teams = team_id_dict.get("teams", [])
-            team = [team.get("id") for team in teams]
-            self.team_id = ",".join(team)
-
     def generate_token(self):
         """Generate token for clickup."""
         with self.work_on(self._name) as work:
@@ -371,7 +362,6 @@ class ClickupBackend(models.Model):
                 self.test_token = token
             else:
                 self.api_key = token
-        return self.get_team_info()
 
     def get_authorization_url(self):
         """Prepare the authorization url with parameters"""
@@ -400,6 +390,22 @@ class ClickupBackend(models.Model):
             "url": authorization_url,
             "target": "new",
         }
+
+    def sync_metadata(self):
+        """Sync meta data"""
+        self.ensure_one()
+        self.import_teams(from_sync=False)
+
+    def import_teams(self, with_delay=True, from_sync=False):
+        """#T-02421 Import Akeneo Attributes"""
+        for backend in self:
+            backend._import_from_date(
+                model="clickup.team",
+                from_date_field=None if not from_sync else False,
+                filters=None,
+                with_delay=with_delay,
+                priority=0,
+            )
 
 
 class ClickupBackendAdapter(Component):

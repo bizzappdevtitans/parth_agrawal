@@ -47,15 +47,6 @@ class ProjectTaskImportMapper(Component):
     _inherit = "clickup.export.mapper"
     _apply_on = "clickup.project.task"
     _mapper_ext_key = "identifier"
-    # _map_child_fallback = "clickup.map.child.export"
-
-    # children = [
-    #     (
-    #         "checklists",
-    #         "clickup_task_checklist_ids",
-    #         "clickup.task.checklist",
-    #     ),
-    # ]
 
     @mapping
     def name(self, record):
@@ -114,7 +105,7 @@ class ProjectTaskImportMapper(Component):
     def resolved(self, record):
         """Mapped checklist items"""
         total_record = []
-        for rec in record.checklists:
+        for rec in record.checklist_item_ids:
             if rec.state == "todo":
                 total_record.append(rec)
                 return {"resolved": False}

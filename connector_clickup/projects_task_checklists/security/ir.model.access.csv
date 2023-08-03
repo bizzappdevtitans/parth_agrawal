@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-
-access_task_checklist,access.task.checklist,model_task_checklist,connector.group_connector_manager,1,1,1,1
-access_checklist_item,access.checklist.item,model_checklist_item,connector.group_connector_manager,1,1,1,1
+projects_task_checklists.access_checklist_item_connector_manager,access_checklist_item,projects_task_checklists.model_checklist_item,connector.group_connector_manager,1,1,1,1
+projects_task_checklists.access_checklist_item,access_checklist_item,projects_task_checklists.model_checklist_item,base.group_user  ,1,0,0,0
+projects_task_checklists.access_task_checklist_connector_manager,access_task_checklist,projects_task_checklists.model_task_checklist,connector.group_connector_manager,1,1,1,1
+projects_task_checklists.access_task_checklist,access_task_checklist,projects_task_checklists.model_task_checklist,base.group_user,1,0,0,0

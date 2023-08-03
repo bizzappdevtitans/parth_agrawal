@@ -303,15 +303,6 @@ class ClickupCRUDAdapter(AbstractComponent):
             is_token=True,
         )
 
-    def get_team(self, arguments=None, http_method=None):
-        """Method to get team id from remote system"""
-        return self._call(
-            resource_path="/team",
-            arguments=arguments,
-            http_method="get",
-            is_token=False,
-        )
-
     def get_chat(self, arguments=None, http_method=None, resource_path=None):
         """Method to get chats from remote system"""
         return self._call(
