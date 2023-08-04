@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Inherited project.task model form view to add checklist page -->
+    <record id="project_task_progress_notebook" model="ir.ui.view">
+        <field name="name">project.task.notebook</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="checklist_ids" widget="many2many_tags" />
+                <field
+                    name="checklist_progress"
+                    widget="progressbar"
+                    attrs="{'invisible':[('checklist_ids','=',[])]}"
+                />
+            </xpath>
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page
+                    string="Checklist"
+                    attrs="{'invisible':[('checklist_ids','=',[])]}"
+                >
+                    <field name="checklist_item_ids">
+                        <tree string="Checklists" decoration-bf="1">
+                            <field
+                                name="name"
+                                decoration-success="state =='done'"
+                                decoration-danger="state =='todo'"
+                            />
+                            <button
+                                type="object"
+                                name="mark_completed"
+                                icon="fa-check-circle"
+                                string="Complete"
+                                title="Complete"
+                                class="text-success"
+                            />
+                            <button
+                                type="object"
+                                name="reset_stage"
+                                icon="fa-times"
+                                string="To Do"
+                                title="To Do"
+                                class="text-danger"
+                            />
+                            <field
+                                name="state"
+                                widget="badge"
+                                decoration-success="state =='done'"
+                                decoration-danger="state =='todo'"
+                            />
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

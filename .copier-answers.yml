@@ -12,7 +12,7 @@ github_enable_stale_action: true
 github_enforce_dev_status_compatibility: true
 include_wkhtmltopdf: true
 odoo_version: 14.0
-org_name: Odoo Community Association (OCA)
+org_name:BizzAppDev
 org_slug: OCA
 rebel_module_groups:
 - fetchmail_incoming_log,fetchmail_notify_error_to_sender_test,fetchmail_notify_error_to_sender
