@@ -22,7 +22,6 @@ class ClickupTaskChecklist(models.Model):
         while importing task for the first time
         - added here as in mapping no binding exists
          to identify based on external id"""
-
         if not vals.get("task_id"):
             task_checklist_id = vals.get("task_checklist_id")
             if not task_checklist_id:
@@ -30,6 +29,19 @@ class ClickupTaskChecklist(models.Model):
             binding = self.env["clickup.project.task"].browse(task_checklist_id)
             vals["task_id"] = binding.odoo_id.id
         return super().create(vals)
+
+    @api.model
+    def write(self, vals):
+        """If user removed the checklists from particular task,
+        at the time of updating or re-importing the tasks the
+        co-related checklists will be set in that task again"""
+        if not vals.get("task_id"):
+            task_checklist_id = self.task_checklist_id.id
+            if not task_checklist_id:
+                return super().write(vals)
+            binding = self.env["clickup.project.task"].browse(task_checklist_id)
+            vals["task_id"] = binding.odoo_id.id
+        return super().write(vals)
 
 
 class TaskChecklist(models.Model):

@@ -15,7 +15,7 @@ class ClickupProjectTasks(models.Model):
     _name = "clickup.project.task"
     _inherits = {"project.task": "odoo_id"}
     _inherit = ["clickup.binding"]
-    _description = "Clickup project.tasks binding model"
+    _description = "Clickup project.task binding model"
 
     odoo_id = fields.Many2one(
         "project.task", string="Task", required=True, ondelete="restrict"

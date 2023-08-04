@@ -15,7 +15,7 @@ class TestImportTask(ClickupTestCase):
         """Import of a project"""
         external_id = "85zt6b21b"
         self.binding = self._import_record(
-            filename="import_00_project_tasks",
+            filename="import_00_project_task",
             model_name="clickup.project.task",
             external_id=external_id,
             backend=self.backend,
