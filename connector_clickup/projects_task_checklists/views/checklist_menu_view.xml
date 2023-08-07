@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- menu buttons -->
+    <menuitem
+        id="project_checklist_root"
+        name="Checklist"
+        parent="project.menu_project_config"
+        sequence="6"
+    />
+
+    <menuitem
+        parent="project_checklist_root"
+        id="menu_task_checklist"
+        name="Task Checklist"
+        action="task_checklist_action"
+        sequence="1"
+    />
+
+    <menuitem
+        parent="project_checklist_root"
+        id="menu_checklist_item"
+        name="Checklist Item"
+        action="checklist_item_action"
+        sequence="2"
+    />
+
+</odoo>

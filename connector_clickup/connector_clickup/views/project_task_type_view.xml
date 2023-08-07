@@ -13,7 +13,6 @@
                     attrs="{'invisible': [('clickup_bind_ids', '=', [])]}"
                     groups="connector.group_connector_manager"
                 >
-
                     <field invisible="1" name="clickup_bind_ids" />
                     <field name="clickup_backend_id" />
                 </group>

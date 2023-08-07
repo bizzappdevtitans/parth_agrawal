@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!-- Task checklist tree view -->
+    <record id="task_checklist_action_tree" model="ir.ui.view">
+        <field name="name">task.checklist.action.tree</field>
+        <field name="model">task.checklist</field>
+        <field name="arch" type="xml">
+            <tree string="Task Checklist">
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- search/groupby view -->
+    <record id="task_checklist_search_form" model="ir.ui.view">
+        <field name="name">task.checklist.search.form</field>
+        <field name="model">task.checklist</field>
+        <field name="arch" type="xml">
+            <search string="Checklists">
+                <group expand="0" string="Group By">
+                    <filter
+                        string="Task"
+                        name="task_id"
+                        context="{'group_by': 'task_id'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Task checklist form view -->
+    <record id="task_checklist_action_form" model="ir.ui.view">
+        <field name="name">task.checklist.action.form</field>
+        <field name="model">task.checklist</field>
+        <field name="arch" type="xml">
+            <form string="Task Checklist">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                        <group>
+                            <field name="task_id" />
+                        </group>
+                    </group>
+                    <label for="checklist_ids" string="CheckList Items" />
+                    <field name="checklist_ids">
+                        <tree create="1">
+                            <field name="name" required="1" />
+                            <field name="state" />
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Task checklist action -->
+    <record id="task_checklist_action" model="ir.actions.act_window">
+        <field name="name">Task Checklist</field>
+        <field name="res_model">task.checklist</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a checklist
+            </p>
+        </field>
+    </record>
+
+</odoo>

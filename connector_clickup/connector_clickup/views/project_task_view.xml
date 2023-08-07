@@ -43,7 +43,10 @@
 
             </header>
             <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="estimated_cost" />
+                <field
+                    name="estimated_cost"
+                    attrs="{'invisible': [('estimated_cost', '=', False)]}"
+                />
 
             </xpath>
             <xpath expr="//page[@name='extra_info']" position="after">

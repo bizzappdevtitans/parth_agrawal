@@ -44,8 +44,8 @@
 
 **Other Configuration:**
 
-* To correctly import or export the project and tasks we should select one workspace(team) at the time of generation authentication code if authentication type is Oauth authentication or provide one workspace id(team) if auth type is API key.
-* We can import projects and tasks from more than one space(URI/Test location). At the time of export if folder id is no provided it will be exported to first space id.
+* After "Sync Metadata" we should select one workspace(team) before starting importing or exporting projects and tasks.
+* We can import projects and tasks from more than one space(URI/Test location). At the time of export if folder id is no provided in project.project it will be exported to first space id.
 * Creating different backend for workspaces(team) and location(space id) is recommended.
 * Removing demo data of project module before starting to use this module is recommended.
 * We need Connector module as well as Queue_job module to run this module.
@@ -58,9 +58,9 @@
 
 **The Connector Clickup module offers the following functionalities:**
 
-**Import Users/Members:**
+**Sync Metadata:**
 
-* By clicking on "Import Members" button in backend level we first import all the users which is associated with clickup website.
+* By clicking on "Sync Metadata" button in backend level we first import all the teams(Workspaces) detail, so that we can choose a team(workspace) in backend level.
 
 **Import Projects and Tasks:**
 
