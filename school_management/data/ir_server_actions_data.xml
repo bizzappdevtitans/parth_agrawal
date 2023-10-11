@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="action_confirm_admission" model="ir.actions.server">
+            <field name="name">Confirm Admission</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_addmission_option" />
+            <field name="binding_model_id" ref="model_addmission_option" />
+            <field name="state">code</field>
+            <field name="code">if not env.user.has_group('school_management.group_school_teacher'):
+    records.access_error()
+if  env.user.has_group('school_management.group_school_teacher'):
+    records.action_confirm_admission()</field>
+        </record>
+
+        <record id="action_cancel_admission" model="ir.actions.server">
+            <field name="name">Cancel Admission</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_addmission_option" />
+            <field name="binding_model_id" ref="model_addmission_option" />
+            <field name="state">code</field>
+            <field name="code">if not env.user.has_group('school_management.group_school_teacher'):
+    records.access_error()
+if  env.user.has_group('school_management.group_school_teacher'):
+    records.action_cancel()</field>
+        </record>
+
+         <record id="action_create_admission_form" model="ir.actions.server">
+            <field name="name">Create new admission form</field>
+            <field name="binding_view_types">form</field>
+            <field name="model_id" ref="school_management.model_department_option"/>
+            <field name="binding_model_id" ref="school_management.model_department_option" />
+            <field name="state">object_create</field>
+            <field name="code">action = records.action_addmission_option()</field>
+        </record>
+</odoo>
